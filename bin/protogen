@@ -37,88 +37,22 @@ TOP_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
-    # 1. Generate and distribute top-level protos
-    proto_dir = JOIN(TOP_DIR, "protos")
 
-    protoc(proto_dir, "sdk/python", "sawtooth_sdk/protobuf")
-    protoc(proto_dir, "cli", "sawtooth_cli/protobuf")
-    protoc(proto_dir, "validator", "sawtooth_validator/protobuf")
-    protoc(proto_dir, "rest_api", "sawtooth_rest_api/protobuf")
-    protoc(proto_dir, "families/settings", "sawtooth_settings/protobuf")
-    protoc(proto_dir, "families/identity", "sawtooth_identity/protobuf")
-    protoc(proto_dir, "families/block_info", "sawtooth_block_info/protobuf")
-
-    if "javascript" in args:
-        protoc(proto_dir, "sdk/javascript", "protobuf", "javascript")
-
-    if "go" in args:
-        protoc(proto_dir, "sdk/go/src", "sawtooth_sdk/protobuf", "go")
-
-    if "rust" in args:
-        protoc(proto_dir, "sdk/rust", "src/messages", "rust")
-        protoc(JOIN(TOP_DIR, "families/smallbank/protos"),
-               "perf/smallbank_workload",
-               "src/",
-               "rust")
-
-    # 2. Generate config protos
-    proto_dir = JOIN(TOP_DIR, "families/settings/protos")
-    protoc(proto_dir, "families/settings", "sawtooth_settings/protobuf")
-    protoc(proto_dir, "cli", "sawtooth_cli/protobuf")
-
-    # 3. Generate PoET protos
-    proto_dir = \
-        JOIN(
-            TOP_DIR,
-            "consensus/poet/families/sawtooth_validator_registry/protos")
-    protoc(proto_dir, "consensus/poet/common", "sawtooth_poet_common/protobuf")
-
-    # 4. Generate supplychain protos
+    # Generate supplychain protos
     proto_dir = JOIN(TOP_DIR, "families/supplychain/protos")
     protoc(proto_dir, "families/supplychain/python",
         "sawtooth_supplychain/protobuf")
 
-    # 5. Generate identity protos
-    proto_dir = JOIN(TOP_DIR, "families/identity/protos")
-    protoc(proto_dir, "families/identity", "sawtooth_identity/protobuf")
-    protoc(proto_dir, "cli", "sawtooth_cli/protobuf")
-
-    # 6. Generate block info protos
-    proto_dir = JOIN(TOP_DIR, "families/block_info/protos")
-    protoc(proto_dir, "families/block_info", "sawtooth_block_info/protobuf")
-
-    # 7. Generate smallbank protos
-    if "go" in args:
-        proto_dir = JOIN(TOP_DIR, "families/smallbank/protos")
-        protoc(proto_dir, "families/smallbank", "smallbank_go/src/protobuf", "go")
-
-    # 8. Generate Track and Trade protos
+    # Generate Track and Trade protos
     protoc(
         JOIN(TOP_DIR, "families/track_and_trade/protos"),
         "families/track_and_trade/processor",
         "sawtooth_track_and_trade/protobuf")
 
-    if "seth-go" in args:
-        proto_dir = JOIN(TOP_DIR, "families/block_info/protos")
-        protoc(proto_dir, "families/seth/src", "sawtooth_seth/protobuf", "go")
-        proto_dir = JOIN(TOP_DIR, "families/seth/src/protos")
-        protoc(proto_dir, "families/seth/src", "sawtooth_seth/protobuf", "go")
-
-    if "seth-rust" in args:
-        proto_dir = JOIN(TOP_DIR, "families/seth/src/protos")
-        protoc(proto_dir, "families/seth/rpc", "src/messages/", "rust")
-        protoc(proto_dir, "families/seth/rpc", "tests/protobuf")
-
 
 def protoc(src_dir, base_dir, pkg, language="python"):
     if language == "python":
         protoc_python(src_dir, base_dir, pkg)
-    elif language == "go":
-        protoc_go(src_dir, base_dir, pkg)
-    elif language == "javascript":
-        protoc_javascript(src_dir, base_dir, pkg)
-    elif language == "rust":
-        protoc_rust(src_dir, base_dir, pkg)
 
 
 def protoc_python(src_dir, base_dir, pkg):
@@ -158,97 +92,6 @@ def protoc_python(src_dir, base_dir, pkg):
             __file__,
             "-I=%s" % tmp_dir,
             "--python_out=%s" % JOIN(TOP_DIR, base_dir),
-        ] + glob("%s/*.proto" % tmp_pkg_dir))
-
-
-def protoc_javascript(src_dir, base_dir, pkg):
-    pkg_dir = JOIN(TOP_DIR, base_dir, pkg)
-    os.makedirs(pkg_dir, exist_ok=True)
-
-    with open(JOIN(pkg_dir, 'protobuf_bundle.json'), 'w') as out:
-        p = subprocess.Popen(['node', 'compile_protobuf.js'],
-                             cwd=JOIN(TOP_DIR, base_dir),
-                             stdout=out)
-        ret_code = p.wait()
-        out.flush()
-
-    if ret_code != 0:
-        raise AssertionError(
-            'Unable to compile protobuf messages for JS!')
-
-
-def protoc_go(src_dir, base_dir, pkg):
-    # 1. Get a list of all .proto files to build
-    cwd = os.getcwd()
-    os.chdir(src_dir)
-    proto_files = glob("*.proto")
-    os.chdir(cwd)
-
-    # 2. Create a temp directory for building
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        defer = []
-
-        # 3. In order to have each protobuf file in its own namespace,
-        # directories need to be created for all of them and the .proto file
-        # copied in
-        for proto_file in proto_files:
-            proto = proto_file[:-6]
-
-            sub_pkg = JOIN(pkg, proto)
-            tmp_pkg_dir = JOIN(tmp_dir, sub_pkg + "_pb2")
-            os.makedirs(tmp_pkg_dir)
-
-            src = JOIN(src_dir, proto_file)
-            dst = JOIN(tmp_pkg_dir, proto_file)
-            with open(src, encoding='utf-8') as fin:
-                with open(dst, "w", encoding='utf-8') as fout:
-                    src_contents = fin.read()
-                    fixed_contents = fix_import(src_contents, pkg, sub_dir=True)
-                    fout.write(fixed_contents)
-
-            # Need to defer until the whole directory is setup
-            defer.append([
-                __file__,
-                "-I=%s" % tmp_dir,
-                "--go_out=%s" % JOIN(TOP_DIR, base_dir),
-                "%s" % dst
-            ])
-
-        for args in defer:
-            _protoc(args)
-
-
-def protoc_rust(src_dir, base_dir, pkg):
-    # 1. Create output package directory
-    pkg_dir = JOIN(TOP_DIR, base_dir, pkg)
-    os.makedirs(pkg_dir, exist_ok=True)
-
-    # 2. Create a temp directory for building
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp_pkg_dir = JOIN(tmp_dir, pkg)
-        os.makedirs(tmp_pkg_dir)
-
-        # 3. Get a list of all .proto files to build
-        cwd = os.getcwd()
-        os.chdir(src_dir)
-        proto_files = glob("*.proto")
-        os.chdir(cwd)
-
-        # 4. Copy protos to temp dir and fix imports
-        for proto in proto_files:
-            src = JOIN(src_dir, proto)
-            dst = JOIN(tmp_pkg_dir, proto)
-            with open(src, encoding='utf-8') as fin:
-                with open(dst, "w", encoding='utf-8') as fout:
-                    src_contents = fin.read()
-                    fixed_contents = fix_import(src_contents, pkg)
-                    fout.write(fixed_contents)
-
-        # 5. Compile protobuf files
-        _protoc([
-            __file__,
-            "-I=%s" % tmp_dir,
-            "--rust_out=%s" % JOIN(TOP_DIR, base_dir, pkg),
         ] + glob("%s/*.proto" % tmp_pkg_dir))
 
 

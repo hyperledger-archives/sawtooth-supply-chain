@@ -1,1 +1,0 @@
-SAWTOOTH_REST_API_ARGS=--connect tcp://localhost:4004

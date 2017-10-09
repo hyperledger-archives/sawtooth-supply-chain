@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-top_dir=$(cd $(dirname $(dirname $0)) && pwd)
-cd $top_dir/sdk/examples/intkey_javascript
-
-rm -r node_modules
-npm set progress=false
-npm install --no-bin-links
