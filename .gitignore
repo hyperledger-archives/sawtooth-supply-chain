@@ -2,14 +2,16 @@
 /.idea/
 *.sublime*
 
-/families/**/__pycache__/
-/families/track_and_trade/**/node_modules
-/families/track_and_trade/**/package-lock.json
-/families/track_and_trade/processor/sawtooth_track_and_trade/protobuf
-/families/track_and_trade/client/public/dist
-/families/track_and_trade/client/src/protos.json
-/families/track_and_trade/server/rethinkdb_data
-/families/track_and_trade/server/fish.batch
+# Node
+**/node_modules
+**/package-lock.json
+
+/processor/**/__pycache__/
+/processor/sawtooth_track_and_trade/protobuf
+/client/public/dist
+/client/src/protos.json
+/server/rethinkdb_data
+/server/fish.batch
 
 /docs/build/
 /docs/source/_autogen/

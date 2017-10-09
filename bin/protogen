@@ -40,8 +40,8 @@ def main(args=None):
 
     # Generate Track and Trade protos
     protoc(
-        JOIN(TOP_DIR, "families/track_and_trade/protos"),
-        "families/track_and_trade/processor",
+        JOIN(TOP_DIR, "/protos"),
+        "/processor",
         "sawtooth_track_and_trade/protobuf")
 
 
