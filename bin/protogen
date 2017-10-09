@@ -38,11 +38,6 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    # Generate supplychain protos
-    proto_dir = JOIN(TOP_DIR, "families/supplychain/protos")
-    protoc(proto_dir, "families/supplychain/python",
-        "sawtooth_supplychain/protobuf")
-
     # Generate Track and Trade protos
     protoc(
         JOIN(TOP_DIR, "families/track_and_trade/protos"),

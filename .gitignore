@@ -3,8 +3,6 @@
 *.sublime*
 
 /families/**/__pycache__/
-/families/supplychain/python/sawtooth_supplychain/protobuf
-/families/supplychain/python/build/
 /families/track_and_trade/**/node_modules
 /families/track_and_trade/**/package-lock.json
 /families/track_and_trade/processor/sawtooth_track_and_trade/protobuf
