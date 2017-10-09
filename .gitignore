@@ -7,7 +7,7 @@
 **/package-lock.json
 
 /processor/**/__pycache__/
-/processor/sawtooth_track_and_trade/protobuf
+/processor/supply_chain_processor/protobuf
 /client/public/dist
 /client/src/protos.json
 /server/rethinkdb_data

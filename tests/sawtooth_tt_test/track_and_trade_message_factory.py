@@ -18,22 +18,22 @@ import time
 
 from sawtooth_processor_test.message_factory import MessageFactory
 
-from sawtooth_track_and_trade.protobuf.payload_pb2 import TTPayload
-from sawtooth_track_and_trade.protobuf.payload_pb2 import CreateAgentAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import CreateProposalAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import AnswerProposalAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import CreateRecordAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import \
+from supply_chain_processor.protobuf.payload_pb2 import TTPayload
+from supply_chain_processor.protobuf.payload_pb2 import CreateAgentAction
+from supply_chain_processor.protobuf.payload_pb2 import CreateProposalAction
+from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
+from supply_chain_processor.protobuf.payload_pb2 import CreateRecordAction
+from supply_chain_processor.protobuf.payload_pb2 import \
     CreateRecordTypeAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import FinalizeRecordAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import \
+from supply_chain_processor.protobuf.payload_pb2 import FinalizeRecordAction
+from supply_chain_processor.protobuf.payload_pb2 import \
     UpdatePropertiesAction
-from sawtooth_track_and_trade.protobuf.payload_pb2 import RevokeReporterAction
+from supply_chain_processor.protobuf.payload_pb2 import RevokeReporterAction
 
-from sawtooth_track_and_trade.protobuf.property_pb2 import PropertySchema
-from sawtooth_track_and_trade.protobuf.property_pb2 import PropertyValue
+from supply_chain_processor.protobuf.property_pb2 import PropertySchema
+from supply_chain_processor.protobuf.property_pb2 import PropertyValue
 
-import sawtooth_track_and_trade.addressing as addressing
+import supply_chain_processor.addressing as addressing
 
 
 LOGGER = logging.getLogger(__name__)

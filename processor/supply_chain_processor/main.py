@@ -22,7 +22,7 @@ import pkg_resources
 from colorlog import ColoredFormatter
 
 from sawtooth_sdk.processor.core import TransactionProcessor
-from sawtooth_track_and_trade.processor.handler import TTTransactionHandler
+from supply_chain_processor.handler import TTTransactionHandler
 
 
 DISTRIBUTION_NAME = 'sawtooth-track-and-trade'

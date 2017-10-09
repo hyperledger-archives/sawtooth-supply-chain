@@ -21,28 +21,28 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.exceptions import InternalError
 from sawtooth_sdk.protobuf.transaction_pb2 import TransactionHeader
 
-from sawtooth_track_and_trade.protobuf.agent_pb2 import Agent
-from sawtooth_track_and_trade.protobuf.agent_pb2 import AgentContainer
+from supply_chain_processor.protobuf.agent_pb2 import Agent
+from supply_chain_processor.protobuf.agent_pb2 import AgentContainer
 
-from sawtooth_track_and_trade.protobuf.property_pb2 import Property
-from sawtooth_track_and_trade.protobuf.property_pb2 import PropertyContainer
-from sawtooth_track_and_trade.protobuf.property_pb2 import PropertySchema
-from sawtooth_track_and_trade.protobuf.property_pb2 import PropertyPage
-from sawtooth_track_and_trade.protobuf.property_pb2 import \
+from supply_chain_processor.protobuf.property_pb2 import Property
+from supply_chain_processor.protobuf.property_pb2 import PropertyContainer
+from supply_chain_processor.protobuf.property_pb2 import PropertySchema
+from supply_chain_processor.protobuf.property_pb2 import PropertyPage
+from supply_chain_processor.protobuf.property_pb2 import \
     PropertyPageContainer
 
-from sawtooth_track_and_trade.protobuf.proposal_pb2 import Proposal
-from sawtooth_track_and_trade.protobuf.proposal_pb2 import ProposalContainer
+from supply_chain_processor.protobuf.proposal_pb2 import Proposal
+from supply_chain_processor.protobuf.proposal_pb2 import ProposalContainer
 
-from sawtooth_track_and_trade.protobuf.record_pb2 import Record
-from sawtooth_track_and_trade.protobuf.record_pb2 import RecordContainer
-from sawtooth_track_and_trade.protobuf.record_pb2 import RecordType
-from sawtooth_track_and_trade.protobuf.record_pb2 import RecordTypeContainer
+from supply_chain_processor.protobuf.record_pb2 import Record
+from supply_chain_processor.protobuf.record_pb2 import RecordContainer
+from supply_chain_processor.protobuf.record_pb2 import RecordType
+from supply_chain_processor.protobuf.record_pb2 import RecordTypeContainer
 
-from sawtooth_track_and_trade.protobuf.payload_pb2 import TTPayload
-from sawtooth_track_and_trade.protobuf.payload_pb2 import AnswerProposalAction
+from supply_chain_processor.protobuf.payload_pb2 import TTPayload
+from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
 
-import sawtooth_track_and_trade.addressing as addressing
+import supply_chain_processor.addressing as addressing
 
 
 LOGGER = logging.getLogger(__name__)
