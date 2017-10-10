@@ -18,7 +18,7 @@ import time
 
 from sawtooth_processor_test.message_factory import MessageFactory
 
-from supply_chain_processor.protobuf.payload_pb2 import TTPayload
+from supply_chain_processor.protobuf.payload_pb2 import SCPayload
 from supply_chain_processor.protobuf.payload_pb2 import CreateAgentAction
 from supply_chain_processor.protobuf.payload_pb2 import CreateProposalAction
 from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
@@ -40,7 +40,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 
 
-class TrackAndTradeMessageFactory:
+class SupplyChainMessageFactory:
     def __init__(self, private=None, public=None):
         self._factory = MessageFactory(
             encoding='application/protobuf',
@@ -55,8 +55,8 @@ class TrackAndTradeMessageFactory:
         self.signer_address = addressing.make_agent_address(self.public_key)
 
     def create_agent(self, name):
-        payload = _make_tt_payload(
-            action=TTPayload.CREATE_AGENT,
+        payload = _make_sc_payload(
+            action=SCPayload.CREATE_AGENT,
             create_agent=CreateAgentAction(name=name))
 
         return self._create_transaction(
@@ -66,8 +66,8 @@ class TrackAndTradeMessageFactory:
         )
 
     def create_record_type(self, name, *properties):
-        payload = _make_tt_payload(
-            action=TTPayload.CREATE_RECORD_TYPE,
+        payload = _make_sc_payload(
+            action=SCPayload.CREATE_RECORD_TYPE,
             create_record_type=CreateRecordTypeAction(
                 name=name,
                 properties=[
@@ -89,8 +89,8 @@ class TrackAndTradeMessageFactory:
         )
 
     def create_record(self, record_id, record_type, properties_dict):
-        payload = _make_tt_payload(
-            action=TTPayload.CREATE_RECORD,
+        payload = _make_sc_payload(
+            action=SCPayload.CREATE_RECORD,
             create_record=CreateRecordAction(
                 record_id=record_id,
                 record_type=record_type,
@@ -123,8 +123,8 @@ class TrackAndTradeMessageFactory:
         )
 
     def finalize_record(self, record_id):
-        payload = _make_tt_payload(
-            action=TTPayload.FINALIZE_RECORD,
+        payload = _make_sc_payload(
+            action=SCPayload.FINALIZE_RECORD,
             finalize_record=FinalizeRecordAction(
                 record_id=record_id))
 
@@ -137,8 +137,8 @@ class TrackAndTradeMessageFactory:
         )
 
     def update_properties(self, record_id, properties_dict):
-        payload = _make_tt_payload(
-            action=TTPayload.UPDATE_PROPERTIES,
+        payload = _make_sc_payload(
+            action=SCPayload.UPDATE_PROPERTIES,
             update_properties=UpdatePropertiesAction(
                 record_id=record_id,
                 properties=[
@@ -168,8 +168,8 @@ class TrackAndTradeMessageFactory:
         if properties is None:
             properties = []
 
-        payload = _make_tt_payload(
-            action=TTPayload.CREATE_PROPOSAL,
+        payload = _make_sc_payload(
+            action=SCPayload.CREATE_PROPOSAL,
             create_proposal=CreateProposalAction(
                 record_id=record_id,
                 receiving_agent=receiving_agent,
@@ -196,8 +196,8 @@ class TrackAndTradeMessageFactory:
         )
 
     def answer_proposal(self, record_id, receiving_agent, role, response):
-        payload = _make_tt_payload(
-            action=TTPayload.ANSWER_PROPOSAL,
+        payload = _make_sc_payload(
+            action=SCPayload.ANSWER_PROPOSAL,
             answer_proposal=AnswerProposalAction(
                 record_id=record_id,
                 receiving_agent=receiving_agent,
@@ -229,8 +229,8 @@ class TrackAndTradeMessageFactory:
         )
 
     def revoke_reporter(self, record_id, reporter_id, properties):
-        payload = _make_tt_payload(
-            action=TTPayload.REVOKE_REPORTER,
+        payload = _make_sc_payload(
+            action=SCPayload.REVOKE_REPORTER,
             revoke_reporter=RevokeReporterAction(
                 record_id=record_id,
                 reporter_id=reporter_id,
@@ -264,7 +264,7 @@ class TrackAndTradeMessageFactory:
         address = addressing.make_agent_address(public_key)
 
         return self._create_transaction(
-            payload=TTPayload().SerializeToString(),
+            payload=SCPayload().SerializeToString(),
             inputs=[address],
             outputs=[address]
         )
@@ -277,8 +277,8 @@ class TrackAndTradeMessageFactory:
         return self._factory.create_batch([transaction])
 
 
-def _make_tt_payload(**kwargs):
-    return TTPayload(
+def _make_sc_payload(**kwargs):
+    return SCPayload(
         timestamp=round(time.time()),
         **kwargs
     ).SerializeToString()

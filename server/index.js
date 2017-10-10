@@ -36,7 +36,7 @@ Promise.all([
     app.use('/api', api)
 
     app.listen(PORT, () => {
-      console.log(`Track and Trade Server listening on port ${PORT}`)
+      console.log(`Supply Chain Server listening on port ${PORT}`)
     })
   })
   .catch(err => console.error(err.message))

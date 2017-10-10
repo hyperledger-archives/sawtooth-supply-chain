@@ -20,7 +20,7 @@ const r = require('rethinkdb')
 
 const HOST = process.env.DB_HOST || 'localhost'
 const PORT = process.env.DB_PORT || 28015
-const NAME = process.env.DB_NAME || 'tnt'
+const NAME = process.env.DB_NAME || 'supply_chain'
 
 r.connect({host: HOST, port: PORT})
   .then(conn => {

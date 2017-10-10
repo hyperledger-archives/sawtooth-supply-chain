@@ -19,7 +19,7 @@ import "property.proto";
 import "proposal.proto";
 
 
-message TTPayload {
+message SCPayload {
   enum Action {
     CREATE_AGENT = 0;
     CREATE_RECORD = 1;

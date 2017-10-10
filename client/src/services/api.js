@@ -20,7 +20,7 @@ const m = require('mithril')
 const _ = require('lodash')
 const sjcl = require('sjcl')
 
-const STORAGE_KEY = 'tnt.authorization'
+const STORAGE_KEY = 'fish_net.authorization'
 let authToken = null
 
 /**

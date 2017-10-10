@@ -28,7 +28,7 @@ if (SECRET === undefined) {
   console.warn('WARNING! No secret provided at startup!')
   console.warn('JWT authorization tokens will be insecure.')
   console.warn('Set the "SECRET" environment variable to create secure tokens.')
-  SECRET = 'tnt-secret'
+  SECRET = 'supply-chain-secret'
 }
 
 // Hashes a password as promised

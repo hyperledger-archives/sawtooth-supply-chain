@@ -22,10 +22,10 @@ import pkg_resources
 from colorlog import ColoredFormatter
 
 from sawtooth_sdk.processor.core import TransactionProcessor
-from supply_chain_processor.handler import TTTransactionHandler
+from supply_chain_processor.handler import SCTransactionHandler
 
 
-DISTRIBUTION_NAME = 'sawtooth-track-and-trade'
+DISTRIBUTION_NAME = 'sawtooth-supply-chain'
 
 
 def create_console_handler(verbose_level):
@@ -108,7 +108,7 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None,
 
     processor = TransactionProcessor(url=args.endpoint)
 
-    handler = TTTransactionHandler()
+    handler = SCTransactionHandler()
 
     processor.add_handler(handler)
 
