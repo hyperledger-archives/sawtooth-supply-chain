@@ -22,7 +22,7 @@ const jsSchema = require('js-schema')
 
 const HOST = process.env.DB_HOST || 'localhost'
 const PORT = process.env.DB_PORT || 28015
-const NAME = process.env.DB_NAME || 'tnt'
+const NAME = process.env.DB_NAME || 'supply_chain'
 
 // Connection to db for query methods, run connect before querying
 let connection = null

@@ -27,10 +27,10 @@ const Dashboard = {
         m('h5',
           m('em',
             'Powered by ',
-            m('strong', 'Sawtooth: Track and Trade')))),
+            m('strong', 'Sawtooth Supply Chain')))),
       m('.blurb',
         m('p',
-          m('em', 'Track and Trade'),
+          m('em', 'Sawtooth Supply Chain'),
           ' is a general purpose supply chain solution built using the ',
           'power of ',
           m('a[href="https://github.com/hyperledger/sawtooth-core"]',
@@ -57,7 +57,7 @@ const Dashboard = {
           'ownership or possession of the fish entirely. For the ',
           'adventurous, these actions can also be accomplished directly ',
           'with the REST API running on the ',
-          m('em', 'Track and Trade'),
+          m('em', 'Supply Chain'),
           ' server, perfect for automated IoT sensors.'))
     ]
   }

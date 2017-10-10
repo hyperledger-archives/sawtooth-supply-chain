@@ -32,32 +32,32 @@ const { records, agents } = require(`./${DATA}`)
 let batcherPubkey = null
 
 const createPayload = message => {
-  return protos.TTPayload.encode(_.assign({
+  return protos.SCPayload.encode(_.assign({
     timestamp: Math.floor(Date.now() / 1000)
   }, message)).finish()
 }
 
 const createTxn = (privateKey, payload) => {
   return new TransactionEncoder(privateKey, {
-    familyName: 'track_and_trade',
+    familyName: 'supply_chain',
     familyVersion: '1.0',
     payloadEncoding: 'application/protobuf',
-    inputs: ['1c1108'],
-    outputs: ['1c1108'],
+    inputs: ['3400de'],
+    outputs: ['3400de'],
     batcherPubkey
   }).create(payload)
 }
 
 const createProposal = (privateKey, action) => {
   return createTxn(privateKey, createPayload({
-    action: protos.TTPayload.Action.CREATE_PROPOSAL,
+    action: protos.SCPayload.Action.CREATE_PROPOSAL,
     createProposal: protos.CreateProposalAction.create(action)
   }))
 }
 
 const answerProposal = (privateKey, action) => {
   return createTxn(privateKey, createPayload({
-    action: protos.TTPayload.Action.ANSWER_PROPOSAL,
+    action: protos.SCPayload.Action.ANSWER_PROPOSAL,
     answerProposal: protos.AnswerProposalAction.create(action)
   }))
 }
@@ -85,7 +85,7 @@ protos.compile()
     console.log('Creating Agents . . .')
     const agentAdditions = agents.map(agent => {
       return createTxn(agent.privateKey, createPayload({
-        action: protos.TTPayload.Action.CREATE_AGENT,
+        action: protos.SCPayload.Action.CREATE_AGENT,
         createAgent: protos.CreateAgentAction.create({ name: agent.name })
       }))
     })
@@ -122,7 +122,7 @@ protos.compile()
       })
 
       return createTxn(agents[record.ownerIndex || 0].privateKey, createPayload({
-        action: protos.TTPayload.Action.CREATE_RECORD,
+        action: protos.SCPayload.Action.CREATE_RECORD,
         createRecord: protos.CreateRecordAction.create({
           recordId: record.recordId,
           recordType: record.recordType,

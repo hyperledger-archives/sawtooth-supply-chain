@@ -48,7 +48,7 @@ const actionMap = ACTIONS.reduce((map, enumName) => {
 
 // Compile Protobufs
 const root = protobuf.Root.fromJSON(protoJson)
-const TTPayload = root.lookup('TTPayload')
+const SCPayload = root.lookup('SCPayload')
 const PropertyValue = root.lookup('PropertyValue')
 const PropertySchema = root.lookup('PropertySchema')
 const Location = root.lookup('Location')
@@ -75,7 +75,7 @@ actionMap.createRecordType.xform = schemaXform
 actionMap.updateProperties.xform = valueXform
 
 /**
- * Encodes a new TTPayload with the specified action
+ * Encodes a new SCPayload with the specified action
  */
 const encode = (actionKey, actionData) => {
   const action = actionMap[actionKey]
@@ -83,8 +83,8 @@ const encode = (actionKey, actionData) => {
     throw new Error('There is no payload action with that key')
   }
 
-  return TTPayload.encode({
-    action: TTPayload.Action[action.enum],
+  return SCPayload.encode({
+    action: SCPayload.Action[action.enum],
     timestamp: Math.floor(Date.now() / 1000),
     [actionKey]: action.proto.create(action.xform(actionData))
   }).finish()

@@ -22,7 +22,7 @@ const { Message } = require('sawtooth-sdk/protobuf')
 const deltas = require('./deltas')
 const batcher = require('./batcher')
 
-const PREFIX = '1c1108'
+const PREFIX = '3400de'
 const VALIDATOR_URL = process.env.VALIDATOR_URL || 'tcp://localhost:4004'
 const stream = new Stream(VALIDATOR_URL)
 

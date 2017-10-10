@@ -39,7 +39,7 @@ from supply_chain_processor.protobuf.record_pb2 import RecordContainer
 from supply_chain_processor.protobuf.record_pb2 import RecordType
 from supply_chain_processor.protobuf.record_pb2 import RecordTypeContainer
 
-from supply_chain_processor.protobuf.payload_pb2 import TTPayload
+from supply_chain_processor.protobuf.payload_pb2 import SCPayload
 from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
 
 import supply_chain_processor.addressing as addressing
@@ -53,7 +53,7 @@ PROPERTY_PAGE_MAX_LENGTH = 256
 TOTAL_PROPERTY_PAGE_MAX = 16 ** 4 - 1
 
 
-class TTTransactionHandler:
+class SCTransactionHandler:
     @property
     def family_name(self):
         return addressing.FAMILY_NAME
@@ -72,7 +72,7 @@ class TTTransactionHandler:
 
     def apply(self, transaction, state):
         '''
-        A TTPayload consists of a timestamp, an action tag, and
+        A SCPayload consists of a timestamp, an action tag, and
         attributes corresponding to various actions (create_agent,
         create_record, etc). The appropriate attribute will be
         selected depending on the action tag, and that information
@@ -81,7 +81,7 @@ class TTTransactionHandler:
         handler function (_create_agent, _create_record, etc).
         _unpack_transaction gets the signing key, the timestamp, and
         the action tag out of the transaction, then returns the
-        signing key, the timestamp, and the appropriate TTPayload
+        signing key, the timestamp, and the appropriate SCPayload
         attribute and handler function.
 
         Besides this, the transaction's timestamp is verified, since
@@ -877,8 +877,8 @@ def _verify_timestamp(timestamp):
 
 
 def _unpack_transaction(transaction):
-    '''Return the transaction signing key, the TTPayload timestamp, the
-    appropriate TTPayload action attribute, and the appropriate
+    '''Return the transaction signing key, the SCPayload timestamp, the
+    appropriate SCPayload action attribute, and the appropriate
     handler function (with the latter two determined by the constant
     TYPE_TO_ACTION_HANDLER table.
     '''
@@ -887,7 +887,7 @@ def _unpack_transaction(transaction):
 
     signer = header.signer_pubkey
 
-    payload = TTPayload()
+    payload = SCPayload()
     payload.ParseFromString(transaction.payload)
 
     action = payload.action
@@ -904,13 +904,13 @@ def _unpack_transaction(transaction):
 
 
 TYPE_TO_ACTION_HANDLER = {
-    TTPayload.CREATE_AGENT: ('create_agent', _create_agent),
-    TTPayload.CREATE_RECORD: ('create_record', _create_record),
-    TTPayload.FINALIZE_RECORD: ('finalize_record', _finalize_record),
-    TTPayload.CREATE_RECORD_TYPE: ('create_record_type',
+    SCPayload.CREATE_AGENT: ('create_agent', _create_agent),
+    SCPayload.CREATE_RECORD: ('create_record', _create_record),
+    SCPayload.FINALIZE_RECORD: ('finalize_record', _finalize_record),
+    SCPayload.CREATE_RECORD_TYPE: ('create_record_type',
                                    _create_record_type),
-    TTPayload.UPDATE_PROPERTIES: ('update_properties', _update_properties),
-    TTPayload.CREATE_PROPOSAL: ('create_proposal', _create_proposal),
-    TTPayload.ANSWER_PROPOSAL: ('answer_proposal', _answer_proposal),
-    TTPayload.REVOKE_REPORTER: ('revoke_reporter', _revoke_reporter),
+    SCPayload.UPDATE_PROPERTIES: ('update_properties', _update_properties),
+    SCPayload.CREATE_PROPOSAL: ('create_proposal', _create_proposal),
+    SCPayload.ANSWER_PROPOSAL: ('answer_proposal', _answer_proposal),
+    SCPayload.REVOKE_REPORTER: ('revoke_reporter', _revoke_reporter),
 }

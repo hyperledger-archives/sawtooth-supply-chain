@@ -1,7 +1,7 @@
 {
-  "name": "tnt_server",
+  "name": "supply_chain_server",
   "version": "0.0.0",
-  "description": "A database and API for the Track and Trade client app",
+  "description": "A database and API for clients using Sawtooth Supply Chain",
   "main": "index.js",
   "directories": {
     "test": "tests"

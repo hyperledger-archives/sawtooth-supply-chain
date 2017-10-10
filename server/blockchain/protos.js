@@ -58,7 +58,7 @@ const compile = () => {
       'RecordTypeContainer'
     ]),
     loadProtos('payload.proto', [
-      'TTPayload',
+      'SCPayload',
       'CreateAgentAction',
       'FinalizeRecordAction',
       'CreateRecordAction',

@@ -25,11 +25,11 @@ const protos = require('../blockchain/protos')
 
 const privateKey = signer.makePrivateKey()
 const encoder = new TransactionEncoder(privateKey, {
-  familyName: 'track_and_trade',
+  familyName: 'supply_chain',
   familyVersion: '1.0',
   payloadEncoding: 'application/protobuf',
-  inputs: ['1c1108'],
-  outputs: ['1c1108']
+  inputs: ['3400de'],
+  outputs: ['3400de']
 })
 const batcher = new BatchEncoder(privateKey)
 
@@ -70,16 +70,16 @@ protos.compile()
       }]
     }
 
-    const agentPayload = protos.TTPayload.encode({
-      action: protos.TTPayload.Action.CREATE_AGENT,
+    const agentPayload = protos.SCPayload.encode({
+      action: protos.SCPayload.Action.CREATE_AGENT,
       timestamp: Math.floor(Date.now() / 1000),
       createAgent: protos.CreateAgentAction.create({
         name: 'FishNet Admin'
       })
     }).finish()
 
-    const typePayload = protos.TTPayload.encode({
-      action: protos.TTPayload.Action.CREATE_RECORD_TYPE,
+    const typePayload = protos.SCPayload.encode({
+      action: protos.SCPayload.Action.CREATE_RECORD_TYPE,
       timestamp: Math.floor(Date.now() / 1000),
       createRecordType: protos.CreateRecordTypeAction.create({
         name: fishType.name,
