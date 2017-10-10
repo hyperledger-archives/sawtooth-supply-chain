@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
     'families', 'track_and_trade', 'processor'))
 
-from sawtooth_track_and_trade.processor.main import main
+from supply_chain_processor.main import main
 
 if __name__ == '__main__':
     main()
