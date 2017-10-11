@@ -17,7 +17,7 @@
 'use strict'
 
 const m = require('mithril')
-const moment = require('moment')
+const moment = require('moment').default
 const truncate = require('lodash/truncate')
 
 const {MultiSelect} = require('../components/forms')
