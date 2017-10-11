@@ -25,10 +25,7 @@ build_str = "lib.{}-{}.{}".format(
 
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-    'sdk', 'python'))
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-    'families', 'track_and_trade', 'processor'))
+    'processor'))
 
 from supply_chain_processor.main import main
 
