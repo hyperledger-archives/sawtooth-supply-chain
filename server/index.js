@@ -32,7 +32,7 @@ Promise.all([
   .then(() => {
     blockchain.subscribe()
 
-    app.use('/fish', express.static('../client/public'))
+    app.use('/fish', express.static('../fish_client/public'))
     app.use('/api', api)
 
     app.listen(PORT, () => {
