@@ -47,7 +47,7 @@ const field = (onValue, attrs = null) => {
 /**
  * Returns a labeled input field which passes its value to a callback
  */
-const input = (type, onValue, label, required) => {
+const input = (type, onValue, label, required = true) => {
   return group(label, field(onValue, { type, required }))
 }
 
