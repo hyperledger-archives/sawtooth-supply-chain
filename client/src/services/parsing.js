@@ -17,7 +17,7 @@
 'use strict'
 
 const _ = require('lodash')
-const moment = require('moment').default
+const moment = require('moment')
 const { FLOAT_PRECISION } = require('./payloads')
 
 const STRINGIFIERS = {
