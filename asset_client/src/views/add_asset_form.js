@@ -21,23 +21,23 @@ const api = require('../services/api')
 const payloads = require('../services/payloads')
 const transactions = require('../services/transactions')
 const parsing = require('../services/parsing')
-const {MultiSelect} = require('../components/forms')
+const forms = require('../components/forms')
 const layout = require('../components/layout')
 
 /**
  * Possible selection options
  */
 const authorizableProperties = [
+  ['weight', 'Weight'],
   ['location', 'Location'],
   ['temperature', 'Temperature'],
-  ['tilt', 'Tilt'],
   ['shock', 'Shock']
 ]
 
 /**
- * The Form for tracking a new fish.
+ * The Form for tracking a new asset.
  */
-const AddFishForm = {
+const AddAssetForm = {
   oninit (vnode) {
     // Initialize the empty reporters fields
     vnode.state.reporters = [
@@ -54,108 +54,83 @@ const AddFishForm = {
   },
 
   view (vnode) {
-    return m('.fish_form',
-             m('form', {
-               onsubmit: (e) => {
-                 e.preventDefault()
-                 _handleSubmit(vnode.attrs.signingKey, vnode.state)
-               }
-             },
-             m('legend', 'Track New Fish'),
-             _formGroup('Serial Number', m('input.form-control', {
-               type: 'text',
-               oninput: m.withAttr('value', (value) => {
-                 vnode.state.serialNumber = value
-               }),
-               value: vnode.state.serialNumber
-             })),
-             _formGroup('Species (ASFIS 3-letter code)', m('input.form-control', {
-               type: 'text',
-               oninput: m.withAttr('value', (value) => {
-                 vnode.state.species = value
-               }),
-               value: vnode.state.species
-             })),
+    const setter = forms.stateSetter(vnode.state)
+    return [
+      m('.add_asset_form',
+        m('form', {
+          onsubmit: (e) => {
+            e.preventDefault()
+            _handleSubmit(vnode.attrs.signingKey, vnode.state)
+          }
+        },
+        m('legend', 'Track New Asset'),
+        forms.textInput(setter('serialNumber'), 'Serial Number'),
 
-             layout.row([
-               _formGroup('Length (m)', m('input.form-control', {
-                 type: 'number',
-                 min: 0,
-                 step: 'any',
-                 oninput: m.withAttr('value', (value) => {
-                   vnode.state.lengthInCM = value
-                 }),
-                 value: vnode.state.lengthInCM
-               })),
-               _formGroup('Weight (kg)', m('input.form-control', {
-                 type: 'number',
-                 step: 'any',
-                 oninput: m.withAttr('value', (value) => {
-                   vnode.state.weightInKg = value
-                 }),
-                 value: vnode.state.weightInKg
-               }))
-             ]),
+        layout.row([
+          forms.textInput(setter('type'), 'Type'),
+          forms.textInput(setter('subtype'), 'Subtype', false)
+        ]),
 
-             layout.row([
-               _formGroup('Latitude', m('input.form-control', {
-                 type: 'number',
-                 step: 'any',
-                 min: -90,
-                 max: 90,
-                 oninput: m.withAttr('value', (value) => {
-                   vnode.state.latitude = value
-                 }),
-                 value: vnode.state.latitude
-               })),
-               _formGroup('Longitude', m('input.form-control', {
-                 type: 'number',
-                 step: 'any',
-                 min: -180,
-                 max: 180,
-                 oninput: m.withAttr('value', (value) => {
-                   vnode.state.longitude = value
-                 }),
-                 value: vnode.state.longitude
-               }))
-             ]),
+        forms.group('Weight (kg)', forms.field(setter('weight'), {
+          type: 'number',
+          step: 'any',
+          min: 0,
+          required: false
+        })),
 
-             m('.reporters.form-group',
-               m('label', 'Authorize Reporters'),
+        layout.row([
+          forms.group('Latitude', forms.field(setter('latitude'), {
+            type: 'number',
+            step: 'any',
+            min: -90,
+            max: 90,
+            required: false
+          })),
+          forms.group('Longitude', forms.field(setter('longitude'), {
+            type: 'number',
+            step: 'any',
+            min: -180,
+            max: 180,
+            required: false
+          }))
+        ]),
 
-               vnode.state.reporters.map((reporter, i) =>
-                 m('.row.mb-2',
-                   m('.col-sm-8',
-                     m('input.form-control', {
-                       type: 'text',
-                       placeholder: 'Add reporter by name or public key...',
-                       oninput: m.withAttr('value', (value) => {
-                         // clear any previously matched values
-                         vnode.state.reporters[i].reporterKey = null
-                         const reporter = vnode.state.agents.find(agent => {
-                           return agent.name === value || agent.key === value
-                         })
-                         if (reporter) {
-                           vnode.state.reporters[i].reporterKey = reporter.key
-                         }
-                       }),
-                       onblur: () => _updateReporters(vnode, i)
-                     })),
+        m('.reporters.form-group',
+          m('label', 'Authorize Reporters'),
+          vnode.state.reporters.map((reporter, i) =>
+            m('.row.mb-2',
+              m('.col-sm-8',
+                m('input.form-control', {
+                  type: 'text',
+                  placeholder: 'Add reporter by name or public key...',
+                  oninput: m.withAttr('value', (value) => {
+                    // clear any previously matched values
+                    vnode.state.reporters[i].reporterKey = null
+                    const reporter = vnode.state.agents.find(agent => {
+                      return agent.name === value || agent.key === value
+                    })
+                    if (reporter) {
+                      vnode.state.reporters[i].reporterKey = reporter.key
+                    }
+                  }),
+                  onblur: () => _updateReporters(vnode, i)
+                })),
 
-                   m('.col-sm-4',
-                     m(MultiSelect, {
-                       label: 'Select Fields',
-                       options: authorizableProperties,
-                       selected: reporter.properties,
-                       onchange: (selection) => {
-                         vnode.state.reporters[i].properties = selection
-                       }
-                     }))))),
+             m('.col-sm-4',
+                m(forms.MultiSelect, {
+                  label: 'Select Fields',
+                  options: authorizableProperties,
+                  selected: reporter.properties,
+                  onchange: (selection) => {
+                    vnode.state.reporters[i].properties = selection
+                  }
+                }))))),
 
-             m('.row.justify-content-end.align-items-end',
-               m('col-2',
-                 m('button.btn.btn-primary',
-                   'Create Record')))))
+        m('.row.justify-content-end.align-items-end',
+          m('col-2',
+            m('button.btn.btn-primary',
+              'Create Record')))))
+    ]
   }
 }
 
@@ -184,34 +159,43 @@ const _updateReporters = (vnode, reporterIndex) => {
  * Extract the appropriate values to pass to the create record transaction.
  */
 const _handleSubmit = (signingKey, state) => {
+  const properties = [{
+    name: 'type',
+    stringValue: state.type,
+    dataType: payloads.createRecord.enum.STRING
+  }]
+
+  if (state.subtype) {
+    properties.push({
+      name: 'subtype',
+      stringValue: state.subtype,
+      dataType: payloads.createRecord.enum.STRING
+    })
+  }
+
+  if (state.weight) {
+    properties.push({
+      name: 'weight',
+      intValue: parsing.toInt(state.weight),
+      dataType: payloads.createRecord.enum.INT
+    })
+  }
+
+  if (state.latitude && state.longitude) {
+    properties.push({
+      name: 'location',
+      locationValue: {
+        latitude: parsing.toInt(state.latitude),
+        longitude: parsing.toInt(state.longitude)
+      },
+      dataType: payloads.createRecord.enum.LOCATION
+    })
+  }
+
   const recordPayload = payloads.createRecord({
     recordId: state.serialNumber,
-    recordType: 'fish',
-    properties: [
-      {
-        name: 'species',
-        stringValue: state.species,
-        dataType: payloads.createRecord.enum.STRING
-      },
-      {
-        name: 'length',
-        intValue: parsing.toInt(state.lengthInCM),
-        dataType: payloads.createRecord.enum.INT
-      },
-      {
-        name: 'weight',
-        intValue: parsing.toInt(state.weightInKg),
-        dataType: payloads.createRecord.enum.INT
-      },
-      {
-        name: 'location',
-        locationValue: {
-          latitude: parsing.toInt(state.latitude),
-          longitude: parsing.toInt(state.longitude)
-        },
-        dataType: payloads.createRecord.enum.LOCATION
-      }
-    ]
+    recordType: 'asset',
+    properties
   })
 
   const reporterPayloads = state.reporters
@@ -224,15 +208,7 @@ const _handleSubmit = (signingKey, state) => {
     }))
 
   transactions.submit([recordPayload].concat(reporterPayloads), true)
-    .then(() => m.route.set(`/fish/${state.serialNumber}`))
+    .then(() => m.route.set(`/assets/${state.serialNumber}`))
 }
 
-/**
- * Create a form group (this is a styled form-group with a label).
- */
-const _formGroup = (label, formEl) =>
-  m('.form-group',
-    m('label', label),
-    formEl)
-
-module.exports = AddFishForm
+module.exports = AddAssetForm
