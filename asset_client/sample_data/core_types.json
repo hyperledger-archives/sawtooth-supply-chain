@@ -1,38 +1,31 @@
 [
   {
-    "name": "fish",
+    "name": "asset",
     "properties": [
         {
-          "name": "species",
+          "name": "type",
           "dataType": 1,
           "required": true
         },
         {
-          "name": "length",
-          "dataType": 2,
-          "required": true
+          "name": "subtype",
+          "dataType": 1
         },
         {
           "name": "weight",
-          "dataType": 2,
-          "required": true
+          "dataType": 2
         },
         {
           "name": "location",
-          "dataType": 4,
-          "required": true
+          "dataType": 4
         },
         {
           "name": "temperature",
           "dataType": 2
         },
         {
-          "name": "tilt",
-          "dataType": 1
-        },
-        {
           "name": "shock",
-          "dataType": 1
+          "dataType": 2
         }
     ]
   }
