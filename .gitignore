@@ -8,8 +8,8 @@
 
 /processor/**/__pycache__/
 /processor/supply_chain_processor/protobuf
-/client/public/dist
-/client/src/protos.json
+/fish_client/public/dist
+/fish_client/src/protos.json
 /server/rethinkdb_data
 /server/fish.batch
 
