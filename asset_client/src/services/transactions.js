@@ -23,7 +23,7 @@ const { signer, TransactionEncoder } = require('sawtooth-sdk/client')
 const modals = require('../components/modals')
 const api = require('../services/api')
 
-const STORAGE_KEY = 'fish_net.encryptedKey'
+const STORAGE_KEY = 'asset_track.encryptedKey'
 
 let txnEncoder = null
 const encoderSettings = {

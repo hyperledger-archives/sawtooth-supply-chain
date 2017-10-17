@@ -26,11 +26,11 @@ const api = require('./services/api')
 const transactions = require('./services/transactions')
 const navigation = require('./components/navigation')
 
-const AddFishForm = require('./views/add_fish_form')
+const AddAssetForm = require('./views/add_asset_form')
 const AgentDetailPage = require('./views/agent_detail')
 const AgentList = require('./views/list_agents')
-const FishList = require('./views/list_fish')
-const FishDetail = require('./views/fish_detail')
+const AssetList = require('./views/list_assets')
+const AssetDetail = require('./views/asset_detail')
 const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
 const PropertyDetailPage = require('./views/property_detail')
@@ -50,8 +50,8 @@ const Layout = {
 
 const loggedInNav = () => {
   const links = [
-    ['/create', 'Add Fish'],
-    ['/fish', 'View Fish'],
+    ['/create', 'Add Asset'],
+    ['/assets', 'View Assets'],
     ['/agents', 'View Agents']
   ]
   return m(navigation.Navbar, {}, [
@@ -63,7 +63,7 @@ const loggedInNav = () => {
 
 const loggedOutNav = () => {
   const links = [
-    ['/fish', 'View Fish'],
+    ['/assets', 'View Assets'],
     ['/agents', 'View Agents']
   ]
   return m(navigation.Navbar, {}, [
@@ -121,13 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
     '/': resolve(Dashboard),
     '/agents/:publicKey': resolve(AgentDetailPage),
     '/agents': resolve(AgentList),
-    '/create': resolve(AddFishForm, true),
-    '/fish/:recordId': resolve(FishDetail),
-    '/fish': resolve(FishList),
+    '/create': resolve(AddAssetForm, true),
+    '/assets/:recordId': resolve(AssetDetail),
+    '/assets': resolve(AssetList),
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },
     '/profile': { onmatch: profile },
-    '/properties/:recordId/:name': resolve(PropertyDetailPage),
+    '/assets/:recordId/:name': resolve(PropertyDetailPage),
     '/signup': resolve(SignupForm)
   })
 })
