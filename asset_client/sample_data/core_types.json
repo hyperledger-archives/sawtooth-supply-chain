@@ -1,0 +1,39 @@
+[
+  {
+    "name": "fish",
+    "properties": [
+        {
+          "name": "species",
+          "dataType": 1,
+          "required": true
+        },
+        {
+          "name": "length",
+          "dataType": 2,
+          "required": true
+        },
+        {
+          "name": "weight",
+          "dataType": 2,
+          "required": true
+        },
+        {
+          "name": "location",
+          "dataType": 4,
+          "required": true
+        },
+        {
+          "name": "temperature",
+          "dataType": 2
+        },
+        {
+          "name": "tilt",
+          "dataType": 1
+        },
+        {
+          "name": "shock",
+          "dataType": 1
+        }
+    ]
+  }
+]
