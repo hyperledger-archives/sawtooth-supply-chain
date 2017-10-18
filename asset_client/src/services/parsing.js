@@ -22,8 +22,9 @@ const { FLOAT_PRECISION } = require('./payloads')
 
 const STRINGIFIERS = {
   LOCATION: v => `${v.latitude}, ${v.longitude}`,
-  tilt: v => `X: ${v.x}, Y: ${v.y}`,
-  shock: v => `Accel: ${v.accel}, Duration: ${v.duration}`,
+  weight: v => `${v}kg`,
+  temperature: v => `${v} °C`,
+  shock: v => `${v}g`,
   '*': v => JSON.stringify(v, null, 1).replace(/[{}"]/g, '')
 }
 
@@ -49,7 +50,7 @@ const toInt = num => parseInt(parseFloat(num) * FLOAT_PRECISION)
 
 /**
  * Calls toFloat on a property value, or it's sub-values in the case of
- * location, tilt, or shock
+ * an object or JSON object
  */
 const floatifyValue = value => {
   if (_.isString(value)) value = JSON.parse(value)
