@@ -6,9 +6,12 @@
 **/node_modules
 **/package-lock.json
 
+# Webpack
+**/dist
+
 /processor/**/__pycache__/
 /processor/supply_chain_processor/protobuf
-/fish_client/public/dist
+/asset_client/src/protos.json
 /fish_client/src/protos.json
 /server/rethinkdb_data
 /server/fish.batch
