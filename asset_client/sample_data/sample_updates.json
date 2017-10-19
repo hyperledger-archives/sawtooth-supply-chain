@@ -1,0 +1,121 @@
+[
+  {
+    "recordId": "7h15-45537-15-br173",
+    "privateKey": "86f508f1e4bfd975ce747e38adb6bd8b01e5b80143520710126d4b53118c123c",
+    "updates": [
+      {
+        "name": "temperature",
+        "dataType": 2,
+        "value": 1000000,
+        "isRelative": true
+      },
+
+      {
+        "name": "location",
+        "dataType": 4,
+        "value": {
+          "latitude": 542852,
+          "longitude": 4127038
+        },
+        "isRelative": true,
+        "isAverage": true
+      },
+
+      {
+        "name": "weight",
+        "dataType": 2,
+        "value": 10000,
+        "noOpChance": 0.9,
+        "isRelative": true
+      },
+
+      {
+        "name": "shock",
+        "dataType": 2,
+        "value": 50000,
+        "isAlwaysPositive": true,
+        "noOpChance": 0.8
+      }
+    ]
+  },
+
+  {
+    "recordId": "7h15-45537-f1135",
+    "privateKey": "68ca3f7423f76397a27eb1b4185e808b953fc5b82cfa3eb2fd375de1c2e53b4e",
+    "updates": [
+      {
+        "name": "temperature",
+        "dataType": 2,
+        "value": 10000000,
+        "isRelative": true
+      },
+
+      {
+        "name": "location",
+        "dataType": 4,
+        "value": {
+          "latitude": -104551,
+          "longitude": 1159712
+        },
+        "isRelative": true,
+        "isAverage": true
+      },
+
+      {
+        "name": "weight",
+        "dataType": 2,
+        "value": 500000000,
+        "noOpChance": 0.9,
+        "isRelative": true
+      },
+
+      {
+        "name": "shock",
+        "dataType": 2,
+        "value": 500000,
+        "isAlwaysPositive": true,
+        "noOpChance": 0.7
+      }
+    ]
+  },
+
+  {
+    "recordId": "7h15-45537-15-b357",
+    "privateKey": "68ca3f7423f76397a27eb1b4185e808b953fc5b82cfa3eb2fd375de1c2e53b4e",
+    "updates": [
+      {
+        "name": "temperature",
+        "dataType": 2,
+        "value": 10000,
+        "isRelative": true
+      },
+
+      {
+        "name": "location",
+        "dataType": 4,
+        "value": {
+          "latitude": 1007305,
+          "longitude": 2509187
+        },
+        "isRelative": true,
+        "isAverage": true
+      },
+
+      {
+        "name": "weight",
+        "dataType": 2,
+        "value": 1000,
+        "noOpChance": 0.9,
+        "isRelative": true
+      },
+
+      {
+        "name": "shock",
+        "dataType": 2,
+        "value": 50000,
+        "isAlwaysPositive": true,
+        "noOpChance": 0.9
+      }
+    ]
+  }
+]
