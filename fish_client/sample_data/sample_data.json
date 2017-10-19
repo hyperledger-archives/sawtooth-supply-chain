@@ -30,7 +30,8 @@
       ],
       "ownerIndex": 0,
       "custodianIndex": 2,
-      "reporterIndex": 1
+      "reporterIndex": 1,
+      "reportableProperties": ["temperature", "location", "tilt", "shock"]
     },
 
     {

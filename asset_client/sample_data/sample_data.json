@@ -1,0 +1,149 @@
+{
+  "records": [
+    {
+      "recordId": "7h15-45537-15-br173",
+      "recordType": "asset",
+      "properties": [
+          {
+            "name": "type",
+            "dataType": 1,
+            "stringValue": "Lightbulb"
+          },
+          {
+            "name": "subtype",
+            "dataType": 1,
+            "stringValue": "LED"
+          },
+          {
+            "name": "weight",
+            "dataType": 2,
+            "intValue": 134089
+          },
+          {
+            "name": "location",
+            "dataType": 4,
+            "locationValue": {
+              "latitude": 33928564,
+              "longitude": 134615935
+            }
+          },
+          {
+            "name": "temperature",
+            "dataType": 2,
+            "intValue": 44857012
+          }
+      ],
+      "ownerIndex": 0,
+      "custodianIndex": 1,
+      "reporterIndex": 2,
+      "reportableProperties": ["temperature", "location", "weight", "shock"]
+    },
+
+    {
+      "recordId": "7h15-45537-f1135",
+      "recordType": "asset",
+      "properties": [
+          {
+            "name": "type",
+            "dataType": 1,
+            "stringValue": "Airliner"
+          },
+          {
+            "name": "subtype",
+            "dataType": 1,
+            "stringValue": "Boeing 747"
+          },
+          {
+            "name": "weight",
+            "dataType": 2,
+            "intValue": 174540000000
+          },
+          {
+            "name": "location",
+            "dataType": 4,
+            "locationValue": {
+              "latitude": 47499875,
+              "longitude": -122208106
+            }
+          },
+          {
+            "name": "temperature",
+            "dataType": 2,
+            "intValue": -35014970
+          }
+      ],
+      "ownerIndex": 1
+    },
+
+    {
+      "recordId": "7h15-45537-15-b357",
+      "recordType": "asset",
+      "properties": [
+          {
+            "name": "type",
+            "dataType": 1,
+            "stringValue": "Coffee"
+          },
+          {
+            "name": "subtype",
+            "dataType": 1,
+            "stringValue": "Kona"
+          },
+          {
+            "name": "weight",
+            "dataType": 2,
+            "intValue": 10000000
+          },
+          {
+            "name": "location",
+            "dataType": 4,
+            "locationValue": {
+              "latitude": 19703448,
+              "longitude": -155944975
+            }
+          },
+          {
+            "name": "temperature",
+            "dataType": 2,
+            "intValue": 21829043
+          }
+      ],
+      "ownerIndex": 1
+    }
+  ],
+
+  "agents": [
+    {
+      "username": "nobuo",
+      "password": "nobuo",
+      "publicKey": "02cd3181dbd7d1539f470436ce222c53ab5e514f67809dc0095895e6cdfba97612",
+      "name": "Nobuo",
+      "email": "nobuo@nichia.co.jp",
+      "privateKey": "2f4175fa39e7d2a89884b492d741a494c2b4f1021d3b3deb7c93ab72cc84935c",
+      "encryptedKey": "{\"iv\":\"h7h0uW9NqLB+VaKM7C8gSA==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"Kn8J+U0Ko98=\",\"ct\":\"w5bGmngbGIt8QIIi/42gVDujsJNUkGsLwmeminMSYIdQq0i+qWZBz1ZYalxitEsSte7NY/L/UrDcYE6drcAmSOvQNQdIkwFz\"}",
+      "hashedPassword": "slf3UiKJzmcE03wvYFqcHselnMQlDOhhriovzXmGeyk="
+    },
+
+    {
+      "username": "bessie",
+      "password": "bessie",
+      "publicKey": "02fb5b3a093e20e420ecf9c5839215e74c97f49eb51889069eb87bc6f62ceca8dd",
+      "name": "Bessie",
+      "email": "bessie@boeing.biz",
+      "privateKey": "68ca3f7423f76397a27eb1b4185e808b953fc5b82cfa3eb2fd375de1c2e53b4e",
+      "encryptedKey": "{\"iv\":\"KuOUW7sBaqb9LIHdN1uATg==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"uiawGO8JPSA=\",\"ct\":\"A2llr54xkkxnrgvkSEDV9jIjoChmivkALO8G9c1tnQxb6qgRUWI/qcYvZxa3VxhjnZSEDeuCavF6yB8+TiPZ+0s7TgfpwfUj\"}",
+      "hashedPassword": "90/BIv+IKk+4K3LY9IwWTEr+oNXXiTUXIMzBQdpUGUw="
+    },
+
+    {
+      "username": "ruggles",
+      "password": "ruggles",
+      "publicKey": "0364edd42bd9b2dea1315e2da820b569665f96e36c44b267ceeac488cfdc03bf61",
+      "name": "Ruggles",
+      "email": "ruggles@kona.me",
+      "privateKey": "86f508f1e4bfd975ce747e38adb6bd8b01e5b80143520710126d4b53118c123c",
+      "encryptedKey": "{\"iv\":\"5/v02joKWVzbQpBJBntsTg==\",\"v\":1,\"iter\":10000,\"ks\":128,\"ts\":64,\"mode\":\"ccm\",\"adata\":\"\",\"cipher\":\"aes\",\"salt\":\"gebKHyPsM3E=\",\"ct\":\"iWU9myR6SXRO2pQKdaVUhFqHs9yd2P9wxdmOXsVKYZL/qynlYE1HnDoxmlHuhnRBOECOj2akaF4g4f/MZBGcshqWePObn+mH\"}",
+      "hashedPassword": "SyoFXfALbmw/kP1yw4fDSddZHQBkMnX+LTkDj9jWiSo="
+    }
+  ]
+}

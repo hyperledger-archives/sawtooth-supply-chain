@@ -174,7 +174,7 @@ protos.compile()
           recordId: record.recordId,
           receivingAgent: agents[record.reporterIndex].publicKey,
           role: protos.Proposal.Role.REPORTER,
-          properties: ['temperature', 'location', 'tilt', 'shock']
+          properties: record.reportableProperties
         })
       })
 
