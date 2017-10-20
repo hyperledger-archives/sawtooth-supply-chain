@@ -71,3 +71,51 @@ services:
         sawtooth keygen && \
         tail -f /dev/null \
         \""
+
+  supply-chain-tp:
+    image: supply-chain-tp
+    container_name: supply-chain-tp
+    volumes:
+      - .:/sawtooth-supply-chain
+    entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp
+    build:
+      context: processor/
+
+  supply-chain-server:
+    image: supply-chain-server:latest
+    volumes:
+      - .:/sawtooth-supply-chain
+    expose:
+      - 8080
+      - 3000
+    ports:
+      - "3000:3000"
+    command: "bash -c \" \
+        set -x && \
+        cd /sawtooth-supply-chain/fish_client && \
+        npm install && \
+        npm run build && \
+        cd /sawtooth-supply-chain/asset_client && \
+        npm install && \
+        npm run build && \
+        cd /sawtooth-supply-chain/server && \
+        npm link request-promise-native && \
+        npm link request && \
+        npm link bcrypt body-parser express js-schema jsonwebtoken lodash protobufjs sawtooth-sdk rethinkdb && \
+        npm run make-fish && \
+        curl --request POST --header 'Content-Type: application/octet-stream' --data-binary @fish.batch 'http://rest-api:8008/batches' && \
+        DB_HOST=rethinkdb node ./scripts/bootstrap_database.js && \
+        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb PRIVATE_KEY='1111111111111111111111111111111111111111111111111111111111111111' node index.js
+    \""
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+
+  rethinkdb:
+    image: rethinkdb
+    expose:
+      - 8080
+      - 28015
+    ports:
+      - "18080:8080"
+      - "28015:28015"
