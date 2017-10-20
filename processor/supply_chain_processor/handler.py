@@ -89,8 +89,6 @@ class SCTransactionHandler:
         '''
         signer, timestamp, payload, handler = _unpack_transaction(transaction)
 
-        _verify_timestamp(timestamp)
-
         handler(payload, signer, timestamp, state)
 
 
@@ -860,20 +858,6 @@ DATA_TYPE_TO_ATTRIBUTE = {
     PropertySchema.FLOAT: 'float_value',
     PropertySchema.LOCATION: 'location_value',
 }
-
-
-def _verify_timestamp(timestamp):
-    '''Verify that the timestamp is not greater than the system time.
-
-    This may not the right way to verify the timestamp, but there
-    ought to be some sort of verification.
-
-    '''
-    system_time = round(time.time())
-
-    if timestamp > system_time:
-        raise InvalidTransaction(
-            'Timestamp must be less than system time')
 
 
 def _unpack_transaction(transaction):
