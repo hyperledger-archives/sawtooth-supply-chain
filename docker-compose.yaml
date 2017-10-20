@@ -97,15 +97,8 @@ services:
       - rethinkdb
     command: "bash -c \" \
         set -x && \
-        cd server/ && \
         DB_HOST=rethinkdb npm run init && \
-        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb PRIVATE_KEY='1111111111111111111111111111111111111111111111111111111111111111' node index.js & \
-        npm run init && \
-        npm run make-asset && \
-        npm run make-fish && \
-        npm run seed-sample-assets && \
-        npm run seed-sample-fish && \
-        tail -f /dev/null \
+        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb PRIVATE_KEY='1111111111111111111111111111111111111111111111111111111111111111' node index.js
     \""
 
   rethinkdb:
