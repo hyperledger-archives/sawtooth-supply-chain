@@ -72,6 +72,15 @@ services:
         tail -f /dev/null \
         \""
 
+  supply-chain-tp:
+    image: supply-chain-tp
+    container_name: supply-chain-tp
+    volumes:
+      - .:/sawtooth-supply-chain
+    entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp
+    build:
+      context: processor/
+
   supply-chain-server:
     image: supply-chain-server:latest
     volumes:
