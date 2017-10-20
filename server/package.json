@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "rethinkdb & nodemon index.js",
-    "init": "rethinkdb & node ./scripts/bootstrap_database.js && kill $! || true",
+    "start": "nodemon index.js",
+    "init": "node ./scripts/bootstrap_database.js",
     "test": "standard",
     "make-asset": "DATA=\"../../asset_client/sample_data/core_types.json\" node ./scripts/seed_core_types.js",
     "seed-sample-assets": "DATA=\"../../asset_client/sample_data/sample_data.json\" node ./scripts/seed_sample_data.js",
