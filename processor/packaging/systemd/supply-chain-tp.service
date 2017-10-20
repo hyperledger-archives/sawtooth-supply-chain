@@ -1,0 +1,12 @@
+[Unit]
+Description=Sawtooth Supply Chain Transaction Processor
+After=network.target
+
+[Service]
+User=sawtooth
+Group=sawtooth
+EnvironmentFile=-/etc/default/supply-chain-tp
+ExecStart=/usr/bin/supply-chain-tp $SUPPLY_CHAIN_TP_ARGS
+
+[Install]
+WantedBy=multi-user.target
