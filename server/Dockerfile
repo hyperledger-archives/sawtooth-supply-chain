@@ -29,6 +29,7 @@ FROM ubuntu:xenial
 
 LABEL "install-type"="mounted"
 
+# Install Node and Ubuntu dependencies
 RUN apt-get update && apt-get install -y -q --no-install-recommends \
     curl \
     ca-certificates \
@@ -42,15 +43,24 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
  && rm /tmp/setup-node.sh \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
- && npm install -g prebuild-install \
- && npm install -g bcrypt body-parser express js-schema jsonwebtoken lodash protobufjs sawtooth-sdk rethinkdb
+ && npm install -g prebuild-install
 
-EXPOSE 4004/tcp
+WORKDIR /usr/src/supply-chain
 
-RUN mkdir -p /project/sawtooth-core/ \
- && mkdir -p /var/log/sawtooth \
- && mkdir -p /var/lib/sawtooth \
- && mkdir -p /etc/sawtooth \
- && mkdir -p /etc/sawtooth/keys \
+# Install Dependencies
+COPY asset_client/package.json asset_client/
+RUN cd asset_client/ && npm install && cd ..
 
-ENV PATH=$PATH:/project/sawtooth-core/bin
+COPY fish_client/package.json fish_client/
+RUN cd fish_client/ && npm install && cd ..
+
+COPY server/package.json server/
+RUN cd server/ && npm install && cd ..
+
+# Build Clients
+COPY . .
+
+RUN cd asset_client/ && npm run build && cd ..
+RUN cd fish_client/ && npm run build && cd ..
+
+EXPOSE 3000/tcp
