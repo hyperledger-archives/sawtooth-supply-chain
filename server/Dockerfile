@@ -14,16 +14,8 @@
 # ------------------------------------------------------------------------------
 
 # Description:
-#   Builds an image to be used when developing in JavaScript. The default CMD is to run
-#   build_javascript.
-#
-# Build:
-#   $ cd sawtooth-core/docker
-#   $ docker build . -f sawtooth-dev-javascript -t sawtooth-dev-javascript
-#
-# Run:
-#   $ cd sawtooth-core
-#   $ docker run -v $(pwd):/project/sawtooth-core sawtooth-dev-javascript
+#   Builds server and client node dependencies, creating a server image
+#   which can be run with root context
 
 FROM ubuntu:xenial
 
@@ -62,5 +54,7 @@ COPY . .
 
 RUN cd asset_client/ && npm run build && cd ..
 RUN cd fish_client/ && npm run build && cd ..
+
+WORKDIR /usr/src/supply-chain/server/
 
 EXPOSE 3000/tcp
