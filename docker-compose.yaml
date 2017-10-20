@@ -71,3 +71,12 @@ services:
         sawtooth keygen && \
         tail -f /dev/null \
         \""
+
+  rethinkdb:
+    image: rethinkdb
+    expose:
+      - 8080
+      - 28015
+    ports:
+      - "18080:8080"
+      - "28015:28015"
