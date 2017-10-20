@@ -42,6 +42,7 @@
     "nodemon": "^1.11.0",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
+    "rethinkdb": "^2.3.3",
     "standard": "^10.0.3"
   }
 }
