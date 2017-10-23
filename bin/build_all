@@ -58,7 +58,7 @@ main() {
     # Start in project directory
     cd $top_dir
 
-    docker_build docker/track-and-trade-server docker/ track-and-trade-server
+    docker_build server/Dockerfile . supply-chain-server
 }
 
 docker_run() {
