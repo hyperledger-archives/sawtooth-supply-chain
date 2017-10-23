@@ -132,6 +132,7 @@ const restrict = (req, res, next) => {
 // Send back a simple JSON error with an HTTP status code
 const errorHandler = (err, req, res, next) => {
   if (err) {
+    console.error(err.stack)
     res.status(err.status || 500).json({ error: err.message })
   } else {
     next()
