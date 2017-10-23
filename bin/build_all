@@ -59,6 +59,9 @@ main() {
     cd $top_dir
 
     docker_build server/Dockerfile . supply-chain-server
+    docker_build docker/supply-chain-dev-python . supply-chain-dev-python
+
+    build_python
 }
 
 docker_run() {
