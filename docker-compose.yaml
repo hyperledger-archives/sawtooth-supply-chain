@@ -77,7 +77,7 @@ services:
     container_name: supply-chain-tp
     volumes:
       - .:/sawtooth-supply-chain
-    entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp
+    entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
     build:
       context: processor/
 
