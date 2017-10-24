@@ -112,4 +112,9 @@ docker_build() {
         --build-arg HTTP_PROXY=$HTTP_PROXY
 }
 
+build_python() {
+    ./docker/build/build_images
+    ./docker/build/build_debs
+}
+
 main
