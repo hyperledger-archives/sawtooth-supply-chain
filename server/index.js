@@ -33,8 +33,11 @@ Promise.all([
   .then(() => {
     blockchain.subscribe()
 
-    app.use('/fish', express.static('../fish_client/public'))
-    app.use('/asset', express.static('../asset_client/public'))
+    config.clients.forEach(client => {
+      app.use(client.url, express.static(client.path))
+      console.log(`Added client at url "${client.url}"`)
+    })
+
     app.use('/api', api)
 
     app.listen(PORT, () => {
