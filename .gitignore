@@ -5,16 +5,18 @@
 # Node
 **/node_modules
 **/package-lock.json
+**/npm-debug.log
 
 # Webpack
 **/dist
 
 /processor/**/__pycache__/
 /processor/supply_chain_processor/protobuf
+
+/server/config.json
+
 /asset_client/src/protos.json
 /fish_client/src/protos.json
-/server/rethinkdb_data
-/server/fish.batch
 
 /docs/build/
 /docs/source/_autogen/

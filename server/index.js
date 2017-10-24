@@ -21,8 +21,9 @@ const db = require('./db')
 const blockchain = require('./blockchain')
 const protos = require('./blockchain/protos')
 const api = require('./api')
+const config = require('./system/config')
 
-const PORT = process.env.PORT || 3000
+const PORT = config.PORT
 const app = express()
 
 Promise.all([

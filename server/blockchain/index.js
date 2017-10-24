@@ -21,9 +21,10 @@ const { Stream } = require('sawtooth-sdk/messaging/stream')
 const { Message } = require('sawtooth-sdk/protobuf')
 const deltas = require('./deltas')
 const batcher = require('./batcher')
+const config = require('../system/config')
 
 const PREFIX = '3400de'
-const VALIDATOR_URL = process.env.VALIDATOR_URL || 'tcp://localhost:4004'
+const VALIDATOR_URL = config.VALIDATOR_URL
 const stream = new Stream(VALIDATOR_URL)
 
 // This workaround is necessary until delta protos are added to SDK
