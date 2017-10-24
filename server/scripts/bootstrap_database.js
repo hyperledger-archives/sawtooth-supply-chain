@@ -17,10 +17,11 @@
 'use strict'
 
 const r = require('rethinkdb')
+const config = require('../system/config')
 
-const HOST = process.env.DB_HOST || 'localhost'
-const PORT = process.env.DB_PORT || 28015
-const NAME = process.env.DB_NAME || 'supply_chain'
+const HOST = config.DB_HOST
+const PORT = config.DB_PORT
+const NAME = config.DB_NAME
 
 r.connect({host: HOST, port: PORT})
   .then(conn => {

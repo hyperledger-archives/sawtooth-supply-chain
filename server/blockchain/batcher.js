@@ -19,15 +19,9 @@
 const { signer, BatchEncoder } = require('sawtooth-sdk')
 const { TransactionHeader, TransactionList } = require('sawtooth-sdk/protobuf')
 const { BadRequest } = require('../api/errors')
+const config = require('../system/config')
 
-let PRIVATE_KEY = process.env.PRIVATE_KEY
-
-if (!PRIVATE_KEY) {
-  PRIVATE_KEY = Array(64).fill('1').join('')
-  console.warn('No signing key provided, batch signing will be insecure!')
-  console.warn(`Server is using the default key of "${PRIVATE_KEY}".`)
-  console.warn('Use the "PRIVATE_KEY" environment variable to set a key.')
-}
+const PRIVATE_KEY = config.PRIVATE_KEY
 
 const batcher = new BatchEncoder(PRIVATE_KEY)
 const publicKey = signer.getPublicKey(PRIVATE_KEY)
