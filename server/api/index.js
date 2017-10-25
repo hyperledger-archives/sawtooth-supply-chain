@@ -22,11 +22,12 @@ const bodyParser = require('body-parser')
 
 const auth = require('./auth')
 const users = require('./users')
-const { Unauthorized } = require('./errors')
+const { BadRequest, Unauthorized } = require('./errors')
 const agents = require('./agents')
 const records = require('./records')
 const blockchain = require('../blockchain/')
 const batcher = require('../blockchain/batcher')
+const config = require('../system/config')
 
 const router = express.Router()
 
@@ -159,8 +160,20 @@ router.get('/info', handle(() => {
   return Promise.resolve()
     .then(() => ({
       pubkey: batcher.getPublicKey(),
+      mapsApiKey: config.MAPS_API_KEY,
       endpoints: endpointInfo
     }))
+}))
+
+router.post('/info/mapsApiKey', handleBody(body => {
+  return Promise.resolve()
+    .then(() => {
+      if (config.MAPS_API_KEY) {
+        throw new BadRequest('Google Maps API key already set')
+      }
+      config.set('MAPS_API_KEY', body.mapsApiKey)
+      return `Google Maps API key set to "${body.mapsApiKey}"`
+    })
 }))
 
 router.get('/records', handle(records.listRecords))
