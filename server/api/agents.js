@@ -16,9 +16,12 @@
  */
 'use strict'
 
+const _ = require('lodash')
 const db = require('../db/agents')
 
-const list = db.list
+const FILTER_KEYS = ['name', 'publicKey']
+
+const list = params => db.list(_.pick(params, FILTER_KEYS))
 
 const fetch = ({ publicKey, authedKey }) => db.fetch(publicKey, publicKey === authedKey)
 

@@ -228,8 +228,9 @@ const fetchRecordQuery = (recordId, authedKey) => block => {
   return findRecord(recordId)(block).do(_loadRecord(block, authedKey))
 }
 
-const listRecordsQuery = authedKey => block => {
+const listRecordsQuery = (authedKey, filterQuery) => block => {
   return getTable('records', block)
+    .filter(filterQuery)
     .map(_loadRecord(block, authedKey))
     .coerceTo('array')
 }
@@ -244,8 +245,8 @@ const fetchRecord = (recordId, authedKey) => {
   return db.queryWithCurrentBlock(fetchRecordQuery(recordId, authedKey))
 }
 
-const listRecords = authedKey => {
-  return db.queryWithCurrentBlock(listRecordsQuery(authedKey))
+const listRecords = (authedKey, filterQuery) => {
+  return db.queryWithCurrentBlock(listRecordsQuery(authedKey, filterQuery))
 }
 
 module.exports = {

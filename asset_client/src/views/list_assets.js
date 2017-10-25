@@ -33,7 +33,7 @@ const AssetList = {
     vnode.state.currentPage = 0
 
     const refresh = () => {
-      api.get('/records').then((records) => {
+      api.get('/records?recordType=asset').then((records) => {
         vnode.state.records = records
         vnode.state.records.sort((a, b) => {
           return getLatestPropertyUpdateTime(b) - getLatestPropertyUpdateTime(a)
