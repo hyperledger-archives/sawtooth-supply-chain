@@ -19,10 +19,50 @@
 const m = require('mithril')
 const Chart = require('chart.js')
 const GoogleMapsLoader = require('google-maps')
+const modals = require('./modals')
+const api = require('../services/api')
 
-// Google Maps Dev API key
-GoogleMapsLoader.KEY = 'AIzaSyAF75RJvbpC-NhYERNuWadktXnEkrmGDDI'
+GoogleMapsLoader.KEY = null
 let google = null
+
+// If maps key is missing, asks server for it, and then finally the user
+const setMapsApiKey = () => {
+  return Promise.resolve()
+    .then(() => {
+      if (GoogleMapsLoader.KEY) return
+      return api.get('info')
+        .then(({ mapsApiKey }) => {
+          if (mapsApiKey) {
+            GoogleMapsLoader.KEY = mapsApiKey
+            return
+          }
+
+          return modals.show(modals.BasicModal, {
+            title: 'No API Key',
+            acceptText: 'Set Key',
+            body: m('.container', [
+              m('.mb-4',
+                'Oh no! This server has not been configured with an API key ',
+                'to use Google Maps. Fortunately, you can easily ',
+                m('a', {
+                  href: 'https://developers.google.com/maps/documentation/javascript/get-api-key',
+                  target: '_blank'
+                }, 'request a free developer key from Google'),
+                ' and input it into the field below'),
+              m('input.form-control', {
+                type: 'text',
+                oninput: m.withAttr('value', value => { mapsApiKey = value })
+              })
+            ])
+          })
+            .then(() => {
+              GoogleMapsLoader.KEY = mapsApiKey
+              api.post('info/mapsApiKey', { mapsApiKey })
+            })
+            .catch(() => {})
+        })
+    })
+}
 
 const LineGraphWidget = {
   view (vnode) {
@@ -109,30 +149,33 @@ const MapWidget = {
   },
 
   oncreate (vnode) {
-    GoogleMapsLoader.load(goog => {
-      google = goog
-      const coordinates = vnode.attrs.coordinates.map(coord => ({
-        lat: coord.latitude,
-        lng: coord.longitude
-      }))
+    setMapsApiKey()
+      .then(() => {
+        GoogleMapsLoader.load(goog => {
+          google = goog
+          const coordinates = vnode.attrs.coordinates.map(coord => ({
+            lat: coord.latitude,
+            lng: coord.longitude
+          }))
 
-      const container = document.getElementById('map-container')
-      vnode.state.map = new google.maps.Map(container, { zoom: 4 })
-      vnode.state.markers = coordinates.map(position => {
-        return new google.maps.Marker({ position, map: vnode.state.map })
+          const container = document.getElementById('map-container')
+          vnode.state.map = new google.maps.Map(container, { zoom: 4 })
+          vnode.state.markers = coordinates.map(position => {
+            return new google.maps.Marker({ position, map: vnode.state.map })
+          })
+
+          vnode.state.path = new google.maps.Polyline({
+            map: vnode.state.map,
+            path: coordinates,
+            geodesic: true,
+            strokeColor: '#FF0000'
+          })
+
+          vnode.state.bounds = new google.maps.LatLngBounds()
+          coordinates.forEach(position => vnode.state.bounds.extend(position))
+          vnode.state.map.fitBounds(vnode.state.bounds)
+        })
       })
-
-      vnode.state.path = new google.maps.Polyline({
-        map: vnode.state.map,
-        path: coordinates,
-        geodesic: true,
-        strokeColor: '#FF0000'
-      })
-
-      vnode.state.bounds = new google.maps.LatLngBounds()
-      coordinates.forEach(position => vnode.state.bounds.extend(position))
-      vnode.state.map.fitBounds(vnode.state.bounds)
-    })
   },
 
   onbeforeupdate (vnode, old) {

@@ -2,6 +2,7 @@
 
   "JWT_SECRET": "shhhhh",
   "PRIVATE_KEY": "1111111111111111111111111111111111111111111111111111111111111111",
+  "MAPS_API_KEY": "https://developers.google.com/maps/documentation/javascript/get-api-key",
 
   "PORT": 3000,
   "VALIDATOR_URL": "tcp://localhost:4004",

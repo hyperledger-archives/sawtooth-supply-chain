@@ -16,14 +16,20 @@
  */
 'use strict'
 
-// Look for config JSON in root server directory
-let config = {}
-try {
-  config = require('../config.json')
-} catch (err) {
-  // Throw error on bad JSON, otherwise ignore
-  if (err instanceof SyntaxError) throw err
+const fs = require('fs')
+const path = require('path')
+
+const loadConfig = (defaultValue = {}) => {
+  try {
+    return require('../config.json')
+  } catch (err) {
+    // Throw error on bad JSON, otherwise ignore
+    if (err instanceof SyntaxError) throw err
+    return {}
+  }
 }
+
+const config = loadConfig()
 
 const initConfigValue = (key, defaultValue = null) => {
   config[key] = process.env[key] || config[key] || defaultValue
@@ -68,6 +74,20 @@ if (!config.clients) {
   }]
   console.warn('No clients specified, defaulting to AssetTrack.')
   console.warn('Specify static clients with the "clients" key in "config.json"')
+}
+
+// Config method to set a new value, then write it to config.json
+config.set = (key, value) => {
+  config[key] = value
+
+  const diskConfig = loadConfig()
+  diskConfig[key] = value
+
+  const configPath = path.resolve(__dirname, '../config.json')
+  const jsonConfig = JSON.stringify(diskConfig, null, 2)
+  fs.writeFile(configPath, jsonConfig, 'utf8', err => {
+    if (err) throw err
+  })
 }
 
 module.exports = config
