@@ -68,8 +68,9 @@ const isReporter = agent => property => {
 const getTable = (tableName, block) =>
       r.table(tableName).filter(hasCurrentBlock(block))
 
-const listQuery = block => {
+const listQuery = filterQuery => block => {
   return getTable('agents', block)
+    .filter(filterQuery)
     .map(agent => r.expr({
       'name': getName(agent),
       'key': getPublicKey(agent),
@@ -110,7 +111,7 @@ const fetchUser = publicKey => {
     .nth(0)
 }
 
-const list = () => db.queryWithCurrentBlock(listQuery)
+const list = filterQuery => db.queryWithCurrentBlock(listQuery(filterQuery))
 
 const fetch = (publicKey, auth) =>
       db.queryWithCurrentBlock(fetchQuery(publicKey, auth))
