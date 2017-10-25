@@ -71,9 +71,7 @@ const submitTxns = txns => {
     body: new TransactionEncoder(agents[0].privateKey).encode(txns)
   })
   .catch(err => {
-    if (err.message) console.error(err.message)
-    else if (err.response) console.error(err.response.body.toString())
-    else console.error(err)
+    console.error(err.error.toString())
     process.exit()
   })
 }
