@@ -9,6 +9,7 @@ main() {
     rm -f $pkg_dir/*.deb
 
 PACKAGES='
+    protogen
     processor
 '
     for PACKAGE in $PACKAGES
