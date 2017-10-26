@@ -86,7 +86,7 @@ config.set = (key, value) => {
   const configPath = path.resolve(__dirname, '../config.json')
   const jsonConfig = JSON.stringify(diskConfig, null, 2)
   fs.writeFile(configPath, jsonConfig, 'utf8', err => {
-    if (err) throw err
+    if (err) console.error(err)
   })
 }
 
