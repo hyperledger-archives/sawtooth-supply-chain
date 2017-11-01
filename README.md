@@ -10,13 +10,39 @@ It provides an extremely modular and flexible platform for implementing
 transaction-based updates to shared state between
 untrusted parties coordinated by consensus algorithms.
 
-Incubation Notice
+Getting Started with Sawtooth Supply Chain
 -----------------
 
-This project is an _active_ Hyperledger project. It was proposed to the 
-community and documented [here](http://bit.ly/1T6eVBH). Information on what 
-_Active_ entails can be found in the 
-[Hyperledger Project Lifecycle document](https://goo.gl/4edNRc).
+These instructions will enable you to launch a supply chain focused blockchain with web interface, and seed it with some sample assets.
+
+Requirements:
+
+Git - https://git-scm.com/download/mac
+
+Docker - https://www.docker.com/docker-mac 
+
+NPM - https://nodejs.org/en/download/ 
+
+Python3 - https://www.python.org/downloads/mac-osx/ 
+
+GRPC - $ python3 -m pip install grpcio 
+
+GRPC Tools - $ python3 -m pip install grpcio-tools
+
+
+Setup Instructions:
+
+1. $ git clone https://github.com/hyperledger/sawtooth-supply-chain.git
+2. Navigate to sawtooth-supply-chain folder
+3. $ ./bin/protogen
+4. $ docker-compose up
+5. Open a new terminal
+6. Navigate to sawtooth-supply-chain/server
+7. $ npm install
+8. $ npm run make-asset
+9. $ npm run seed-sample-assets
+10. Navigate your browser to localhost:3000/asset
+
 
 Documentation
 -------------
