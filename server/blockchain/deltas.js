@@ -16,7 +16,6 @@
  */
 'use strict'
 
-const _ = require('lodash')
 const blocks = require('../db/blocks')
 const state = require('../db/state')
 const protos = require('./protos')
@@ -43,8 +42,7 @@ const deltaQueue = {
       const current = this._queue.shift()
       return current().then(() => this._runNext())
     }
-  },
-
+  }
 }
 
 const getProtoName = address => {
@@ -96,16 +94,19 @@ const getEntries = ({ address, value }) => {
 
 const handle = event => {
   deltaQueue.add(() => {
+    const blockNum = Math.round(event.blockNum.toNumber())
     return Promise.all(event.stateChanges.map(change => {
       const addState = getAdder(change.address)
       return Promise.all(getEntries(change).map(entry => {
-        return addState(entry, event.blockNum)
+        return addState(entry, blockNum)
       }))
     }))
       .then(() => {
-        return blocks.insert(
-          _.pick(event, 'blockNum', 'blockId', 'stateRootHash')
-        )
+        return blocks.insert({
+          blockNum,
+          blockId: event.blockId,
+          stateRootHash: event.stateRootHash
+        })
       })
       .then(() => event)
   })
