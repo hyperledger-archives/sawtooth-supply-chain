@@ -15,10 +15,10 @@
 # ------------------------------------------------------------------------------
 
 FROM ubuntu:xenial
-RUN echo "deb http://repo.sawtooth.me/ubuntu/0.8/stable xenial universe" >> /etc/apt/sources.list
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD
-RUN apt-get update
-RUN apt-get install -y -q \
+RUN echo "deb http://repo.sawtooth.me/ubuntu/0.8/stable xenial universe" >> /etc/apt/sources.list \
+ && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
+ && apt-get update \
+ && apt-get install -y -q \
     apt-transport-https \
     build-essential \
     ca-certificates \
@@ -61,13 +61,12 @@ RUN apt-get install -y -q \
     python3-yarl=0.10.0-1 \
     python3-zmq \
     software-properties-common \
-    python3-sawtooth-sdk
+    python3-sawtooth-sdk \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 COPY . sawtooth-supply-chain
 WORKDIR /sawtooth-supply-chain/processor
 RUN python3 setup.py install
 
 WORKDIR /
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/*
-RUN rm -rf sawtooth-supply-chain
