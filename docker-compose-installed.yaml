@@ -51,7 +51,7 @@ services:
     depends_on:
       - validator
     build:
-      context: processor/
+      context: .
       dockerfile: processor/Dockerfile-installed
       args:
         - http_proxy
