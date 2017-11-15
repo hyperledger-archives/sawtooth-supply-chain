@@ -18,7 +18,7 @@ version: "2.1"
 services:
 
   settings-tp:
-    image: hyperledger/sawtooth-tp_settings:latest
+    image: hyperledger/sawtooth-settings-tp:0.8
     container_name: sawtooth-settings-tp-default
     expose:
       - 4004
@@ -27,7 +27,7 @@ services:
     entrypoint: settings-tp -vv tcp://validator:4004
 
   validator:
-    image: hyperledger/sawtooth-validator:latest
+    image: hyperledger/sawtooth-validator:0.8
     container_name: sawtooth-validator-default
     expose:
       - 4004
