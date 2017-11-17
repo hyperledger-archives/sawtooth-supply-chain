@@ -80,11 +80,19 @@ services:
     entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
     build:
       context: processor/
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
 
   server:
     build:
       context: .
       dockerfile: server/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     container_name: supply-chain-server-default
     expose:
       - 3000

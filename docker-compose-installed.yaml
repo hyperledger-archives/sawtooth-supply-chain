@@ -53,11 +53,19 @@ services:
     build:
       context: processor/
       dockerfile: processor/Dockerfile-installed
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
 
   server:
     build:
       context: .
       dockerfile: server/Dockerfile-installed
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     container_name: supply-chain-server-default
     expose:
       - 3000
