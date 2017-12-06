@@ -77,7 +77,10 @@ services:
     container_name: supply-chain-tp
     volumes:
       - .:/sawtooth-supply-chain
-    entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
+    command: "bash -c \" \
+        ./bin/protogen && \
+        ./bin/supply_chain_tp -vv tcp://validator:4004
+      \""
     build:
       context: processor/
       args:
@@ -85,7 +88,8 @@ services:
         - https_proxy
         - no_proxy
 
-  server:
+  supply-chain-server:
+    image: supply-chain-server:latest
     build:
       context: .
       dockerfile: server/Dockerfile
@@ -94,6 +98,8 @@ services:
         - https_proxy
         - no_proxy
     container_name: supply-chain-server-default
+    volumes:
+      - .:/sawtooth-supply-chain
     expose:
       - 3000
       - 28015
@@ -105,8 +111,12 @@ services:
       - rethinkdb
     command: "bash -c \" \
         set -x && \
-        DB_HOST=rethinkdb npm run init && \
-        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb node index.js
+        cd /sawtooth-supply-chain/asset_client && npm install && npm run build && cd .. && \
+        cd /sawtooth-supply-chain/fish_client && npm install && npm run build && cd .. && \
+        cd /sawtooth-supply-chain/server && npm install && \
+        DB_HOST=rethinkdb npm run init; \
+        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb PRIVATE_KEY='1111111111111111111111111111111111111111111111111111111111111111' node index.js &
+        sleep 2 && npm run make-asset && npm run seed-sample-assets && echo 'Sawtooth Supply Chain Server is started' && tail -f /dev/null
     \""
 
   rethinkdb:

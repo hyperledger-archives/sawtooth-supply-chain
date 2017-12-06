@@ -23,30 +23,18 @@ Git - https://git-scm.com/download/mac
 
 Docker - https://www.docker.com/docker-mac 
 
-NPM - https://nodejs.org/en/download/ 
-
-Python3 - https://www.python.org/downloads/mac-osx/ 
-
-GRPC - $ python3 -m pip install grpcio 
-
-GRPC Tools - $ python3 -m pip install grpcio-tools
-
-
 Setup Instructions:
 
 1. $ git clone https://github.com/hyperledger/sawtooth-supply-chain.git
 2. Navigate to sawtooth-supply-chain directory 
-3. $ ./bin/protogen
-4. $ docker-compose up
-5. Open a new terminal
-6. Navigate to sawtooth-supply-chain/server
-7. $ npm install
-8. $ npm run make-asset
-9. $ npm run seed-sample-assets
-10. Navigate your browser to localhost:3000/asset
+3. $ docker-compose up
+4. When you see "Supply Chain Server is started", navigate your browser to localhost:3000/asset
 
-Optionally run data feeds to update the assets (watch maps and graphs update in the browser):
-11. $ npm run update-sample-assets
+*Note: Sawtooth Supply Chain will need to download some dependencies the first time you run it. This can take a few minutes.*
+
+Optionally run data feeds to update the assets (watch maps and graphs update in the browser)(in a new window):
+
+5. $ docker exec supply-chain-server-default bash -c 'npm run update-sample-assets'
 
 Shutdown Instructions:
 1. Navigate to sawtooth-supply-chain directory 
@@ -54,12 +42,8 @@ Shutdown Instructions:
 
 Subsequent Runs:
 1. $ docker-compose up
-2. Open a new terminal
-3. Navigate to sawtooth-supply-chain/server
-4. $ npm run make-asset
-5. $ npm run seed-sample-assets
-6. Navigate your browser to localhost:3000/asset
-7. $ npm run update-sample-assets
+2. When you see "Supply Chain Server is started", navigate your browser to localhost:3000/asset
+
 
 Documentation
 -------------

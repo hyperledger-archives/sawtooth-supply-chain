@@ -64,3 +64,5 @@ RUN echo "deb http://repo.sawtooth.me/ubuntu/0.8/stable xenial universe" >> /etc
     python3-sawtooth-sdk \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /sawtooth-supply-chain

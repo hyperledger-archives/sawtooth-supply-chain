@@ -37,24 +37,6 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
  && rm -rf /var/lib/apt/lists/* \
  && npm install -g prebuild-install
 
-WORKDIR /usr/src/supply-chain
-
-# Install Dependencies
-COPY asset_client/package.json asset_client/
-RUN cd asset_client/ && npm install && cd ..
-
-COPY fish_client/package.json fish_client/
-RUN cd fish_client/ && npm install && cd ..
-
-COPY server/package.json server/
-RUN cd server/ && npm install && cd ..
-
-# Build Clients
-COPY . .
-
-RUN cd asset_client/ && npm run build && cd ..
-RUN cd fish_client/ && npm run build && cd ..
-
-WORKDIR /usr/src/supply-chain/server/
+WORKDIR /sawtooth-supply-chain/server
 
 EXPOSE 3000/tcp
