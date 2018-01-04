@@ -43,10 +43,8 @@ services:
         - no_proxy
     expose:
       - 3000
-      - 28015
-      - 4004
     ports:
-      - '3000:3000'
+      - '8020:3000'
     depends_on:
       - validator
       - rethink
@@ -64,8 +62,8 @@ services:
       - 8080
       - 28015
     ports:
-      - '18080:8080'
-      - '28015:28015'
+      - '8021:8080'
+      - '28020:28015'
 
   validator:
     image: hyperledger/sawtooth-validator:0.8
@@ -73,7 +71,7 @@ services:
     expose:
       - 4004
     ports:
-      - '4004:4004'
+      - '4020:4004'
     # start the validator with an empty genesis batch
     entrypoint: |
       bash -c "
@@ -90,8 +88,6 @@ services:
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:0.8
     container_name: supply-settings-tp
-    expose:
-      - 4004
     depends_on:
       - validator
     entrypoint: settings-tp -vv tcp://validator:4004
@@ -100,10 +96,9 @@ services:
     image: hyperledger/sawtooth-rest-api:0.8
     container_name: supply-rest-api
     expose:
-      - 4004
       - 8008
     ports:
-      - '8008:8008'
+      - '8022:8008'
     depends_on:
       - validator
     entrypoint: |
@@ -116,9 +111,6 @@ services:
     container_name: supply-shell
     volumes:
       - ./:/sawtooth-supply-chain
-    expose:
-      - 8008
-      - 4004
     depends_on:
       - rest-api
     entrypoint: |
