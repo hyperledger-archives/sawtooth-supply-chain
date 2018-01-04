@@ -17,11 +17,9 @@ version: '2.1'
 
 services:
 
-  supply-chain-tp:
-    container_name: supply-chain-tp
-    entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
-    depends_on:
-      - validator
+  processor:
+    image: supply-tp-installed
+    container_name: supply-tp-installed
     build:
       context: .
       dockerfile: processor/Dockerfile-installed
@@ -29,8 +27,14 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
+    depends_on:
+      - validator
+    entrypoint: |
+      /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
 
   server:
+    image: supply-server-installed
+    container_name: supply-server-installed
     build:
       context: .
       dockerfile: server/Dockerfile-installed
@@ -38,7 +42,6 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    container_name: supply-chain-server-default
     expose:
       - 3000
       - 28015
@@ -47,16 +50,17 @@ services:
       - '3000:3000'
     depends_on:
       - validator
-      - rethinkdb
+      - rethink
     command: |
       bash -c "
         set -x &&
-        DB_HOST=rethinkdb npm run init &&
-        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb node index.js
+        DB_HOST=rethink npm run init &&
+        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethink node index.js
       "
 
-  rethinkdb:
+  rethink:
     image: rethinkdb
+    container_name: supply-rethink
     expose:
       - 8080
       - 28015
@@ -65,8 +69,8 @@ services:
       - '28015:28015'
 
   validator:
-    image: hyperledger/sawtooth-validator:0.8
-    container_name: sawtooth-validator-default
+    image: hyperledger/sawtooth-validator:1.0
+    container_name: supply-validator
     expose:
       - 4004
     ports:
@@ -86,7 +90,7 @@ services:
 
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:0.8
-    container_name: sawtooth-settings-tp-default
+    container_name: supply-settings-tp
     expose:
       - 4004
     depends_on:
