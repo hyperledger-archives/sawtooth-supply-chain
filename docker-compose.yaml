@@ -13,7 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-version: "2.1"
+version: '2.1'
 
 services:
 
@@ -44,15 +44,16 @@ services:
       - 28015
       - 4004
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - validator
       - rethinkdb
-    command: "bash -c \" \
-        set -x && \
-        DB_HOST=rethinkdb npm run init && \
+    command: |
+      bash -c "
+        set -x &&
+        DB_HOST=rethinkdb npm run init &&
         VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethinkdb node index.js
-    \""
+      "
 
   rethinkdb:
     image: rethinkdb
@@ -60,8 +61,8 @@ services:
       - 8080
       - 28015
     ports:
-      - "18080:8080"
-      - "28015:28015"
+      - '18080:8080'
+      - '28015:28015'
 
   validator:
     image: hyperledger/sawtooth-validator:0.8
@@ -69,18 +70,19 @@ services:
     expose:
       - 4004
     ports:
-      - "4004:4004"
+      - '4004:4004'
     # start the validator with an empty genesis batch
-    entrypoint: "bash -c \"\
-        sawtooth admin keygen && \
-        sawtooth keygen my_key && \
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv && \
-        sawtooth admin genesis config-genesis.batch && \
+    entrypoint: |
+      bash -c "
+        sawtooth admin keygen &&
+        sawtooth keygen my_key &&
+        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv &&
+        sawtooth admin genesis config-genesis.batch &&
         sawtooth-validator -vv \
           --endpoint tcp://validator:8800 \
           --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
-        \""
+          --bind network:tcp://eth0:8800
+      "
 
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:0.8
@@ -98,7 +100,7 @@ services:
       - 4004
       - 8008
     ports:
-      - "8008:8008"
+      - '8008:8008'
     depends_on:
       - validator
     entrypoint: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
@@ -113,7 +115,8 @@ services:
       - 4004
     depends_on:
       - rest-api
-    entrypoint: "bash -c \"\
-        sawtooth keygen && \
-        tail -f /dev/null \
-        \""
+    entrypoint: |
+      bash -c "
+        sawtooth keygen &&
+        tail -f /dev/null
+      "
