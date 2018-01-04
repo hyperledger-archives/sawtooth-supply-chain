@@ -17,34 +17,6 @@ version: "2.1"
 
 services:
 
-  settings-tp:
-    image: hyperledger/sawtooth-settings-tp:0.8
-    container_name: sawtooth-settings-tp-default
-    expose:
-      - 4004
-    depends_on:
-      - validator
-    entrypoint: settings-tp -vv tcp://validator:4004
-
-  validator:
-    image: hyperledger/sawtooth-validator:0.8
-    container_name: sawtooth-validator-default
-    expose:
-      - 4004
-    ports:
-      - "4004:4004"
-    # start the validator with an empty genesis batch
-    entrypoint: "bash -c \"\
-        sawtooth admin keygen && \
-        sawtooth keygen my_key && \
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv && \
-        sawtooth admin genesis config-genesis.batch && \
-        sawtooth-validator -vv \
-          --endpoint tcp://validator:8800 \
-          --bind component:tcp://eth0:4004 \
-          --bind network:tcp://eth0:8800 \
-        \""
-
   supply-chain-tp:
     container_name: supply-chain-tp
     entrypoint: /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
@@ -90,3 +62,31 @@ services:
     ports:
       - "18080:8080"
       - "28015:28015"
+
+  validator:
+    image: hyperledger/sawtooth-validator:0.8
+    container_name: sawtooth-validator-default
+    expose:
+      - 4004
+    ports:
+      - "4004:4004"
+    # start the validator with an empty genesis batch
+    entrypoint: "bash -c \"\
+        sawtooth admin keygen && \
+        sawtooth keygen my_key && \
+        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv && \
+        sawtooth admin genesis config-genesis.batch && \
+        sawtooth-validator -vv \
+          --endpoint tcp://validator:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+        \""
+
+  settings-tp:
+    image: hyperledger/sawtooth-settings-tp:0.8
+    container_name: sawtooth-settings-tp-default
+    expose:
+      - 4004
+    depends_on:
+      - validator
+    entrypoint: settings-tp -vv tcp://validator:4004
