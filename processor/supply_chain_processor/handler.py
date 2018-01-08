@@ -16,7 +16,6 @@
 import logging
 import time
 
-from sawtooth_sdk.processor.context import StateEntry
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.exceptions import InternalError
 from sawtooth_sdk.protobuf.transaction_pb2 import TransactionHeader
@@ -61,10 +60,6 @@ class SCTransactionHandler:
     @property
     def family_versions(self):
         return ['1.0']
-
-    @property
-    def encodings(self):
-        return ['application/protobuf']
 
     @property
     def namespaces(self):
@@ -682,7 +677,7 @@ def _get_container(state, address):
     container = containers[namespace]()
 
     # Get data from state
-    entries = state.get([address])
+    entries = state.get_state([address])
 
     if entries:
         data = entries[0].data
@@ -692,12 +687,9 @@ def _get_container(state, address):
 
 
 def _set_container(state, address, container):
-    addresses = state.set([
-        StateEntry(
-            address=address,
-            data=container.SerializeToString(),
-        )
-    ])
+    addresses = state.set_state({
+        address: container.SerializeToString()
+    })
 
     if not addresses:
         raise InternalError(
@@ -866,10 +858,7 @@ def _unpack_transaction(transaction):
     handler function (with the latter two determined by the constant
     TYPE_TO_ACTION_HANDLER table.
     '''
-    header = TransactionHeader()
-    header.ParseFromString(transaction.header)
-
-    signer = header.signer_pubkey
+    signer = transaction.header.signer_public_key
 
     payload = SCPayload()
     payload.ParseFromString(transaction.payload)

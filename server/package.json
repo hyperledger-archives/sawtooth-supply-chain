@@ -37,13 +37,12 @@
     "lodash": "^4.17.4",
     "protobufjs": "^6.8.0",
     "rethinkdb": "^2.3.3",
-    "sawtooth-sdk": "^0.8.10"
+    "sawtooth-sdk": "^1.0.0-rc"
   },
   "devDependencies": {
     "nodemon": "^1.11.0",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
-    "rethinkdb": "^2.3.3",
     "standard": "^10.0.3"
   }
 }

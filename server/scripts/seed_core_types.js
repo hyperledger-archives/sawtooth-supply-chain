@@ -17,8 +17,18 @@
 'use strict'
 
 const request = require('request-promise-native')
-const { signer, TransactionEncoder } = require('sawtooth-sdk')
+const { createHash } = require('crypto')
+const secp256k1 = require('sawtooth-sdk/signing/secp256k1')
+const {
+  Transaction,
+  TransactionHeader,
+  TransactionList
+} = require('sawtooth-sdk/protobuf')
 const protos = require('../blockchain/protos')
+
+const FAMILY_NAME = 'supply_chain'
+const FAMILY_VERSION = '1.0'
+const NAMESPACE = '3400de'
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'
 const DATA = process.env.DATA
@@ -29,21 +39,36 @@ if (DATA.indexOf('.json') === -1) {
 
 const types = require(`./${DATA}`)
 
+const encodeHeader = (signerPublicKey, batcherPublicKey, payload) => {
+  return TransactionHeader.encode({
+    signerPublicKey,
+    batcherPublicKey,
+    familyName: FAMILY_NAME,
+    familyVersion: FAMILY_VERSION,
+    inputs: [NAMESPACE],
+    outputs: [NAMESPACE],
+    nonce: (Math.random() * 10 ** 18).toString(36),
+    payloadSha512: createHash('sha512').update(payload).digest('hex')
+  }).finish()
+}
+
+const txnCreator = batcherPublicKey => {
+  const context = new secp256k1.Secp256k1Context()
+  const privateKey = context.newRandomPrivateKey()
+  const signerPublicKey = context.getPublicKey(privateKey).asHex()
+
+  return payload => {
+    const header = encodeHeader(signerPublicKey, batcherPublicKey, payload)
+    const headerSignature = context.sign(header, privateKey)
+    return Transaction.create({ header, headerSignature, payload })
+  }
+}
+
 protos.compile()
   .then(() => request(`${SERVER}/api/info`))
   .then(res => JSON.parse(res).pubkey)
-  .then(batcherPubkey => {
-    const privateKey = signer.makePrivateKey()
-    return new TransactionEncoder(privateKey, {
-      familyName: 'supply_chain',
-      familyVersion: '1.0',
-      payloadEncoding: 'application/protobuf',
-      inputs: ['3400de'],
-      outputs: ['3400de'],
-      batcherPubkey
-    })
-  })
-  .then(encoder => {
+  .then(batcherPublicKey => txnCreator(batcherPublicKey))
+  .then(createTxn => {
     const agentPayload = protos.SCPayload.encode({
       action: protos.SCPayload.Action.CREATE_AGENT,
       timestamp: Math.floor(Date.now() / 1000),
@@ -65,15 +90,15 @@ protos.compile()
       }).finish()
     })
 
-    const txns = [ encoder.create(agentPayload) ]
-      .concat(typePayloads.map(payload => encoder.create(payload)))
+    const transactions = [ createTxn(agentPayload) ]
+      .concat(typePayloads.map(payload => createTxn(payload)))
 
     return request({
       method: 'POST',
       url: `${SERVER}/api/transactions`,
       headers: { 'Content-Type': 'application/octet-stream' },
       encoding: null,
-      body: encoder.encode(txns)
+      body: TransactionList.encode({ transactions }).finish()
     })
     .catch(err => {
       console.error(err.error.toString())

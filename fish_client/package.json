@@ -29,7 +29,7 @@
     "moment": "^2.18.1",
     "octicons": "^6.0.1",
     "popper.js": "^1.12.3",
-    "sawtooth-sdk": "^0.8.2",
+    "sawtooth-sdk": "^1.0.0-rc",
     "sjcl": "^1.0.7"
   },
   "devDependencies": {
