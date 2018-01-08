@@ -18,45 +18,88 @@
 
 const _ = require('lodash')
 const { Stream } = require('sawtooth-sdk/messaging/stream')
-const { Message } = require('sawtooth-sdk/protobuf')
+const {
+  Message,
+  EventList,
+  EventSubscription,
+  EventFilter,
+  StateChangeList,
+  ClientEventsSubscribeRequest,
+  ClientEventsSubscribeResponse,
+  ClientBatchSubmitRequest,
+  ClientBatchSubmitResponse,
+  ClientBatchStatus,
+  ClientBatchStatusRequest,
+  ClientBatchStatusResponse
+} = require('sawtooth-sdk/protobuf')
+
 const deltas = require('./deltas')
 const batcher = require('./batcher')
 const config = require('../system/config')
 
 const PREFIX = '3400de'
+const NULL_BLOCK_ID = '0000000000000000'
 const VALIDATOR_URL = config.VALIDATOR_URL
 const stream = new Stream(VALIDATOR_URL)
 
-// This workaround is necessary until delta protos are added to SDK
-const protobuf = require('protobufjs')
-const pbJson = require('sawtooth-sdk/protobuf/protobuf_bundle.json')
-const root = protobuf.Root.fromJSON(pbJson)
-const StateDeltaSubscribeRequest = root.lookup('StateDeltaSubscribeRequest')
-const StateDeltaSubscribeResponse = root.lookup('StateDeltaSubscribeResponse')
-const StateDeltaEvent = root.lookup('StateDeltaEvent')
-const ClientBatchSubmitRequest = root.lookup('ClientBatchSubmitRequest')
-const ClientBatchSubmitResponse = root.lookup('ClientBatchSubmitResponse')
-const BatchStatus = root.lookup('BatchStatus')
+const getBlock = events => {
+  const block = _.chain(events)
+    .find(e => e.eventType === 'sawtooth/block-commit')
+    .get('attributes')
+    .map(a => [a.key, a.value])
+    .fromPairs()
+    .value()
+
+  return {
+    blockNum: parseInt(block.block_num),
+    blockId: block.block_id,
+    stateRootHash: block.state_root_hash
+  }
+}
+
+const getChanges = events => {
+  const event = events.find(e => e.eventType === 'sawtooth/state-delta')
+  if (!event) return []
+
+  const changeList = StateChangeList.decode(event.data)
+  return changeList.stateChanges
+    .filter(change => change.address.slice(0, 6) === PREFIX)
+}
 
 const subscribe = () => {
   stream.connect(() => {
     // Set up onReceive handlers
     stream.onReceive(msg => {
-      if (msg.messageType === Message.MessageType.STATE_DELTA_EVENT) {
-        deltas.handle(StateDeltaEvent.decode(msg.content))
+      if (msg.messageType === Message.MessageType.CLIENT_EVENTS) {
+        const events = EventList.decode(msg.content).events
+        deltas.handle(getBlock(events), getChanges(events))
       } else {
         console.error('Received message of unknown type:', msg.messageType)
       }
     })
 
     // Send subscribe request
+    const blockSub = EventSubscription.create({
+      eventType: 'sawtooth/block-commit'
+    })
+    const deltaSub = EventSubscription.create({
+      eventType: 'sawtooth/state-delta',
+      filters: [EventFilter.create({
+        key: 'address',
+        matchString: `^${PREFIX}.*`,
+        filterType: EventFilter.FilterType.REGEX_ANY
+      })]
+    })
     stream.send(
-      Message.MessageType.STATE_DELTA_SUBSCRIBE_REQUEST,
-      StateDeltaSubscribeRequest.encode({ addressPrefixes: [PREFIX] }).finish()
+      Message.MessageType.CLIENT_EVENTS_SUBSCRIBE_REQUEST,
+      ClientEventsSubscribeRequest.encode({
+        lastKnownBlockIds: [NULL_BLOCK_ID],
+        subscriptions: [blockSub, deltaSub]
+      }).finish()
     )
-      .then(response => StateDeltaSubscribeResponse.decode(response))
+      .then(response => ClientEventsSubscribeResponse.decode(response))
       .then(decoded => {
-        const status = _.findKey(StateDeltaSubscribeResponse.Status,
+        const status = _.findKey(ClientEventsSubscribeResponse.Status,
                                  val => val === decoded.status)
         if (status !== 'OK') {
           throw new Error(`Validator responded with status "${status}"`)
@@ -73,31 +116,49 @@ const submit = (txnBytes, { wait }) => {
   return stream.send(
     Message.MessageType.CLIENT_BATCH_SUBMIT_REQUEST,
     ClientBatchSubmitRequest.encode({
-      batches: [batch],
-      waitForCommit: wait !== null,
-      timeout: wait
+      batches: [batch]
     }).finish()
   )
   .then(response => ClientBatchSubmitResponse.decode(response))
   .then((decoded) => {
-    const status = _.findKey(ClientBatchSubmitResponse.Status,
+    const submitStatus = _.findKey(ClientBatchSubmitResponse.Status,
                              val => val === decoded.status)
-    if (status !== 'OK') {
-      throw new Error(`Batch submission failed with status '${status}'`)
+    if (submitStatus !== 'OK') {
+      throw new Error(`Batch submission failed with status '${submitStatus}'`)
     }
 
     if (wait === null) {
       return { batch: batch.headerSignature }
     }
 
-    if (decoded.batchStatuses[0].status !== BatchStatus.Status.COMMITTED) {
-      throw new Error(decoded.batchStatuses[0].invalidTransactions[0].message)
-    }
+    return stream.send(
+      Message.MessageType.CLIENT_BATCH_STATUS_REQUEST,
+      ClientBatchStatusRequest.encode({
+        batchIds: [batch.headerSignature],
+        wait: true,
+        timeout: wait
+      }).finish()
+    )
+    .then(statusResponse => {
+      const statusBody = ClientBatchStatusResponse
+        .decode(statusResponse)
+        .batchStatuses[0]
 
-    // Wait to return until new block is in database
-    return new Promise(resolve => setTimeout(() => {
-      resolve({ batch: batch.headerSignature })
-    }, 1000))
+      if (statusBody.status !== ClientBatchStatus.Status.COMMITTED) {
+        const id = statusBody.batchId
+        const status = _.findKey(ClientBatchStatus.Status,
+                                 val => val === statusBody.status)
+        const message = statusBody.invalidTransactions.length > 0
+          ? statusBody.invalidTransactions[0].message
+          : ''
+        throw new Error(`Batch ${id} is ${status}, with message: ${message}`)
+      }
+
+      // Wait to return until new block is in database
+      return new Promise(resolve => setTimeout(() => {
+        resolve({ batch: batch.headerSignature })
+      }, 1000))
+    })
   })
 }
 

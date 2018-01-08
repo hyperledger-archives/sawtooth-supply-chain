@@ -69,7 +69,7 @@ services:
       - '28020:28015'
 
   validator:
-    image: hyperledger/sawtooth-validator:0.8
+    image: hyperledger/sawtooth-validator:1.0
     container_name: supply-validator
     expose:
       - 4004
@@ -78,10 +78,12 @@ services:
     # start the validator with an empty genesis batch
     entrypoint: |
       bash -c "
-        sawtooth admin keygen &&
-        sawtooth keygen my_key &&
-        sawtooth config genesis -k /root/.sawtooth/keys/my_key.priv &&
-        sawtooth admin genesis config-genesis.batch &&
+        if [ ! -f /etc/sawtooth/keys/validator.priv ]; then
+          sawadm keygen &&
+          sawtooth keygen my_key &&
+          sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+          sawadm genesis config-genesis.batch
+        fi;
         sawtooth-validator -vv \
           --endpoint tcp://validator:8800 \
           --bind component:tcp://eth0:4004 \
@@ -89,14 +91,14 @@ services:
       "
 
   settings-tp:
-    image: hyperledger/sawtooth-settings-tp:0.8
+    image: hyperledger/sawtooth-settings-tp:1.0
     container_name: supply-settings-tp
     depends_on:
       - validator
-    entrypoint: settings-tp -vv tcp://validator:4004
+    entrypoint: settings-tp -vv -C tcp://validator:4004
 
   rest-api:
-    image: hyperledger/sawtooth-rest-api:0.8
+    image: hyperledger/sawtooth-rest-api:1.0
     container_name: supply-rest-api
     expose:
       - 8008
@@ -110,7 +112,7 @@ services:
         --bind sawtooth-rest-api:8008
 
   shell:
-    image: hyperledger/sawtooth-shell:0.8
+    image: hyperledger/sawtooth-shell:1.0
     container_name: supply-shell
     volumes:
       - ./:/sawtooth-supply-chain
@@ -118,6 +120,8 @@ services:
       - rest-api
     entrypoint: |
       bash -c "
-        sawtooth keygen &&
+        if [ ! -f /root/.sawtooth/keys/root.priv ]; then
+          sawtooth keygen
+        fi;
         tail -f /dev/null
       "

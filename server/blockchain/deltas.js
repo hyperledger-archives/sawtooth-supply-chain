@@ -92,23 +92,15 @@ const getEntries = ({ address, value }) => {
     .entries
 }
 
-const handle = event => {
+const handle = (block, changes) => {
   deltaQueue.add(() => {
-    const blockNum = Math.round(event.blockNum.toNumber())
-    return Promise.all(event.stateChanges.map(change => {
+    return Promise.all(changes.map(change => {
       const addState = getAdder(change.address)
       return Promise.all(getEntries(change).map(entry => {
-        return addState(entry, blockNum)
+        return addState(entry, block.blockNum)
       }))
     }))
-      .then(() => {
-        return blocks.insert({
-          blockNum,
-          blockId: event.blockId,
-          stateRootHash: event.stateRootHash
-        })
-      })
-      .then(() => event)
+      .then(() => blocks.insert(block))
   })
 }
 

@@ -19,30 +19,29 @@
 const m = require('mithril')
 const _ = require('lodash')
 const sjcl = require('sjcl')
-const { signer, TransactionEncoder } = require('sawtooth-sdk/client')
+const { createHash } = require('crypto')
+const secp256k1 = require('sawtooth-sdk/signing/secp256k1')
+const {
+  Transaction,
+  TransactionHeader,
+  TransactionList
+} = require('sawtooth-sdk/protobuf')
 const modals = require('../components/modals')
 const api = require('../services/api')
 
 const STORAGE_KEY = 'fish_net.encryptedKey'
+const FAMILY_NAME = 'supply_chain'
+const FAMILY_VERSION = '1.0'
+const NAMESPACE = '3400de'
 
-let txnEncoder = null
-const encoderSettings = {
-  familyName: 'supply_chain',
-  familyVersion: '1.0',
-  payloadEncoding: 'application/protobuf',
-  inputs: ['3400de'],
-  outputs: ['3400de'],
-  batcherPubkey: null
-}
+const context = new secp256k1.Secp256k1Context()
+let privateKey = null
+let signerPublicKey = null
+let batcherPublicKey = null
 
 const setBatcherPubkey = () => {
   return api.get('info')
-    .then(({ pubkey }) => {
-      if (txnEncoder) {
-        txnEncoder.batcherPubkey = pubkey
-      }
-      encoderSettings.batcherPubkey = pubkey
-    })
+    .then(({ pubkey }) => { batcherPublicKey = pubkey })
 }
 setBatcherPubkey()
 
@@ -63,27 +62,51 @@ const requestPassword = () => {
     .then(() => password)
 }
 
+const createTxn = payload => {
+  const header = TransactionHeader.encode({
+    signerPublicKey,
+    batcherPublicKey,
+    familyName: FAMILY_NAME,
+    familyVersion: FAMILY_VERSION,
+    inputs: [NAMESPACE],
+    outputs: [NAMESPACE],
+    nonce: (Math.random() * 10 ** 18).toString(36),
+    payloadSha512: createHash('sha512').update(payload).digest('hex'),
+  }).finish()
+
+  return Transaction.create({
+    payload,
+    header,
+    headerSignature: context.sign(header, privateKey)
+  })
+}
+
+const encodeTxns = transactions => {
+  return TransactionList.encode({ transactions }).finish()
+}
+
 /**
  * Generates a new private key, saving it it to memory and storage (encrypted).
  * Returns both a public key and the encrypted private key.
  */
 const makePrivateKey = password => {
-  const privateKey = signer.makePrivateKey()
-  txnEncoder = new TransactionEncoder(privateKey, encoderSettings)
+  privateKey = context.newRandomPrivateKey()
+  signerPublicKey = context.getPublicKey(privateKey).asHex()
 
-  const encryptedKey = sjcl.encrypt(password, privateKey)
+  const encryptedKey = sjcl.encrypt(password, privateKey.asHex())
   window.localStorage.setItem(STORAGE_KEY, encryptedKey)
 
-  const publicKey = signer.getPublicKey(privateKey)
-  return { encryptedKey, publicKey }
+  return { encryptedKey, publicKey: signerPublicKey }
 }
 
 /**
  * Saves an encrypted key to storage, and the decrypted version in memory.
  */
 const setPrivateKey = (password, encryptedKey) => {
-  const privateKey = sjcl.decrypt(password, encryptedKey)
-  txnEncoder = new TransactionEncoder(privateKey, encoderSettings)
+  const privateKeyHex = sjcl.decrypt(password, encryptedKey)
+
+  privateKey = secp256k1.Secp256k1PrivateKey.fromHex(privateKeyHex)
+  signerPublicKey = context.getPublicKey(privateKey).asHex()
 
   window.localStorage.setItem(STORAGE_KEY, encryptedKey)
 
@@ -97,7 +120,8 @@ const clearPrivateKey = () => {
   const encryptedKey = window.localStorage.getItem(STORAGE_KEY)
 
   window.localStorage.clear(STORAGE_KEY)
-  txnEncoder = null
+  privateKey = null
+  signerPublicKey = null
 
   return encryptedKey
 }
@@ -108,7 +132,7 @@ const clearPrivateKey = () => {
 const getPrivateKey = () => {
   return Promise.resolve()
   .then(() => {
-    if (txnEncoder) return txnEncoder._privateKey
+    if (privateKey) return privateKey.asHex()
     const encryptedKey = window.localStorage.getItem(STORAGE_KEY)
     return requestPassword()
       .then(password => sjcl.decrypt(password, encryptedKey))
@@ -135,7 +159,7 @@ const submit = (payloads, wait = false) => {
   if (!_.isArray(payloads)) payloads = [payloads]
   return Promise.resolve()
     .then(() => {
-      if (txnEncoder) return
+      if (privateKey) return
 
       return requestPassword()
         .then(password => {
@@ -144,12 +168,12 @@ const submit = (payloads, wait = false) => {
         })
     })
     .then(() => {
-      if (txnEncoder.batchPubkey) return
+      if (batcherPublicKey) return
       return setBatcherPubkey()
     })
     .then(() => {
-      const txns = payloads.map(payload => txnEncoder.create(payload))
-      const txnList = txnEncoder.encode(txns)
+      const txns = payloads.map(payload => createTxn(payload))
+      const txnList = encodeTxns(txns)
       return api.postBinary(`transactions${wait ? '?wait' : ''}`, txnList)
     })
 }
