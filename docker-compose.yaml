@@ -41,6 +41,9 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
+    volumes:
+      - .:/sawtooth-supply-chain
+      - /sawtooth-supply-chain/server/node_modules
     expose:
       - 3000
     ports:
