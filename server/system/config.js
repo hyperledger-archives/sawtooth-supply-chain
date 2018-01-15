@@ -67,13 +67,19 @@ if (!config.JWT_SECRET) {
     'Set "JWT_SECRET" as an environment variable or in "config.json" file.')
 }
 
-// Default to just asset client if no static clients are specified
+// Default to both asset and fish clients if none are specified
 if (!config.clients) {
-  config.clients = config.clients || [{
-    url: '/asset',
-    path: '../asset_client/public'
-  }]
-  console.warn('No clients specified, defaulting to AssetTrack.')
+  config.clients = [
+    {
+      url: '/asset',
+      path: '../asset_client/public'
+    },
+    {
+      url: '/fish',
+      path: '../fish_client/public'
+    }
+  ]
+  console.warn('No clients specified, defaulting to AssetTrack and FishNet.')
   console.warn('Specify static clients with the "clients" key in "config.json"')
 }
 

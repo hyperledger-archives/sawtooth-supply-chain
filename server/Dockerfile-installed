@@ -58,3 +58,5 @@ RUN cd fish_client/ && npm run build && cd ..
 WORKDIR /sawtooth-supply-chain/server
 
 EXPOSE 3000/tcp
+
+CMD ["node" "index.js"]
