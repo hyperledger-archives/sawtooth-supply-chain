@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+/**
+ * Copyright 2017 Intel Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ----------------------------------------------------------------------------
+ */
+
+const { resolve } = require('path')
+
+const baseDir = process.cwd()
+const jsonPaths = process.argv.slice(2)
+
+// Deeply combines objects, overwriting primitive data, but recursively
+// checking nested objects for unique keys. For example:
+//   {a: 1, b: {c: 2}} + {a: 3, b: {x: 5}} -> {a: 3, b: {c: 2, x: 5}}
+const spliceObjects = (a, b) => {
+  return Object.keys(b).reduce((spliced, key) => {
+    if (typeof a[key] === 'object' && typeof b[key] === 'object') {
+      spliced[key] = spliceObjects(a[key], b[key])
+    } else {
+      spliced[key] = b[key]
+    }
+    return spliced
+  }, Object.assign({}, a))
+}
+
+// Splice the JSON files specified then sent to stdout as JSON string
+process.stdout.write(JSON.stringify(jsonPaths
+  .map(relPath => resolve(baseDir, relPath))
+  .map(absPath => require(absPath))
+  .reduce((spliced, jsonObj) => spliceObjects(spliced, jsonObj), {})))
