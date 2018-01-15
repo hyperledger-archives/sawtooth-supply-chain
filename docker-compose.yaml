@@ -109,7 +109,7 @@ services:
     entrypoint: |
       sawtooth-rest-api -vv
         --connect tcp://validator:4004
-        --bind sawtooth-rest-api:8008
+        --bind rest-api:8008
 
   shell:
     image: hyperledger/sawtooth-shell:1.0
