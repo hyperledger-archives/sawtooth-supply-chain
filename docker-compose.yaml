@@ -17,6 +17,36 @@ version: '2.1'
 
 services:
 
+  shell:
+    image: supply-shell
+    container_name: supply-shell
+    build:
+      context: .
+      dockerfile: shell/Dockerfile
+    volumes:
+      - .:/sawtooth-supply-chain
+      - /sawtooth-supply-chain/asset_client/node_modules
+      - /sawtooth-supply-chain/fish_client/node_modules
+      - /sawtooth-supply-chain/server/node_modules
+    depends_on:
+      - rethink
+      - rest-api
+    environment:
+      - SERVER=http://server:3000
+    command: |
+      bash -c "
+        protogen &&
+        cd asset_client/ && npm run build && cd - &&
+        cd fish_client/ && npm run build && cd - &&
+        if [ ! -f /root/.sawtooth/keys/root.priv ]; then
+          sawtooth keygen &&
+          cd server/ &&
+          DB_HOST=rethink npm run init &&
+          cd -
+        fi;
+        tail -f /dev/null
+      "
+
   processor:
     image: supply-tp
     container_name: supply-tp
@@ -28,6 +58,9 @@ services:
         - no_proxy
     volumes:
       - .:/sawtooth-supply-chain
+    depends_on:
+      - shell
+      - validator
     entrypoint: |
       /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
 
@@ -51,10 +84,10 @@ services:
     depends_on:
       - validator
       - rethink
+      - shell
     command: |
       bash -c "
-        set -x &&
-        DB_HOST=rethink npm run init &&
+        sleep 15 &&
         VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethink node index.js
       "
 
@@ -110,18 +143,3 @@ services:
       sawtooth-rest-api -vv
         --connect tcp://validator:4004
         --bind rest-api:8008
-
-  shell:
-    image: hyperledger/sawtooth-shell:1.0
-    container_name: supply-shell
-    volumes:
-      - ./:/sawtooth-supply-chain
-    depends_on:
-      - rest-api
-    entrypoint: |
-      bash -c "
-        if [ ! -f /root/.sawtooth/keys/root.priv ]; then
-          sawtooth keygen
-        fi;
-        tail -f /dev/null
-      "
