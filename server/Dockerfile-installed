@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
     pkg-config \
     build-essential \
     libzmq3-dev \
- && curl -s -S -o /tmp/setup-node.sh https://deb.nodesource.com/setup_6.x \
+ && curl -s -S -o /tmp/setup-node.sh https://deb.nodesource.com/setup_8.x \
  && chmod 755 /tmp/setup-node.sh \
  && /tmp/setup-node.sh \
  && apt-get install nodejs -y -q \
