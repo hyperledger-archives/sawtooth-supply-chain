@@ -30,9 +30,8 @@ Promise.all([
   db.connect(),
   protos.compile()
 ])
+  .then(blockchain.subscribe)
   .then(() => {
-    blockchain.subscribe()
-
     config.clients.forEach(client => {
       app.use(client.url, express.static(client.path))
       console.log(`Added client at url "${client.url}"`)

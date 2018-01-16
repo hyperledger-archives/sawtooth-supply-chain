@@ -85,11 +85,10 @@ services:
       - validator
       - rethink
       - shell
-    command: |
-      bash -c "
-        sleep 15 &&
-        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethink node index.js
-      "
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
+    entrypoint: node index.js
 
   rethink:
     image: rethinkdb

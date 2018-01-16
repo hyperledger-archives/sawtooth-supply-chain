@@ -24,18 +24,32 @@ const config = require('../system/config')
 const HOST = config.DB_HOST
 const PORT = config.DB_PORT
 const NAME = config.DB_NAME
+const RETRY_WAIT = config.RETRY_WAIT
+const AWAIT_TABLE = 'blocks'
 
 // Connection to db for query methods, run connect before querying
 let connection = null
+
+const awaitDatabase = () => {
+  return r.tableList().run(connection)
+    .then(tableNames => {
+      if (!tableNames.includes(AWAIT_TABLE)) {
+        throw new Error()
+      }
+    })
+    .catch(() => {
+      console.warn('Database not initialized:', NAME)
+      console.warn(`Retrying database in ${RETRY_WAIT / 1000} seconds...`)
+      return new Promise(resolve => setTimeout(resolve, RETRY_WAIT))
+        .then(awaitDatabase)
+    })
+}
 
 const connect = () => {
   return r.connect({host: HOST, port: PORT, db: NAME})
     .then(conn => {
       connection = conn
-    })
-    .catch(err => {
-      console.error(`Unable to connect to "${NAME}" db at ${HOST}:${PORT}}!`)
-      console.error(err.message)
+      return awaitDatabase()
     })
 }
 
