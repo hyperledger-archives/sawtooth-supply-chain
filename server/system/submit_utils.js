@@ -32,6 +32,21 @@ const FAMILY_VERSION = '1.0'
 const NAMESPACE = '3400de'
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'
+const RETRY_WAIT = process.env.RETRY_WAIT || 5000
+
+const awaitServerInfo = () => {
+  return request(`${SERVER}/api/info`)
+    .catch(() => {
+      console.warn(
+        `Server unavailable, retrying in ${RETRY_WAIT / 1000} seconds...`)
+      return new Promise(resolve => setTimeout(resolve, RETRY_WAIT))
+        .then(awaitServerInfo)
+    })
+}
+
+const awaitServerPubkey = () => {
+  return awaitServerInfo().then(info => JSON.parse(info).pubkey)
+}
 
 const encodeHeader = (signerPublicKey, batcherPublicKey, payload) => {
   return TransactionHeader.encode({
@@ -81,6 +96,7 @@ const encodeTimestampedPayload = message => {
 }
 
 module.exports = {
+  awaitServerPubkey,
   getTxnCreator,
   submitTxns,
   encodeTimestampedPayload

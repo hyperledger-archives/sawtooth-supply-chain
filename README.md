@@ -54,35 +54,27 @@ command:
 docker-compose down
 ```
 
-### Using the Shell to Setup Web App Data
+### Using the Shell
 
-The example web apps require that their respective "RecordTypes" be sent to the
-blockchain before they will run properly. This can be done from within the
-Supply Chain Shell docker container. Open a new terminal and run:
+Running `docker-compose up`, will automatically run all scripts necessary to
+use all Supply Chain components. However if you want to run any additional
+scripts, such as scripts to automatically update sample blockchain data, a shell
+container is provided with all necessary dependencies installed. To enter the
+shell, simply open a terminal window and run:
 
 ```bash
 docker exec -it supply-shell bash
 ```
 
-Once inside the shell container you can navigate to the server directory and
-run the necessary scripts:
+Once inside the shell, you might try running the one of the update scripts to
+see live updates populate in an example web app. First navigate to the server
+directory:
 
 ```bash
 cd server/
-npm run make-asset
-npm run make-fish
 ```
 
-After the RecordTypes are created, from the same directory you can also run
-scripts to seed some sample data:
-
-```bash
-npm run seed-sample-assets
-npm run seed-sample-fish
-```
-
-If you have seeded the apps with sample data, you can also run scripts to send
-updates over time:
+Then run one of the two provided npm scripts:
 
 ```bash
 npm run update-sample-assets
@@ -97,7 +89,7 @@ certain number are submitted (default 25):
 RATE=3 LIMIT=10 npm run update-sample-assets
 ```
 
-If you just want to  exit the shell, you can simply run:
+If you just want to exit the shell, you can simply run:
 
 ```bash
 exit

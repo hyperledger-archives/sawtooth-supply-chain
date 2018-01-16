@@ -20,6 +20,7 @@ const _ = require('lodash')
 const request = require('request-promise-native')
 const protos = require('../blockchain/protos')
 const {
+  awaitServerPubkey,
   getTxnCreator,
   submitTxns,
   encodeTimestampedPayload
@@ -27,7 +28,6 @@ const {
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'
 const DATA = process.env.DATA
-
 if (DATA.indexOf('.json') === -1) {
   throw new Error('Use the "DATA" environment variable to specify a JSON file')
 }
@@ -50,9 +50,8 @@ const answerProposal = (privateKey, action) => {
 }
 
 protos.compile()
-  .then(() => request(`${SERVER}/api/info`))
-  .then(res => {
-    const batcherPublicKey = JSON.parse(res).pubkey
+  .then(awaitServerPubkey)
+  .then(batcherPublicKey => {
     const txnCreators = {}
 
     createTxn = (privateKey, payload) => {
