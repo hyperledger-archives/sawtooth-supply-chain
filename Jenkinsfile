@@ -75,14 +75,6 @@ node ('master') {
             sh 'docker run --rm -v $(pwd):/project/sawtooth-supply-chain supply-chain-dev-python:$ISOLATION_ID run_bandit'
         }
 
-        // Run the tests
-        stage("Run Tests") {
-            sh './bin/run_tests -i deployment'
-        }
-
-        stage("Compile coverage report") {
-            sh 'docker run --rm -v $(pwd):/project/sawtooth-supply-chain supply-chain-dev-python:$ISOLATION_ID /bin/bash -c "cd coverage && coverage combine && coverage html -d html"'
-        }
 
         stage("Create git archive") {
             sh '''
@@ -102,7 +94,6 @@ node ('master') {
             archiveArtifacts artifacts: '*.tgz, *.zip'
             archiveArtifacts artifacts: 'build/debs/*.deb'
             archiveArtifacts artifacts: 'build/bandit.html'
-            archiveArtifacts artifacts: 'coverage/html/*'
             archiveArtifacts artifacts: 'docs/build/html/**, docs/build/latex/*.pdf'
         }
     }
