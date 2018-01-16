@@ -16,17 +16,15 @@
  */
 'use strict'
 
-const request = require('request-promise-native')
 const protos = require('../blockchain/protos')
 const {
+  awaitServerPubkey,
   getTxnCreator,
   submitTxns,
   encodeTimestampedPayload
 } = require('../system/submit_utils')
 
-const SERVER = process.env.SERVER || 'http://localhost:3000'
 const DATA = process.env.DATA
-
 if (DATA.indexOf('.json') === -1) {
   throw new Error('Use the "DATA" environment variable to specify a JSON file')
 }
@@ -34,8 +32,7 @@ if (DATA.indexOf('.json') === -1) {
 const types = require(`./${DATA}`)
 
 protos.compile()
-  .then(() => request(`${SERVER}/api/info`))
-  .then(res => JSON.parse(res).pubkey)
+  .then(awaitServerPubkey)
   .then(batcherPublicKey => getTxnCreator(null, batcherPublicKey))
   .then(createTxn => {
     const agentPayload = encodeTimestampedPayload({

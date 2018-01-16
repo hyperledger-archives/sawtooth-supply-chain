@@ -32,6 +32,8 @@ services:
       - rethink
       - rest-api
     environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
       - SERVER=http://server:3000
     command: |
       bash -c "
@@ -41,7 +43,11 @@ services:
         if [ ! -f /root/.sawtooth/keys/root.priv ]; then
           sawtooth keygen &&
           cd server/ &&
-          DB_HOST=rethink npm run init &&
+          npm run init &&
+          npm run make-asset &&
+          npm run make-fish &&
+          npm run seed-sample-assets &&
+          npm run seed-sample-fish &&
           cd -
         fi;
         tail -f /dev/null
