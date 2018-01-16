@@ -45,12 +45,6 @@ r.connect({host: HOST, port: PORT})
         }).run(conn)
       })
       .then(() => {
-        console.log('Creating "blocks" table...')
-        return r.db(NAME).tableCreate('blocks', {
-          primaryKey: 'blockNum'
-        }).run(conn)
-      })
-      .then(() => {
         console.log('Creating "agents" table...')
         return r.db(NAME).tableCreate('agents').run(conn)
       })
@@ -103,6 +97,12 @@ r.connect({host: HOST, port: PORT})
           r.row('receivingAgent'),
           r.row('role')
         ]).run(conn)
+      })
+      .then(() => {
+        console.log('Creating "blocks" table...')
+        return r.db(NAME).tableCreate('blocks', {
+          primaryKey: 'blockNum'
+        }).run(conn)
       })
       .then(() => {
         console.log('Bootstrapping complete, closing connection.')

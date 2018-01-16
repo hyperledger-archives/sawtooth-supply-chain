@@ -67,46 +67,49 @@ const getChanges = events => {
 }
 
 const subscribe = () => {
-  stream.connect(() => {
-    // Set up onReceive handlers
-    stream.onReceive(msg => {
-      if (msg.messageType === Message.MessageType.CLIENT_EVENTS) {
-        const events = EventList.decode(msg.content).events
-        deltas.handle(getBlock(events), getChanges(events))
-      } else {
-        console.error('Received message of unknown type:', msg.messageType)
-      }
-    })
-
-    // Send subscribe request
-    const blockSub = EventSubscription.create({
-      eventType: 'sawtooth/block-commit'
-    })
-    const deltaSub = EventSubscription.create({
-      eventType: 'sawtooth/state-delta',
-      filters: [EventFilter.create({
-        key: 'address',
-        matchString: `^${PREFIX}.*`,
-        filterType: EventFilter.FilterType.REGEX_ANY
-      })]
-    })
-    stream.send(
-      Message.MessageType.CLIENT_EVENTS_SUBSCRIBE_REQUEST,
-      ClientEventsSubscribeRequest.encode({
-        lastKnownBlockIds: [NULL_BLOCK_ID],
-        subscriptions: [blockSub, deltaSub]
-      }).finish()
-    )
-      .then(response => ClientEventsSubscribeResponse.decode(response))
-      .then(decoded => {
-        const status = _.findKey(ClientEventsSubscribeResponse.Status,
-                                 val => val === decoded.status)
-        if (status !== 'OK') {
-          throw new Error(`Validator responded with status "${status}"`)
+  return new Promise((resolve, reject) => {
+    stream.connect(() => {
+      // Set up onReceive handlers
+      stream.onReceive(msg => {
+        if (msg.messageType === Message.MessageType.CLIENT_EVENTS) {
+          const events = EventList.decode(msg.content).events
+          deltas.handle(getBlock(events), getChanges(events))
+        } else {
+          console.error('Received message of unknown type:', msg.messageType)
         }
       })
-      .catch(err => console.error('Failed to subscribe to blockchain:',
-                                  err.message))
+
+      // Send subscribe request
+      const blockSub = EventSubscription.create({
+        eventType: 'sawtooth/block-commit'
+      })
+      const deltaSub = EventSubscription.create({
+        eventType: 'sawtooth/state-delta',
+        filters: [EventFilter.create({
+          key: 'address',
+          matchString: `^${PREFIX}.*`,
+          filterType: EventFilter.FilterType.REGEX_ANY
+        })]
+      })
+
+      stream.send(
+        Message.MessageType.CLIENT_EVENTS_SUBSCRIBE_REQUEST,
+        ClientEventsSubscribeRequest.encode({
+          lastKnownBlockIds: [NULL_BLOCK_ID],
+          subscriptions: [blockSub, deltaSub]
+        }).finish()
+      )
+        .then(response => ClientEventsSubscribeResponse.decode(response))
+        .then(decoded => {
+          const status = _.findKey(ClientEventsSubscribeResponse.Status,
+                                   val => val === decoded.status)
+          if (status !== 'OK') {
+            throw new Error(`Validator responded with status "${status}"`)
+          }
+        })
+        .then(() => resolve())
+        .catch(err => reject(err))
+    })
   })
 }
 
