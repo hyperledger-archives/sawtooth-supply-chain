@@ -17,18 +17,12 @@
 'use strict'
 
 const request = require('request-promise-native')
-const { createHash } = require('crypto')
-const secp256k1 = require('sawtooth-sdk/signing/secp256k1')
-const {
-  Transaction,
-  TransactionHeader,
-  TransactionList
-} = require('sawtooth-sdk/protobuf')
 const protos = require('../blockchain/protos')
-
-const FAMILY_NAME = 'supply_chain'
-const FAMILY_VERSION = '1.0'
-const NAMESPACE = '3400de'
+const {
+  getTxnCreator,
+  submitTxns,
+  encodeTimestampedPayload
+} = require('../system/submit_utils')
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'
 const DATA = process.env.DATA
@@ -39,70 +33,36 @@ if (DATA.indexOf('.json') === -1) {
 
 const types = require(`./${DATA}`)
 
-const encodeHeader = (signerPublicKey, batcherPublicKey, payload) => {
-  return TransactionHeader.encode({
-    signerPublicKey,
-    batcherPublicKey,
-    familyName: FAMILY_NAME,
-    familyVersion: FAMILY_VERSION,
-    inputs: [NAMESPACE],
-    outputs: [NAMESPACE],
-    nonce: (Math.random() * 10 ** 18).toString(36),
-    payloadSha512: createHash('sha512').update(payload).digest('hex')
-  }).finish()
-}
-
-const txnCreator = batcherPublicKey => {
-  const context = new secp256k1.Secp256k1Context()
-  const privateKey = context.newRandomPrivateKey()
-  const signerPublicKey = context.getPublicKey(privateKey).asHex()
-
-  return payload => {
-    const header = encodeHeader(signerPublicKey, batcherPublicKey, payload)
-    const headerSignature = context.sign(header, privateKey)
-    return Transaction.create({ header, headerSignature, payload })
-  }
-}
-
 protos.compile()
   .then(() => request(`${SERVER}/api/info`))
   .then(res => JSON.parse(res).pubkey)
-  .then(batcherPublicKey => txnCreator(batcherPublicKey))
+  .then(batcherPublicKey => getTxnCreator(null, batcherPublicKey))
   .then(createTxn => {
-    const agentPayload = protos.SCPayload.encode({
+    const agentPayload = encodeTimestampedPayload({
       action: protos.SCPayload.Action.CREATE_AGENT,
-      timestamp: Math.floor(Date.now() / 1000),
       createAgent: protos.CreateAgentAction.create({
         name: 'Supply Chain Admin'
       })
-    }).finish()
+    })
 
     const typePayloads = types.map(type => {
-      return protos.SCPayload.encode({
+      return encodeTimestampedPayload({
         action: protos.SCPayload.Action.CREATE_RECORD_TYPE,
-        timestamp: Math.floor(Date.now() / 1000),
         createRecordType: protos.CreateRecordTypeAction.create({
           name: type.name,
           properties: type.properties.map(prop => {
             return protos.PropertySchema.create(prop)
           })
         })
-      }).finish()
+      })
     })
 
-    const transactions = [ createTxn(agentPayload) ]
+    const txns = [ createTxn(agentPayload) ]
       .concat(typePayloads.map(payload => createTxn(payload)))
-
-    return request({
-      method: 'POST',
-      url: `${SERVER}/api/transactions`,
-      headers: { 'Content-Type': 'application/octet-stream' },
-      encoding: null,
-      body: TransactionList.encode({ transactions }).finish()
-    })
-    .catch(err => {
-      console.error(err.error.toString())
-      process.exit()
-    })
+    return submitTxns(txns)
   })
-  .then(res => console.log(JSON.parse(res)))
+  .then(res => console.log('Types submitted:\n', JSON.parse(res)))
+  .catch(err => {
+    console.error(err.toString())
+    process.exit()
+  })

@@ -18,18 +18,12 @@
 
 const _ = require('lodash')
 const request = require('request-promise-native')
-const { createHash } = require('crypto')
-const secp256k1 = require('sawtooth-sdk/signing/secp256k1')
-const {
-  Transaction,
-  TransactionHeader,
-  TransactionList
-} = require('sawtooth-sdk/protobuf')
 const protos = require('../blockchain/protos')
-
-const FAMILY_NAME = 'supply_chain'
-const FAMILY_VERSION = '1.0'
-const NAMESPACE = '3400de'
+const {
+  getTxnCreator,
+  submitTxns,
+  encodeTimestampedPayload
+} = require('../system/submit_utils')
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'
 const DATA = process.env.DATA
@@ -39,74 +33,41 @@ if (DATA.indexOf('.json') === -1) {
 }
 
 const { records, agents } = require(`./${DATA}`)
-const context = new secp256k1.Secp256k1Context()
-let batcherPublicKey = null
-
-const encodeHeader = (signerPublicKey, payload) => {
-  return TransactionHeader.encode({
-    signerPublicKey,
-    batcherPublicKey,
-    familyName: FAMILY_NAME,
-    familyVersion: FAMILY_VERSION,
-    inputs: [NAMESPACE],
-    outputs: [NAMESPACE],
-    nonce: (Math.random() * 10 ** 18).toString(36),
-    payloadSha512: createHash('sha512').update(payload).digest('hex')
-  }).finish()
-}
-
-const createTxn = (privateKeyHex, payload) => {
-  const privateKey = secp256k1.Secp256k1PrivateKey.fromHex(privateKeyHex)
-  const signerPublicKey = context.getPublicKey(privateKey).asHex()
-
-  const header = encodeHeader(signerPublicKey, payload)
-  const headerSignature = context.sign(header, privateKey)
-  return Transaction.create({ header, headerSignature, payload })
-}
-
-const createPayload = message => {
-  return protos.SCPayload.encode(_.assign({
-    timestamp: Math.floor(Date.now() / 1000)
-  }, message)).finish()
-}
+let createTxn = null
 
 const createProposal = (privateKey, action) => {
-  return createTxn(privateKey, createPayload({
+  return createTxn(privateKey, encodeTimestampedPayload({
     action: protos.SCPayload.Action.CREATE_PROPOSAL,
     createProposal: protos.CreateProposalAction.create(action)
   }))
 }
 
 const answerProposal = (privateKey, action) => {
-  return createTxn(privateKey, createPayload({
+  return createTxn(privateKey, encodeTimestampedPayload({
     action: protos.SCPayload.Action.ANSWER_PROPOSAL,
     answerProposal: protos.AnswerProposalAction.create(action)
   }))
 }
 
-const submitTxns = transactions => {
-  return request({
-    method: 'POST',
-    url: `${SERVER}/api/transactions?wait`,
-    headers: { 'Content-Type': 'application/octet-stream' },
-    encoding: null,
-    body: TransactionList.encode({ transactions }).finish()
-  })
-  .catch(err => {
-    console.error(err.error.toString())
-    process.exit()
-  })
-}
-
 protos.compile()
   .then(() => request(`${SERVER}/api/info`))
-  .then(res => { batcherPublicKey = JSON.parse(res).pubkey })
+  .then(res => {
+    const batcherPublicKey = JSON.parse(res).pubkey
+    const txnCreators = {}
+
+    createTxn = (privateKey, payload) => {
+      if (!txnCreators[privateKey]) {
+        txnCreators[privateKey] = getTxnCreator(privateKey, batcherPublicKey)
+      }
+      return txnCreators[privateKey](payload)
+    }
+  })
 
   // Create Agents
   .then(() => {
     console.log('Creating Agents . . .')
     const agentAdditions = agents.map(agent => {
-      return createTxn(agent.privateKey, createPayload({
+      return createTxn(agent.privateKey, encodeTimestampedPayload({
         action: protos.SCPayload.Action.CREATE_AGENT,
         createAgent: protos.CreateAgentAction.create({ name: agent.name })
       }))
@@ -143,7 +104,7 @@ protos.compile()
         return protos.PropertyValue.create(property)
       })
 
-      return createTxn(agents[record.ownerIndex || 0].privateKey, createPayload({
+      return createTxn(agents[record.ownerIndex || 0].privateKey, encodeTimestampedPayload({
         action: protos.SCPayload.Action.CREATE_RECORD,
         createRecord: protos.CreateRecordAction.create({
           recordId: record.recordId,
@@ -215,4 +176,8 @@ protos.compile()
       })
 
     return submitTxns(reporterAnswers)
+  })
+  .catch(err => {
+    console.error(err.toString())
+    process.exit()
   })

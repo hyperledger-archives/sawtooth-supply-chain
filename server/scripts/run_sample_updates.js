@@ -18,19 +18,12 @@
 
 const _ = require('lodash')
 const request = require('request-promise-native')
-const { createHash } = require('crypto')
-const secp256k1 = require('sawtooth-sdk/signing/secp256k1')
-const {
-  Transaction,
-  TransactionHeader,
-  TransactionList
-} = require('sawtooth-sdk/protobuf')
 const protos = require('../blockchain/protos')
-
-const FAMILY_NAME = 'supply_chain'
-const FAMILY_VERSION = '1.0'
-const NAMESPACE = '3400de'
-const VARIANCE_FACTOR = 0.75
+const {
+  getTxnCreator,
+  submitTxns,
+  encodeTimestampedPayload
+} = require('../system/submit_utils')
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'
 const DATA = process.env.DATA
@@ -38,6 +31,9 @@ const DATA = process.env.DATA
 if (DATA.indexOf('.json') === -1) {
   throw new Error('Use the "DATA" environment variable to specify a JSON file')
 }
+
+// How much random quantities can vary by
+const VARIANCE_FACTOR = 0.75
 
 // How many times to send each update per minute
 // If 0, will send LIMIT updates immediately, then exit
@@ -47,59 +43,16 @@ const RATE = process.env.RATE ? Number(process.env.RATE) : 6
 const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : 25
 
 const updateGroups = require(`./${DATA}`)
-const context = new secp256k1.Secp256k1Context()
-let batcherPublicKey = null
-
-const encodeHeader = (signerPublicKey, payload) => {
-  return TransactionHeader.encode({
-    signerPublicKey,
-    batcherPublicKey,
-    familyName: FAMILY_NAME,
-    familyVersion: FAMILY_VERSION,
-    inputs: [NAMESPACE],
-    outputs: [NAMESPACE],
-    nonce: (Math.random() * 10 ** 18).toString(36),
-    payloadSha512: createHash('sha512').update(payload).digest('hex')
-  }).finish()
-}
-
-const createTxn = (privateKeyHex, payload) => {
-  const privateKey = secp256k1.Secp256k1PrivateKey.fromHex(privateKeyHex)
-  const signerPublicKey = context.getPublicKey(privateKey).asHex()
-
-  const header = encodeHeader(signerPublicKey, payload)
-  const headerSignature = context.sign(header, privateKey)
-  return Transaction.create({ header, headerSignature, payload })
-}
-
-const createPayload = message => {
-  return protos.SCPayload.encode(_.assign({
-    timestamp: Math.floor(Date.now() / 1000)
-  }, message)).finish()
-}
+let createTxn = null
 
 const createUpdate = (privateKey, recordId, property) => {
-  return createTxn(privateKey, createPayload({
+  return createTxn(privateKey, encodeTimestampedPayload({
     action: protos.SCPayload.Action.UPDATE_PROPERTIES,
     updateProperties: protos.UpdatePropertiesAction.create({
       recordId,
       properties: [protos.PropertyValue.create(property)]
     })
   }))
-}
-
-const submitTxns = transactions => {
-  return request({
-    method: 'POST',
-    url: `${SERVER}/api/transactions?wait`,
-    headers: { 'Content-Type': 'application/octet-stream' },
-    encoding: null,
-    body: TransactionList.encode({ transactions }).finish()
-  })
-  .catch(err => {
-    console.error(err.error.toString())
-    process.exit()
-  })
 }
 
 const getVariance = max => {
@@ -216,5 +169,19 @@ const makeUpdateSubmitter = (count = 0) => () => {
 // Compile protos, fetch batcher pubkey, then begin submitting updates
 protos.compile()
   .then(() => request(`${SERVER}/api/info`))
-  .then(res => { batcherPublicKey = JSON.parse(res).pubkey })
+  .then(res => {
+    const batcherPublicKey = JSON.parse(res).pubkey
+    const txnCreators = {}
+
+    createTxn = (privateKey, payload) => {
+      if (!txnCreators[privateKey]) {
+        txnCreators[privateKey] = getTxnCreator(privateKey, batcherPublicKey)
+      }
+      return txnCreators[privateKey](payload)
+    }
+  })
   .then(() => makeUpdateSubmitter()())
+  .catch(err => {
+    console.error(err.toString())
+    process.exit()
+  })
