@@ -11,15 +11,32 @@ please see its
 [sawtooth-core repo](https://github.com/hyperledger/sawtooth-core) or its
 [published docs](https://sawtooth.hyperledger.org/docs/).
 
-Running alongside the core Sawtooth components, Supply Chain includes a number
-of custom components:
+## Contents
+
+- [Components](#components)
+- [Usage](#usage)
+  - [Start Up](#start-up)
+  - [Running Scripts in the Shell](#running-scripts-in-the-shell)
+  - [Configuring API Keys and Secrets](#configuring-api-keys-and-secrets)
+- [Development](#development)
+  - [Restarting Components](#restarting-components)
+  - [Manually Building Generated Files](#manually-building-generated-files)
+- [Documentation](#documentation)
+- [License](#license)
+
+## Components
+
+Running alongside the core components from Hyperledger Sawtooth, Supply Chain
+includes a number of elements customizing the blockchain and user interaction
+with it:
 
 - a **transaction processor** which handles Supply Chain transaction logic
 - a **server** which provides an HTTP/JSON API, syncs blockchain state to a
-  local db, and serves example clients
+  local database, and serves example clients
 - the **AssetTrack** example client for tracking generic assets
 - the **FishNet** example client for tracking fish from catch to table
-- a **shell** with the dependencies to run any commands and scripts
+- a **shell** container with the dependencies to run any commands and scripts
+
 
 ## Usage
 
@@ -29,8 +46,10 @@ specific to your OS to install and run whatever components are required to run
 `docker` and `docker-compose` from your command line. This is only dependency
 required to run Supply Chain components.
 
-Now, with Docker installed and this repo cloned, from the root project
-directory, simply run:
+### Start Up
+
+Once Docker is installed and you've cloned this repo, navigate to the root
+project directory and run:
 
 ```bash
 docker-compose up
@@ -54,7 +73,7 @@ command:
 docker-compose down
 ```
 
-### Using the Shell
+### Running Scripts in the Shell
 
 Running `docker-compose up`, will automatically run all scripts necessary to
 use all Supply Chain components. However if you want to run any additional
@@ -113,6 +132,8 @@ a template to follow.
 
 ## Development
 
+### Restarting Components
+
 The default Docker containers use the `volumes` command to link directly to the
 source code on your host machine. As a result any changes you make will
 immediately be reflected in Supply Chain components without having to rebuild
@@ -134,7 +155,7 @@ The available container names include:
 - supply-settings-tp
 - supply-rest-api
 
-### Generating Protobuf and Client Files
+### Manually Building Generated Files
 
 Files in the `protos/` directory are used to generate classes for other
 components. This is done automatically on `up`, but if you make changes to
