@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 # Copyright 2017 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,23 +13,21 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-top_dir=$(cd $(dirname $(dirname $0)) && pwd)
 
-directories="
-    families/supplychain/python/build
-"
+ARG iso_id=latest
+FROM ubuntu:${iso_id}
 
-for dir in $directories
-do
-    if [ -z $ignore ]
-    then
-        ignore="$top_dir/$dir"
-    else
-        ignore="$ignore,$top_dir/$dir"
-    fi
-done
+# Add sawtooth repo
+RUN echo "deb http://repo.sawtooth.me/ubuntu/ci xenial universe" >> /etc/apt/sources.list \
+ && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8AA7AF1F1091A5FD \
+ && apt-get update \
+ && apt-get install -y -q --allow-downgrades \
+    python3 \
+    libprotobuf12 \
+    python3-grpcio \
+    python3-grpcio-tools \
+    python3-pkg-resources \
+    python3-protobuf \
+    python3-six
 
-bandit -ll -r --ignore-nosec $top_dir \
-    --exclude $ignore \
-    -f html \
-    -o /project/sawtooth-supply-chain/build/bandit.html
+CMD [ "/project/sawtooth-supply-chain/bin/protogen" ]

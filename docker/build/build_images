@@ -1,0 +1,36 @@
+#!/bin/bash
+
+main() {
+    # Set project directory relative to this file
+    top_dir=$(cd $(dirname $(dirname $(dirname $0))) && pwd)
+
+    IMAGES='
+        protogen
+        processor
+    '
+
+    for IMAGE in $IMAGES
+    do
+        build_image $IMAGE
+    done
+}
+
+info() {
+    echo -e "\033[0;35m\n[--- $1 ---]\n\033[0m"
+}
+
+build_image() {
+    cd $top_dir/docker/build/$1
+
+    if [ -z $ISOLATION_ID ]; then
+        tag=$1
+    else
+        tag=$1:$ISOLATION_ID
+    fi
+
+    info "building $1 image"
+    docker build -t $tag .
+    cd ..
+}
+
+main

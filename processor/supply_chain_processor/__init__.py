@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 # Copyright 2017 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,23 +13,5 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-top_dir=$(cd $(dirname $(dirname $0)) && pwd)
 
-directories="
-    families/supplychain/python/build
-"
-
-for dir in $directories
-do
-    if [ -z $ignore ]
-    then
-        ignore="$top_dir/$dir"
-    else
-        ignore="$ignore,$top_dir/$dir"
-    fi
-done
-
-bandit -ll -r --ignore-nosec $top_dir \
-    --exclude $ignore \
-    -f html \
-    -o /project/sawtooth-supply-chain/build/bandit.html
+__all__ = []

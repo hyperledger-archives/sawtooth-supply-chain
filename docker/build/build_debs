@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+main() {
+    top_dir=$(cd $(dirname $(dirname $(dirname $0))) && pwd)
+    pkg_dir=$top_dir/build/debs
+    mkdir -p $pkg_dir
+    rm -f $pkg_dir/*.deb
+
+PACKAGES='
+    protogen
+    processor
+'
+    for PACKAGE in $PACKAGES
+    do
+        build_package $PACKAGE
+    done
+}
+
+info() {
+    echo -e "\033[0;35m\n[--- $1 ---]\n\033[0m"
+}
+
+build_package() {
+    tag=$1
+    if [ ! -z $ISOLATION_ID ]
+    then
+        tag=$tag:$ISOLATION_ID
+    fi
+
+    info "running $tag"
+    docker run --rm -v $(pwd):/project/sawtooth-supply-chain $tag
+}
+
+main

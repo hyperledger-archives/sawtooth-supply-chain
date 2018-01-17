@@ -58,7 +58,10 @@ main() {
     # Start in project directory
     cd $top_dir
 
-    docker_build docker/track-and-trade-server docker/ track-and-trade-server
+    docker_build server/Dockerfile . supply-chain-server
+    docker_build docker/supply-chain-dev-python . supply-chain-dev-python
+
+    build_python
 }
 
 docker_run() {
@@ -73,14 +76,14 @@ docker_run() {
     info "Running $image"
     if [ -z $BUILD_TAG ]
     then
-        docker run -t --rm -v $top_dir:/project/sawtooth-core \
+        docker run -t --rm -v $top_dir:/project/sawtooth-supply-chain \
             --env https_proxy=$https_proxy \
             --env http_proxy=$http_proxy \
             --env HTTPS_PROXY=$HTTPS_PROXY \
             --env HTTP_PROXY=$HTTP_PROXY \
             $tag
     else
-        docker run --rm -v $top_dir:/project/sawtooth-core \
+        docker run --rm -v $top_dir:/project/sawtooth-supply-chain \
             --env https_proxy=$https_proxy \
             --env http_proxy=$http_proxy \
             --env HTTPS_PROXY=$HTTPS_PROXY \
@@ -107,6 +110,11 @@ docker_build() {
         --build-arg http_proxy=$http_proxy \
         --build-arg HTTPS_PROXY=$HTTPS_PROXY \
         --build-arg HTTP_PROXY=$HTTP_PROXY
+}
+
+build_python() {
+    ./docker/build/build_images
+    ./docker/build/build_debs
 }
 
 main
