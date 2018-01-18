@@ -83,7 +83,7 @@ protos.compile()
       user.password = agent.hashedPassword
       return request({
         method: 'POST',
-        url: `${SERVER}/api/users`,
+        url: `${SERVER}/users`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
       })

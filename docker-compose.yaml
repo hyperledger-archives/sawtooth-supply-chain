@@ -96,6 +96,32 @@ services:
       - DB_HOST=rethink
     entrypoint: node index.js
 
+  asset-client:
+    image: supply-asset-client
+    container_name: supply-asset-client
+    build: ./asset_client
+    volumes:
+      - ./asset_client/public/:/usr/local/apache2/htdocs/
+    expose:
+      - 80
+    ports:
+      - '8021:80'
+    depends_on:
+      - server
+
+  fish-client:
+    image: supply-fish-client
+    container_name: supply-fish-client
+    build: ./fish_client
+    volumes:
+      - ./fish_client/public/:/usr/local/apache2/htdocs/
+    expose:
+      - 80
+    ports:
+      - '8022:80'
+    depends_on:
+      - server
+
   rethink:
     image: rethinkdb
     container_name: supply-rethink
@@ -103,7 +129,7 @@ services:
       - 8080
       - 28015
     ports:
-      - '8021:8080'
+      - '8023:8080'
       - '28020:28015'
 
   validator:
@@ -141,7 +167,7 @@ services:
     expose:
       - 8008
     ports:
-      - '8022:8008'
+      - '8024:8008'
     depends_on:
       - validator
     entrypoint: |

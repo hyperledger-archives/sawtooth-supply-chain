@@ -127,7 +127,7 @@ const makeUpdateSubmitter = (count = 0) => () => {
   if (count >= LIMIT) return
   console.log(`Starting update set ${count + 1} of ${LIMIT}`)
   // Get current property values
-  return request(`${SERVER}/api/records`)
+  return request(`${SERVER}/records`)
     .then(res => {
       return JSON.parse(res).reduce((oldValues, record) => {
         return _.assign({

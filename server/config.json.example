@@ -9,17 +9,6 @@
 
   "DB_HOST": "localhost",
   "DB_PORT": 28015,
-  "DB_NAME": "supply_chain",
-
-  "clients": [
-    {
-      "url": "/asset",
-      "path": "../asset_client/public"
-    },
-    {
-      "url": "/fish",
-      "path": "../fish_client/public"
-    }
-  ]
+  "DB_NAME": "supply_chain"
 
 }

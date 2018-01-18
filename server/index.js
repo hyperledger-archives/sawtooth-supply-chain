@@ -32,13 +32,7 @@ Promise.all([
 ])
   .then(blockchain.subscribe)
   .then(() => {
-    config.clients.forEach(client => {
-      app.use(client.url, express.static(client.path))
-      console.log(`Added client at url "${client.url}"`)
-    })
-
-    app.use('/api', api)
-
+    app.use('/', api)
     app.listen(PORT, () => {
       console.log(`Supply Chain Server listening on port ${PORT}`)
     })
