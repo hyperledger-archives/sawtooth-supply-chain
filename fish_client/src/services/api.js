@@ -20,6 +20,7 @@ const m = require('mithril')
 const _ = require('lodash')
 const sjcl = require('sjcl')
 
+const API_PATH = 'api/'
 const STORAGE_KEY = 'fish_net.authorization'
 let authToken = null
 
@@ -69,7 +70,7 @@ const baseRequest = opts => {
   const Authorization = getAuth()
   const authHeader = Authorization ? { Authorization } : {}
   opts.headers = _.assign(opts.headers, authHeader)
-  opts.url = `../api/${opts.url}`
+  opts.url = API_PATH + opts.url
   return m.request(opts)
 }
 

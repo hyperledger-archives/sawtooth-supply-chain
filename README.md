@@ -31,8 +31,8 @@ includes a number of elements customizing the blockchain and user interaction
 with it:
 
 - a **transaction processor** which handles Supply Chain transaction logic
-- a **server** which provides an HTTP/JSON API, syncs blockchain state to a
-  local database, and serves example clients
+- a **server** which provides an HTTP/JSON API, and syncs blockchain state to a
+  local database
 - the **AssetTrack** example client for tracking generic assets
 - the **FishNet** example client for tracking fish from catch to table
 - a **shell** container with the dependencies to run any commands and scripts
@@ -42,7 +42,7 @@ with it:
 
 This project utilizes [Docker](https://www.docker.com/what-docker) to simplify
 dependencies and deployment. After cloning this repo, follow the instructions
-specific to your OS to install and run whatever components are required to run
+specific to your OS to install and run whatever components are required to use
 `docker` and `docker-compose` from your command line. This is only dependency
 required to run Supply Chain components.
 
@@ -59,11 +59,11 @@ This will take awhile the first time it runs, but when complete will be running
 all required components in separate containers. Many of the components will be
 available through HTTP endpoints, including:
 
-- The Supply Chain REST API will be at **http://localhost:8020/api**
-- AssetTrack will be at **http://localhost:8020/asset**
-- FishNet will be at **http://localhost:8020/fish**
-- RethinkDB's admin panel will be available at **http://localhost:8021**
-- Sawtooth's blockchain REST API will be available at **http://localhost:8022**
+- The Supply Chain REST API will be at **http://localhost:8020**
+- AssetTrack will be at **http://localhost:8021**
+- FishNet will be at **http://localhost:8022**
+- RethinkDB's admin panel will be available at **http://localhost:8023**
+- Sawtooth's blockchain REST API will be available at **http://localhost:8024**
 
 In bash you can shutdown these components with the key combination: `ctrl-C`.
 You can shutdown _and_ remove the containers (destroying their data), with the
@@ -150,6 +150,8 @@ The available container names include:
 - supply-shell
 - supply-processor
 - supply-server
+- supply-asset-client
+- supply-fish-client
 - supply-rethink
 - supply-validator
 - supply-settings-tp
@@ -175,8 +177,8 @@ protogen
 
 For the example clients, in addition to rebuilding them on Protobuf changes,
 any changes to their source code will require their static files be rebuilt.
-Fortunately the server does _not_ need to be restart in order to reflect
-these changes, just rebuild the static files and refresh your browser (the
+However, their containers do _not_ typically need to be restarted in order to
+reflect changes, just rebuild the static files and refresh your browser (the
 browser cache may have to be emptied):
 
 ```bash

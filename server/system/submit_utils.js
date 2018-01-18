@@ -35,7 +35,7 @@ const SERVER = process.env.SERVER || 'http://localhost:3000'
 const RETRY_WAIT = process.env.RETRY_WAIT || 5000
 
 const awaitServerInfo = () => {
-  return request(`${SERVER}/api/info`)
+  return request(`${SERVER}/info`)
     .catch(() => {
       console.warn(
         `Server unavailable, retrying in ${RETRY_WAIT / 1000} seconds...`)
@@ -82,7 +82,7 @@ const getTxnCreator = (privateKeyHex = null, batcherPublicKeyHex = null) => {
 const submitTxns = transactions => {
   return request({
     method: 'POST',
-    url: `${SERVER}/api/transactions?wait`,
+    url: `${SERVER}/transactions?wait`,
     headers: { 'Content-Type': 'application/octet-stream' },
     encoding: null,
     body: TransactionList.encode({ transactions }).finish()
