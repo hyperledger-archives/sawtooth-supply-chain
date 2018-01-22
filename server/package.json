@@ -20,14 +20,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hyperledger/sawtooth-core.git"
+    "url": "git+https://github.com/hyperledger/sawtooth-supply-chain.git"
   },
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/hyperledger/sawtooth-core/issues"
+    "url": "https://github.com/hyperledger/sawtooth-supply-chain/issues"
   },
-  "homepage": "https://github.com/hyperledger/sawtooth-core#readme",
+  "homepage": "https://github.com/hyperledger/sawtooth-supply-chain#readme",
   "dependencies": {
     "bcrypt": "^1.0.3",
     "body-parser": "^1.17.2",
