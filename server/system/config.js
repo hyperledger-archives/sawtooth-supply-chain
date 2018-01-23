@@ -38,11 +38,11 @@ const initConfigValue = (key, defaultValue = null) => {
 // Setup non-sensitive config variable with sensible defaults,
 // if not set in environment variables or config.json
 initConfigValue('PORT', 3000)
+initConfigValue('RETRY_WAIT', 5000)
 initConfigValue('VALIDATOR_URL', 'tcp://localhost:4004')
 initConfigValue('DB_HOST', 'localhost')
 initConfigValue('DB_PORT', 28015)
 initConfigValue('DB_NAME', 'supply_chain')
-initConfigValue('RETRY_WAIT', 5000)
 initConfigValue('SIGNING_ALGORITHM', 'secp256k1')
 
 // Setup config variables with no defaults
