@@ -31,7 +31,7 @@ const AgentList = {
     vnode.state.currentPage = 0
 
     const refresh = () => {
-      api.get('/agents').then((agents) => {
+      api.get('agents').then((agents) => {
         vnode.state.agents = sortBy(agents, 'name')
         vnode.state.filteredAgents = vnode.state.agents
       })
