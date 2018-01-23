@@ -56,6 +56,22 @@ services:
         VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethink node index.js
       "
 
+  ledger-sync:
+    image: supply-ledger-sync-installed
+    container_name: supply-ledger-sync-installed
+    build:
+      context: .
+      dockerfile: ledger_sync/Dockerfile-installed
+    volumes:
+      - .:/sawtooth-supply-chain/ledger_sync
+      - /sawtooth-supply-chain/ledger_sync/node_modules
+    depends_on:
+      - validator
+      - rethink
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
+
   asset-client:
     image: supply-asset-client-installed
     container_name: supply-asset-client-installed
