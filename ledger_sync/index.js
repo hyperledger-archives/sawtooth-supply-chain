@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Intel Corporation
+ * Copyright 2018 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,13 @@
  */
 'use strict'
 
-const express = require('express')
 const db = require('./db')
-const blockchain = require('./blockchain')
-const protos = require('./blockchain/protos')
-const api = require('./api')
-const config = require('./system/config')
-
-const PORT = config.PORT
-const app = express()
+const subscriber = require('./subscriber')
+const protos = require('./subscriber/protos')
 
 Promise.all([
   db.connect(),
-  protos.compile(),
-  blockchain.connect()
+  protos.compile()
 ])
-  .then(() => {
-    app.use('/', api)
-    app.listen(PORT, () => {
-      console.log(`Supply Chain Server listening on port ${PORT}`)
-    })
-  })
+  .then(subscriber.start)
   .catch(err => console.error(err.message))

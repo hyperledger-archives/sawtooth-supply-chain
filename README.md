@@ -31,8 +31,8 @@ includes a number of elements customizing the blockchain and user interaction
 with it:
 
 - a **transaction processor** which handles Supply Chain transaction logic
-- a **server** which provides an HTTP/JSON API, and syncs blockchain state to a
-  local database
+- a **server** which provides an HTTP/JSON API for Supply Chain actions
+- a **ledger sync** which syncs blockchain data to a local database
 - the **AssetTrack** example client for tracking generic assets
 - the **FishNet** example client for tracking fish from catch to table
 - a **shell** container with the dependencies to run any commands and scripts

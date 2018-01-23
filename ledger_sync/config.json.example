@@ -1,0 +1,9 @@
+{
+
+  "RETRY_WAIT": 5000,
+  "VALIDATOR_URL": "tcp://localhost:4004",
+  "DB_HOST": "localhost",
+  "DB_PORT": 28015,
+  "DB_NAME": "supply_chain"
+
+}

@@ -1,0 +1,36 @@
+{
+  "name": "supply_chain_ledger_sync",
+  "version": "0.0.0",
+  "description": "A simple component to sync blockchain state to a database",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "test": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyperledger/sawtooth-supply-chain.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/hyperledger/sawtooth-supply-chain/issues"
+  },
+  "homepage": "https://github.com/hyperledger/sawtooth-supply-chain#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "js-schema": "^1.0.1",
+    "lodash": "^4.17.4",
+    "protobufjs": "^6.8.0",
+    "rethinkdb": "^2.3.3",
+    "sawtooth-sdk": "^1.0.0-rc"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "standard": "^10.0.3"
+  }
+}

@@ -96,6 +96,22 @@ services:
       - DB_HOST=rethink
     entrypoint: node index.js
 
+  ledger-sync:
+    image: supply-ledger-sync
+    container_name: supply-ledger-sync
+    build:
+      context: .
+      dockerfile: ledger_sync/Dockerfile
+    volumes:
+      - .:/sawtooth-supply-chain
+      - /sawtooth-supply-chain/ledger_sync/node_modules
+    depends_on:
+      - validator
+      - rethink
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
+
   asset-client:
     image: supply-asset-client
     container_name: supply-asset-client
