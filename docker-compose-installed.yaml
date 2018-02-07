@@ -62,9 +62,6 @@ services:
     build:
       context: .
       dockerfile: ledger_sync/Dockerfile-installed
-    volumes:
-      - .:/sawtooth-supply-chain/ledger_sync
-      - /sawtooth-supply-chain/ledger_sync/node_modules
     depends_on:
       - validator
       - rethink
