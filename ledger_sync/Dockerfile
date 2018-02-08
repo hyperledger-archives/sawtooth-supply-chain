@@ -42,4 +42,4 @@ WORKDIR /sawtooth-supply-chain/ledger_sync
 COPY ledger_sync/package.json .
 RUN npm install
 
-CMD ["node", "index.js"]
+CMD ["/usr/bin/node", "index.js"]

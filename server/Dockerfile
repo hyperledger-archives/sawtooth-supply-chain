@@ -44,4 +44,4 @@ RUN npm install
 
 EXPOSE 3000/tcp
 
-CMD ["node" "index.js"]
+CMD ["/usr/bin/node" "index.js"]
