@@ -1,4 +1,5 @@
 # Copyright 2017 Intel Corporation
+# Copyright 2018 Cargill Incorporated
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,17 +42,14 @@ LOGGER.setLevel(logging.DEBUG)
 
 
 class SupplyChainMessageFactory:
-    def __init__(self, private=None, public=None):
+    def __init__(self, signer=None):
         self._factory = MessageFactory(
-            encoding='application/protobuf',
             family_name=addressing.FAMILY_NAME,
             family_version='1.0',
             namespace=addressing.NAMESPACE,
-            private=private,
-            public=public)
+            signer=signer)
 
         self.public_key = self._factory.get_public_key()
-        self.private_key = self._factory.get_private_key()
         self.signer_address = addressing.make_agent_address(self.public_key)
 
     def create_agent(self, name):

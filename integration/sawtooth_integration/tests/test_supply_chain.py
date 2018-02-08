@@ -1,4 +1,5 @@
 # Copyright 2017 Intel Corporation
+# Copyright 2018 Cargill Incorporated
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,13 +21,15 @@ import unittest
 from sawtooth_integration.tests.integration_tools import RestClient
 from sawtooth_integration.tests.integration_tools import wait_for_rest_apis
 
-from sawtooth_tt_test.track_and_trade_message_factory import \
-    TrackAndTradeMessageFactory
+from sawtooth_sc_test.supply_chain_message_factory import \
+    SupplyChainMessageFactory
+from sawtooth_signing import create_context
+from sawtooth_signing import CryptoFactory
 
-import sawtooth_track_and_trade.addressing as addressing
-from sawtooth_track_and_trade.protobuf.property_pb2 import PropertySchema
-from sawtooth_track_and_trade.protobuf.proposal_pb2 import Proposal
-from sawtooth_track_and_trade.protobuf.payload_pb2 import AnswerProposalAction
+import supply_chain_processor.addressing as addressing
+from supply_chain_processor.protobuf.property_pb2 import PropertySchema
+from supply_chain_processor.protobuf.proposal_pb2 import Proposal
+from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
 
 
 LOGGER = logging.getLogger(__name__)
@@ -35,52 +38,54 @@ LOGGER.setLevel(logging.DEBUG)
 NARRATION = False
 
 
-REST_API = 'rest-api:8081'
+REST_API = 'rest-api:8008'
 URL = 'http://' + REST_API
 
-SERVER_URL = 'http://tnt-server:3000'
-API = SERVER_URL + '/api'
+SERVER_URL = 'http://supply-server:3000'
+API = SERVER_URL
 
 
-class TTClient(RestClient):
+class SupplyChainClient(RestClient):
     def __init__(self, url=URL):
-        self.factory = TrackAndTradeMessageFactory()
+        context = create_context('secp256k1')
+        private_key = context.new_random_private_key()
+        signer = CryptoFactory(context).new_signer(private_key)
+        self.factory = SupplyChainMessageFactory(signer=signer)
         self.public_key = self.factory.public_key
-        self.private_key = self.factory.private_key
-
+        self.private_key = "encryptedKey"
         self.auth_token = None
 
         super().__init__(
             url=url,
             namespace=addressing.NAMESPACE)
 
-    def _post_tt_transaction(self, transaction):
+    def _post_sc_transaction(self, transaction):
         return self.send_batches(
             self.factory.create_batch(
                 transaction))
-
+#
     def create_agent(self, name):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.create_agent(
                 name))
 
     def create_record_type(self, name, *properties):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.create_record_type(
                 name, *properties))
 
     def create_record(self, record_id, record_type, properties_dict):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.create_record(
                 record_id, record_type, properties_dict))
 
     def finalize_record(self, record_id):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.finalize_record(
                 record_id))
 
     def update_properties(self, record_id, properties_dict):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.update_properties(
                 record_id, properties_dict))
 
@@ -89,7 +94,7 @@ class TTClient(RestClient):
         if properties is None:
             properties = []
 
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.create_proposal(
                 record_id, receiving_agent, role, properties))
 
@@ -97,7 +102,7 @@ class TTClient(RestClient):
         if receiving_agent is None:
             receiving_agent = self.public_key
 
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.answer_proposal(
                 record_id=record_id,
                 receiving_agent=receiving_agent,
@@ -105,12 +110,12 @@ class TTClient(RestClient):
                 response=response))
 
     def revoke_reporter(self, record_id, reporter_id, properties):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.revoke_reporter(
                 record_id, reporter_id, properties))
 
     def send_empty_payload(self):
-        return self._post_tt_transaction(
+        return self._post_sc_transaction(
             self.factory.make_empty_payload(
                 self.public_key))
 
@@ -159,7 +164,7 @@ class TTClient(RestClient):
 
     def post_user(self, username):
         response = self._submit_request(
-            url=SERVER_URL + '/api/users',
+            url=SERVER_URL + '/users',
             method='POST',
             headers={'Content-Type': 'application/json'},
             data=json.dumps({
@@ -167,7 +172,7 @@ class TTClient(RestClient):
                 'email': '{}@website.com'.format(username),
                 'password': '{}pass'.format(username),
                 'publicKey': self.public_key,
-                'encryptedKey': self.private_key,
+                'encryptedKey': str(self.private_key),
             }),
         )
 
@@ -175,15 +180,15 @@ class TTClient(RestClient):
             self.auth_token = response[1]['authorization']
 
 
-class TestTrackAndTrade(unittest.TestCase):
+class TestSupplyChain(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         wait_for_rest_apis([REST_API])
 
     def assert_valid(self, result):
         try:
-            self.assertEqual(1, len(result))
-            self.assertIn('link', result)
+            self.assertEqual("COMMITTED", result[1]['data'][0]['status'])
+            self.assertIn('link', result[1])
         except AssertionError:
             raise AssertionError(
                 'Transaction is unexpectedly invalid -- {}'.format(
@@ -194,7 +199,7 @@ class TestTrackAndTrade(unittest.TestCase):
         try:
             self.assertEqual(
                 'INVALID',
-                result['data'][0]['status'])
+                result[1]['data'][0]['status'])
         except (KeyError, IndexError):
             raise AssertionError(
                 'Transaction is unexpectedly valid')
@@ -206,7 +211,7 @@ class TestTrackAndTrade(unittest.TestCase):
                     *interpolations))
 
     def test_track_and_trade(self):
-        jin = TTClient()
+        jin = SupplyChainClient()
 
         self.assert_invalid(
             jin.send_empty_payload())
@@ -368,7 +373,7 @@ class TestTrackAndTrade(unittest.TestCase):
             get an autonomous IoT sensor to do it for him.
             ''')
 
-        sensor_stark = TTClient()
+        sensor_stark = SupplyChainClient()
 
         self.assert_invalid(
             sensor_stark.update_properties(
@@ -453,7 +458,7 @@ class TestTrackAndTrade(unittest.TestCase):
             (with payment made off-chain).
             ''')
 
-        sun = TTClient()
+        sun = SupplyChainClient()
 
         self.assert_invalid(
             jin.create_proposal(
@@ -550,7 +555,7 @@ class TestTrackAndTrade(unittest.TestCase):
             sensor and authorize her own sensor.
             ''')
 
-        sensor_dollars = TTClient()
+        sensor_dollars = SupplyChainClient()
 
         self.assert_valid(
             sensor_dollars.create_agent(
@@ -635,7 +640,7 @@ class TestTrackAndTrade(unittest.TestCase):
                 'fish-456',
                 {'temperature': 2}))
 
-        ###
+        ##
 
         agents_endpoint = jin.get_agents()
 

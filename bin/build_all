@@ -60,6 +60,7 @@ main() {
 
     docker_build server/Dockerfile . supply-chain-server
     docker_build docker/supply-chain-dev-python . supply-chain-dev-python
+    docker_build processor/Dockerfile . supply-chain-tp
 
     build_python
 }
