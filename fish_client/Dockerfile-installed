@@ -14,19 +14,22 @@
 # -----------------------------------------------------------------------------
 
 FROM node:8 AS static_builder
-WORKDIR /asset_client
-COPY package.json .
+
+WORKDIR /supply_chain/fish_client
+COPY fish_client/package.json .
 RUN npm install
-COPY . .
+
+COPY protos/ ../protos/
+COPY fish_client/ .
 RUN npm run build
 
 FROM httpd:2.4
-WORKDIR .
-COPY --from=static_builder /asset_client/public/ /usr/local/apache2/htdocs/
+
+COPY --from=static_builder /supply_chain/fish_client/public/ /usr/local/apache2/htdocs/
 
 RUN echo "\
 \n\
-ServerName asset_client\n\
+ServerName fish_client\n\
 AddDefaultCharset utf-8\n\
 LoadModule proxy_module modules/mod_proxy.so\n\
 LoadModule proxy_http_module modules/mod_proxy_http.so\n\
@@ -34,7 +37,5 @@ ProxyPass /api http://server:3000\n\
 ProxyPassReverse /api http://server:3000\n\
 \n\
 " >>/usr/local/apache2/conf/httpd.conf
-
-ENV PATH $PATH:/sawtooth-supply-chain/bin
 
 EXPOSE 80/tcp

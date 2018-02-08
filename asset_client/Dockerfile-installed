@@ -14,15 +14,18 @@
 # -----------------------------------------------------------------------------
 
 FROM node:8 AS static_builder
-WORKDIR /asset_client
-COPY package.json .
+
+WORKDIR /supply_chain/asset_client
+COPY asset_client/package.json .
 RUN npm install
-COPY . .
+
+COPY protos/ ../protos/
+COPY asset_client/ .
 RUN npm run build
 
 FROM httpd:2.4
-WORKDIR .
-COPY --from=static_builder /asset_client/public/ /usr/local/apache2/htdocs/
+
+COPY --from=static_builder /supply_chain/asset_client/public/ /usr/local/apache2/htdocs/
 
 RUN echo "\
 \n\
@@ -34,7 +37,5 @@ ProxyPass /api http://server:3000\n\
 ProxyPassReverse /api http://server:3000\n\
 \n\
 " >>/usr/local/apache2/conf/httpd.conf
-
-ENV PATH $PATH:/sawtooth-supply-chain/bin
 
 EXPOSE 80/tcp

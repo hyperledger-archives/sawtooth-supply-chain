@@ -73,8 +73,8 @@ services:
     image: supply-asset-client-installed
     container_name: supply-asset-client-installed
     build:
-      context: ./asset_client
-      dockerfile: ./Dockerfile-installed
+      context: .
+      dockerfile: asset_client/Dockerfile-installed
     expose:
       - 80
     ports:
@@ -86,8 +86,8 @@ services:
     image: supply-fish-client-installed
     container_name: supply-fish-client-installed
     build:
-      context: ./fish_client
-      dockerfile: ./Dockerfile-installed
+      context: .
+      dockerfile: fish_client/Dockerfile-installed
     expose:
       - 80
     ports:
