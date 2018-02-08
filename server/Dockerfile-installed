@@ -37,17 +37,16 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
  && rm -rf /var/lib/apt/lists/* \
  && npm install -g prebuild-install
 
-WORKDIR /sawtooth-supply-chain
-
-COPY server/package.json server/
-RUN cd server/ && npm install && cd ..
-
-#Copy client sample data for script use
-COPY asset_client/sample_data/ asset_client/sample_data/
-COPY fish_client/sample_data/ fish_client/sample_data/
-
 WORKDIR /sawtooth-supply-chain/server
 
+COPY server/package.json .
+RUN npm install
+
+#Copy client sample data for script use
+COPY asset_client/sample_data/ ../asset_client/sample_data/
+COPY fish_client/sample_data/ ../fish_client/sample_data/
+
+COPY protos/ ../protos/
 COPY server/ .
 
 EXPOSE 3000/tcp

@@ -49,11 +49,14 @@ services:
     depends_on:
       - validator
       - rethink
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
     command: |
       bash -c "
         set -x &&
-        DB_HOST=rethink npm run init &&
-        VALIDATOR_URL=tcp://validator:4004 DB_HOST=rethink node index.js
+        npm run init &&
+        node index.js
       "
 
   ledger-sync:
