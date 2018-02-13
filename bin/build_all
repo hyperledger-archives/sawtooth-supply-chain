@@ -61,7 +61,8 @@ main() {
     docker_build server/Dockerfile . supply-chain-server
     docker_build docker/supply-chain-dev-python . supply-chain-dev-python
     docker_build processor/Dockerfile . supply-chain-tp
-
+    docker_build docker/supply-chain-dev-rust . supply-chain-tp-rust
+    docker_run supply-chain-tp-rust
     build_python
 }
 
