@@ -468,7 +468,7 @@ impl SupplyChainTransactionHandler {
         new_agent.set_name(name.to_string());
         new_agent.set_timestamp(timestamp);
 
-        state.set_agent(name, new_agent)?;
+        state.set_agent(signer, new_agent)?;
         Ok(())
     }
 
@@ -947,20 +947,21 @@ impl SupplyChainTransactionHandler {
                             let temp_prob = prop.clone();
                             let reporters =  temp_prob.get_reporters();
                             for reporter in reporters {
-                                if reporter.get_public_key() == current_proposal.get_issuing_agent()
+                                if reporter.get_public_key() == owner.get_agent_id()
                                 {
                                     let mut new_reporter = reporter.clone();
                                     new_reporter.set_authorized(false);
                                     new_reporters.push(new_reporter);
-                                }
-
-                                if reporter.get_public_key() == receiving_agent {
+                                } else if reporter.get_public_key() == receiving_agent {
                                     let mut new_reporter = reporter.clone();
                                     new_reporter.set_authorized(true);
                                     authorized = true;
                                     new_reporters.push(new_reporter);
+                                } else {
+                                    new_reporters.push(reporter.clone());
                                 }
-                                new_reporters.push(reporter.clone());
+
+
                             }
 
                             if !authorized {
@@ -1024,6 +1025,7 @@ impl SupplyChainTransactionHandler {
                             prop.reporters.push(reporter.clone());
                             state.set_property(record_id, prop_name, prop)?;
                         }
+                        current_proposal.status = proposal::Proposal_Status::ACCEPTED;
                     }
                 }
 
@@ -1088,8 +1090,10 @@ impl SupplyChainTransactionHandler {
                     unauthorized_reporter.set_authorized(false);
                     revoked = true;
                     new_reporters.push(unauthorized_reporter);
+                } else {
+                    new_reporters.push(reporter.clone());
                 }
-                new_reporters.push(reporter.clone());
+
             }
             if !revoked {
                 return Err(ApplyError::InvalidTransaction(
