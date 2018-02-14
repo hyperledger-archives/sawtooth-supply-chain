@@ -28,31 +28,36 @@ pub fn get_supply_chain_prefix() -> String {
     sha.result_str()[..6].to_string()
 }
 
-pub fn hash(to_hash: &str) -> String {
+pub fn hash(to_hash: &str, num: usize) -> String {
     let mut sha = Sha512::new();
     sha.input_str(to_hash);
-    sha.result_str().to_string()
+    let temp = sha.result_str().to_string();
+    let hash = match temp.get(..num){
+        Some(x) => x,
+        None =>  ""
+    };
+    hash.to_string()
 }
 
 pub fn make_agent_address(identifier: &str) -> String {
-    get_supply_chain_prefix() + &AGENT + &hash(identifier)
+    get_supply_chain_prefix() + &AGENT + &hash(identifier, 62)
 }
 
 pub fn make_record_address(record_id: &str) -> String {
-    get_supply_chain_prefix() + &RECORD + &hash(record_id)
+    get_supply_chain_prefix() + &RECORD + &hash(record_id, 62)
 }
 
 pub fn make_record_type_address(type_name: &str) -> String {
-    get_supply_chain_prefix() + &RECORD_TYPE + &hash(type_name)
+    get_supply_chain_prefix() + &RECORD_TYPE + &hash(type_name, 62)
 }
 
 pub fn make_property_address(record_id: &str, property_name: &str, page: u32 ) -> String {
-    make_property_address_range(record_id) + &hash(property_name)[..22] +
+    make_property_address_range(record_id) + &hash(property_name, 22) +
         &num_to_page_number(page)
 }
 
 pub fn make_property_address_range(record_id: &str) -> String {
-    get_supply_chain_prefix() + &PROPERTY + &hash(record_id)[..36]
+    get_supply_chain_prefix() + &PROPERTY + &hash(record_id, 36)
 }
 
 pub fn num_to_page_number(page: u32) -> String{
@@ -60,5 +65,5 @@ pub fn num_to_page_number(page: u32) -> String{
 }
 
 pub fn make_proposal_address(record_id: &str, agent_id: &str) -> String {
-    get_supply_chain_prefix() + PROPOSAL + &hash(record_id)[..36] + &hash(agent_id)[..26]
+    get_supply_chain_prefix() + PROPOSAL + &hash(record_id, 36) + &hash(agent_id, 26)
 }
