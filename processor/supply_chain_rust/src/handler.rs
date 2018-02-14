@@ -581,7 +581,7 @@ impl SupplyChainTransactionHandler {
         let final_record = match state.get_record(record_id) {
             Ok(Some(final_record)) => final_record,
             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                    String::from("Record does not exist"))),
+                    format!("Record does not exist: {}", record_id))),
             Err(err)=> return Err(err)
         };
         let owner = match final_record.owners.last() {
@@ -597,11 +597,11 @@ impl SupplyChainTransactionHandler {
 
         if owner.agent_id != signer || custodian.agent_id != signer {
             return Err(ApplyError::InvalidTransaction(
-                    String::from("Must be owner and custodian to finalize record")))
+                    format!("Must be owner and custodian to finalize record")))
         }
         if final_record.get_field_final() {
             return Err(ApplyError::InvalidTransaction(
-                    String::from("Record is already final")))
+                    format!("Record is already final: {}", record_id)))
         }
 
         let mut record_clone = final_record.clone();
@@ -645,12 +645,12 @@ impl SupplyChainTransactionHandler {
         let update_record = match state.get_record(record_id) {
             Ok(Some(update_record)) => update_record,
             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                  String::from("Record does not exist"))),
+                  format!("Record does not exist: {}", record_id))),
             Err(err)=> return Err(err)
         };
 
         if update_record.get_field_final() {
-            return Err(ApplyError::InvalidTransaction( String::from("Record is final")))
+            return Err(ApplyError::InvalidTransaction(format!("Record is final: {}", record_id)))
         }
 
         let updates = payload.get_properties();
@@ -662,7 +662,7 @@ impl SupplyChainTransactionHandler {
             let mut prop = match state.get_property(record_id, name) {
                 Ok(Some(prop)) => prop,
                 Ok(None) => return Err(ApplyError::InvalidTransaction(
-                      String::from("Record does not have poperty"))),
+                      format!("Record does not have provided poperty: {}", name))),
                 Err(err)=> return Err(err)
             };
 
@@ -677,12 +677,12 @@ impl SupplyChainTransactionHandler {
             }
             if !allowed {
                 return Err(ApplyError::InvalidTransaction(
-                      String::from("Reporter is not authorized")))
+                      format!("Reporter is not authorized: {}", signer)))
             }
 
             if data_type != prop.data_type {
                 return Err(ApplyError::InvalidTransaction(
-                      String::from("Update has wrong type")))
+                     format!("Update has wrong type: {:?} != {:?}", data_type, prop.data_type)))
             }
 
             let page_number = prop.get_current_page();
@@ -739,14 +739,14 @@ impl SupplyChainTransactionHandler {
         match state.get_agent(signer) {
             Ok(Some(agent)) => agent,
             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                  String::from("Agent does not exist"))),
+                  format!("Issuing agent does not exist: {}", signer))),
             Err(err)=> return Err(err)
         };
 
         match state.get_agent(&receiving_agent) {
             Ok(Some(agent)) => agent,
             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                  String::from("Agent does not exist"))),
+                    format!("Receiving agent does not exist: {}", receiving_agent))),
             Err(err)=> return Err(err)
         };
 
@@ -773,12 +773,12 @@ impl SupplyChainTransactionHandler {
         let proposal_record = match state.get_record(&record_id) {
             Ok(Some(record)) => record,
             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                  String::from("Record does not exist"))),
+                  format!("Record does not exist: {}", record_id))),
             Err(err)=> return Err(err)
         };
 
         if proposal_record.get_field_final() {
-            return Err(ApplyError::InvalidTransaction( String::from("Record is final.")))
+            return Err(ApplyError::InvalidTransaction(format!("Record is final: {}", record_id)))
         }
 
         if role == proposal::Proposal_Role::OWNER ||
@@ -790,7 +790,7 @@ impl SupplyChainTransactionHandler {
             };
             if owner.get_agent_id() != signer {
                 return Err(ApplyError::InvalidTransaction(
-                    String::from("Must be owner.")))
+                    String::from("Only the owner can create a proposal to change ownership")))
             }
         }
 
@@ -803,7 +803,7 @@ impl SupplyChainTransactionHandler {
 
             if custodian.get_agent_id() != signer {
                 return Err(ApplyError::InvalidTransaction(
-                    String::from("Must be custodian.")))
+                    String::from("Only the custodian can create a proposal to change custodianship")))
             }
         }
 
@@ -843,7 +843,7 @@ impl SupplyChainTransactionHandler {
         let mut current_proposal = match proposals.clone().entries.last() {
             Some(current_proposal) => current_proposal.clone(),
             None => return Err(ApplyError::InvalidTransaction(
-                String::from("No proposals")))
+                format!("No open proposals found for record {} for {}", record_id, receiving_agent)))
         };
 
         let mut proposal_index = 0;
@@ -864,7 +864,7 @@ impl SupplyChainTransactionHandler {
 
         if !exists {
             return Err(ApplyError::InvalidTransaction(
-                String::from("Proposal does not exist")))
+                format!("No open proposals found for record {} for {}", record_id, receiving_agent)))
         }
 
         match response {
@@ -891,7 +891,7 @@ impl SupplyChainTransactionHandler {
                 let mut proposal_record = match state.get_record(record_id) {
                     Ok(Some(record)) => record,
                     Ok(None) => return Err(ApplyError::InvalidTransaction(
-                          String::from("Record in proposal does not exist"))),
+                          format!("Record in proposal does not exist: {}", record_id))),
                     Err(err)=> return Err(err)
                 };
 
@@ -904,7 +904,7 @@ impl SupplyChainTransactionHandler {
                 let custodian = match proposal_record.clone().custodians.last(){
                     Some(custodian) => custodian.clone(),
                     None => return Err(ApplyError::InvalidTransaction(
-                        String::from("Owner not found")))
+                        String::from("Custodian not found")))
                 };
 
                 match role {
@@ -930,7 +930,7 @@ impl SupplyChainTransactionHandler {
                         let record_type = match state.get_record_type(proposal_record.get_record_type()) {
                             Ok(Some(record_type)) => record_type,
                             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                                  String::from("RecordType does not exist"))),
+                                  format!("RecordType does not exist: {}", proposal_record.get_record_type()))),
                             Err(err)=> return Err(err)
                         };
 
@@ -1051,7 +1051,7 @@ impl SupplyChainTransactionHandler {
         let revoke_record = match state.get_record(record_id) {
             Ok(Some(record)) => record,
             Ok(None) => return Err(ApplyError::InvalidTransaction(
-                format!("Record does not exists"))),
+                format!("Record does not exists: {}", record_id))),
             Err(err) => return Err(err)
         };
 
@@ -1067,7 +1067,7 @@ impl SupplyChainTransactionHandler {
         }
 
         if revoke_record.get_field_final() {
-            return Err(ApplyError::InvalidTransaction(String::from("Record is final.")))
+            return Err(ApplyError::InvalidTransaction(format!("Record is final: {}", record_id)))
         }
 
         for prop_name in properties {
@@ -1097,7 +1097,7 @@ impl SupplyChainTransactionHandler {
             }
             if !revoked {
                 return Err(ApplyError::InvalidTransaction(
-                    format!("Reporter cannot be revoked")))
+                    format!("Reporter cannot be revoked: {}", reporter_id)))
             }
             prop.set_reporters(RepeatedField::from_vec(new_reporters));
 
