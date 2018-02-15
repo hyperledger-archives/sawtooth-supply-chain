@@ -29,7 +29,10 @@ fn main() {
 
     protoc_rust::run(protoc_rust::Args {
         out_dir: "src/messages",
-        input: &proto_src_files.iter().map(|a| a.as_ref()).collect::<Vec<&str>>(),
+        input: &proto_src_files
+            .iter()
+            .map(|a| a.as_ref())
+            .collect::<Vec<&str>>(),
         includes: &["src", "../../protos"],
     }).expect("unable to run protoc");
 }
