@@ -19,6 +19,9 @@
 - name: Benjamin Bollen
   user: benjaminbollen
 
+- name: Benoit Razet
+  user: benoitrazet
+
 - name: Jordan Byrd
   user: jabyrd3
 
@@ -27,6 +30,9 @@
 
 - name: Anne Chenette
   user: chenette
+
+- name: Chris Clauss
+  user: cclauss
 
 - name: Naissa Conde
   user: nconde
@@ -46,6 +52,9 @@
 - name: Richard Gendal Brown
   user: gendal
 
+- name: Pankaj Goyal
+  user: pankajgoyal2
+
 - name: Andrea Gunderson
   user: agunde406
 
@@ -64,14 +73,20 @@
 - name: Ry Jones
   user: ryjones
 
+- name: Andrew Donald Kennedy
+  user: grkvlt
+
 - name: Chris Khan
   user: ckr3
- 
+
 - name: Adam Ludvik
   user: aludvik
 
 - name: Dan Middleton
   user: dcmiddle
+
+- name: Ashish Mishra
+  user: askmish
 
 - name: James Mitchell
   user: jsmitchell
@@ -88,11 +103,14 @@
 - name: Kelly Olson
   user: ineffectualproperty
 
+- name: Adam Parker
+  user: foreverska
+
 - name: Darian Plumb
   user: dplumb94
 
 - name: Craig Rowe
-  user: crow15 
+  user: crow15
 
 - name: Peter Schwarz
   user: peterschwarz
@@ -102,3 +120,6 @@
 
 - name: Mark Wagner
   user: n1zyz
+
+- name: Yevgeniy Y Yarmosh
+  user: eugeneyyy
