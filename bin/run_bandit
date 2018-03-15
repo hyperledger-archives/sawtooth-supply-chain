@@ -18,7 +18,10 @@
 top_dir=$(cd $(dirname $(dirname $0)) && pwd)
 
 directories="
-    families/supplychain/python/build
+    build
+    integration
+    fish_client/node_modules
+    asset_client/node_modules
 "
 
 for dir in $directories
