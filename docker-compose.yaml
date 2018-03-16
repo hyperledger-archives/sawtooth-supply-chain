@@ -23,6 +23,10 @@ services:
     build:
       context: .
       dockerfile: shell/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     volumes:
       - .:/sawtooth-supply-chain
       - /sawtooth-supply-chain/asset_client/node_modules
@@ -103,6 +107,10 @@ services:
     build:
       context: .
       dockerfile: ledger_sync/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
     volumes:
       - .:/sawtooth-supply-chain
       - /sawtooth-supply-chain/ledger_sync/node_modules
