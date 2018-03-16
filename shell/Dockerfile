@@ -58,6 +58,20 @@ COPY asset_client/package.json asset_client/
 COPY fish_client/package.json fish_client/
 COPY server/package.json server/
 
+RUN \
+ if [ ! -z $HTTP_PROXY ] && [ -z $http_proxy ]; then \
+  http_proxy=$HTTP_PROXY; \
+ fi; \
+ if [ ! -z $HTTPS_PROXY ] && [ -z $https_proxy ]; then \
+  https_proxy=$HTTPS_PROXY; \
+ fi; \
+ if [ ! -z $http_proxy ]; then \
+  npm config set proxy $http_proxy; \
+ fi; \
+ if [ ! -z $https_proxy ]; then \
+  npm config set https-proxy $https_proxy; \
+ fi
+
 RUN mkdir /node_deps \
   && bin/splice_json \
     asset_client/package.json \
