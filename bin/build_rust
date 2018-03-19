@@ -1,6 +1,5 @@
 #!/bin/bash
-#
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Cargill Incorporated
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,28 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+
+set -e
 
 top_dir=$(cd $(dirname $(dirname $0)) && pwd)
 
-directories="
-    build
-    integration
-    fish_client/node_modules
-    asset_client/node_modules
-"
+echo -e "\033[0;32m--- Building supply-chain-tp-rust ---\n\033[0m"
 
-for dir in $directories
-do
-    if [ -z $ignore ]
-    then
-        ignore="$top_dir/$dir"
-    else
-        ignore="$ignore,$top_dir/$dir"
-    fi
-done
-
-bandit -ll -r --ignore-nosec $top_dir \
-    --exclude $ignore \
-    -f html \
-    -o /project/sawtooth-supply-chain/build/bandit.html
+rm -rf $top_dir/processor/supply_chain_rust/bin/
+mkdir -p $top_dir/processor/supply_chain_rust/bin/
+cd $top_dir/processor/supply_chain_rust/
+cargo build && cp ./target/debug/supply_chain_rust $top_dir/processor/supply_chain_rust/bin/supply_chain_rust
