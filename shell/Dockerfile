@@ -13,7 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-FROM hyperledger/sawtooth-shell:1.0
+FROM ubuntu:xenial
 
 # Install Python, Node.js, and Ubuntu dependencies
 RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
@@ -40,6 +40,11 @@ RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc
     python3-sawtooth-signing \
     python3-setuptools-scm=1.15.0-1 \
     python3-yaml \
+    python3-sawtooth-cli \
+    python3-sawtooth-intkey \
+    python3-sawtooth-poet-cli \
+    python3-sawtooth-settings \
+    python3-sawtooth-xo \    
     software-properties-common \
   && curl -s -S -o /tmp/setup-node.sh https://deb.nodesource.com/setup_8.x \
   && chmod 755 /tmp/setup-node.sh \
@@ -70,5 +75,8 @@ RUN mkdir /node_deps \
   && ln -s /node_deps/node_modules server/
 
 ENV PATH $PATH:/sawtooth-supply-chain/bin
+
+EXPOSE 4004/tcp
+EXPOSE 8008
 
 CMD ["tail", "-f", "/dev/null"]
