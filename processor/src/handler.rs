@@ -1459,17 +1459,20 @@ impl SupplyChainTransactionHandler {
             property::PropertySchema_DataType::BYTES => {
                 reported_value.set_bytes_value(prop.get_bytes_value().to_vec())
             }
-            property::PropertySchema_DataType::STRING => {
-                reported_value.set_string_value(prop.get_string_value().to_string())
+            property::PropertySchema_DataType::BOOLEAN => {
+                reported_value.set_boolean_value(prop.get_boolean_value())
             }
             property::PropertySchema_DataType::INT => {
                 reported_value.set_int_value(prop.get_int_value())
             }
-            property::PropertySchema_DataType::FLOAT => {
-                reported_value.set_float_value(prop.get_float_value())
+            property::PropertySchema_DataType::STRING => {
+                reported_value.set_string_value(prop.get_string_value().to_string())
             }
             property::PropertySchema_DataType::LOCATION => {
                 reported_value.set_location_value(prop.get_location_value().clone())
+            }
+            property::PropertySchema_DataType::FLOAT => {
+                reported_value.set_float_value(prop.get_float_value())
             }
         };
         Ok(reported_value)

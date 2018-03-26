@@ -67,6 +67,7 @@ message PropertySchema {
   enum DataType {
     TYPE_UNSET = 0;
     BYTES = 1;
+    BOOLEAN = 2;
     INT = 3;
     STRING = 4;
     LOCATION = 7;
@@ -96,6 +97,7 @@ message PropertyValue {
   // one of these fields should be used, and it should match the type
   // specified for this Property in the RecordType.
   bytes bytes_value = 11;
+  bool boolean_value = 12;
   sint64 int_value = 13;
   string string_value = 14;
   Location location_value = 17;
@@ -115,6 +117,7 @@ message PropertyPage {
     // fields should be used, and it should match the type
     // specified for this Property in the RecordType.
     bytes bytes_value = 11;
+    bool boolean_value = 12;
     sint64 int_value = 13;
     string string_value = 14;
     Location location_value = 17;
