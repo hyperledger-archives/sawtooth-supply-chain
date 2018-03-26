@@ -5,7 +5,7 @@
     "updates": [
       {
         "name": "temperature",
-        "dataType": 2,
+        "dataType": 3,
         "value": 500000,
         "isRelative": true,
         "startValue": -2000000
@@ -13,7 +13,7 @@
 
       {
         "name": "location",
-        "dataType": 4,
+        "dataType": 7,
         "value": {
           "latitude": -56740,
           "longitude": -99300
@@ -24,7 +24,7 @@
 
       {
         "name": "tilt",
-        "dataType": 1,
+        "dataType": 4,
         "value": {
           "x": 5000000,
           "y": 5000000
@@ -34,7 +34,7 @@
 
       {
         "name": "shock",
-        "dataType": 1,
+        "dataType": 4,
         "value": {
           "accel": 10000000,
           "duration": 500000
@@ -51,7 +51,7 @@
     "updates": [
       {
         "name": "temperature",
-        "dataType": 2,
+        "dataType": 3,
         "value": 1000000,
         "isRelative": true,
         "startValue": 4000000
@@ -59,7 +59,7 @@
 
       {
         "name": "location",
-        "dataType": 4,
+        "dataType": 7,
         "value": {
           "latitude": -90360,
           "longitude": -61290
@@ -70,7 +70,7 @@
 
       {
         "name": "tilt",
-        "dataType": 1,
+        "dataType": 4,
         "value": {
           "x": 2500000,
           "y": 2500000
@@ -80,7 +80,7 @@
 
       {
         "name": "shock",
-        "dataType": 1,
+        "dataType": 4,
         "value": {
           "accel": 5000000,
           "duration": 500000
@@ -97,7 +97,7 @@
     "updates": [
       {
         "name": "temperature",
-        "dataType": 2,
+        "dataType": 3,
         "value": 3000000,
         "isRelative": true,
         "startValue": 35000000
@@ -105,7 +105,7 @@
 
       {
         "name": "location",
-        "dataType": 4,
+        "dataType": 7,
         "value": {
           "latitude": -215515,
           "longitude": -1073695
@@ -116,7 +116,7 @@
 
       {
         "name": "tilt",
-        "dataType": 1,
+        "dataType": 4,
         "value": {
           "x": 10000000,
           "y": 10000000
@@ -126,7 +126,7 @@
 
       {
         "name": "shock",
-        "dataType": 1,
+        "dataType": 4,
         "value": {
           "accel": 20000000,
           "duration": 500000

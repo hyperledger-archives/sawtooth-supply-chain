@@ -6,22 +6,22 @@
       "properties": [
           {
             "name": "type",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "Lightbulb"
           },
           {
             "name": "subtype",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "LED"
           },
           {
             "name": "weight",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 134089
           },
           {
             "name": "location",
-            "dataType": 4,
+            "dataType": 7,
             "locationValue": {
               "latitude": 33928564,
               "longitude": 134615935
@@ -29,7 +29,7 @@
           },
           {
             "name": "temperature",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 44857012
           }
       ],
@@ -45,22 +45,22 @@
       "properties": [
           {
             "name": "type",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "Airliner"
           },
           {
             "name": "subtype",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "Boeing 747"
           },
           {
             "name": "weight",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 174540000000
           },
           {
             "name": "location",
-            "dataType": 4,
+            "dataType": 7,
             "locationValue": {
               "latitude": 47499875,
               "longitude": -122208106
@@ -68,7 +68,7 @@
           },
           {
             "name": "temperature",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": -35014970
           }
       ],
@@ -81,22 +81,22 @@
       "properties": [
           {
             "name": "type",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "Coffee"
           },
           {
             "name": "subtype",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "Kona"
           },
           {
             "name": "weight",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 10000000
           },
           {
             "name": "location",
-            "dataType": 4,
+            "dataType": 7,
             "locationValue": {
               "latitude": 19703448,
               "longitude": -155944975
@@ -104,7 +104,7 @@
           },
           {
             "name": "temperature",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 21829043
           }
       ],
