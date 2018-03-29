@@ -18,7 +18,9 @@
 
 const _ = require('lodash')
 const protobuf = require('protobufjs')
-const protoJson = require('../protos.json')
+
+// Use the generated JSON to reference the .proto files in protos/
+const protoJson = require('../generated_protos.json')
 
 // Keys for payload actions
 const ACTIONS = [

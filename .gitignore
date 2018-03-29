@@ -14,9 +14,7 @@
 /processor/supply_chain_processor/protobuf
 
 /server/config.json
-
-/asset_client/src/protos.json
-/fish_client/src/protos.json
+**/generated_protos.json
 
 /docs/build/
 /docs/source/_autogen/
