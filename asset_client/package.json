@@ -4,9 +4,9 @@
   "description": "A Sawtooth Supply Chain client web app for tracking assets",
   "main": "",
   "scripts": {
-    "compile_protos": "node scripts/compile_protos.js > src/protos.json",
-    "watch": "npm run compile_protos && webpack-dev-server --env development --hot",
-    "build": "npm run compile_protos && webpack --env production",
+    "generate-proto-files": "node scripts/generate_proto_json.js > src/generated_protos.json",
+    "watch": "npm run generate-proto-files && webpack-dev-server --env development --hot",
+    "build": "npm run generate-proto-files && webpack --env production",
     "test": "standard src/**/*.js"
   },
   "repository": {
