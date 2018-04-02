@@ -2,6 +2,11 @@
 /.idea/
 *.sublime*
 
+# Rust
+processor/supply_chain_rust/bin/
+processor/supply_chain_rust/target/
+processor/supply_chain_rust/src/messages/
+
 # Node
 **/node_modules
 **/package-lock.json
