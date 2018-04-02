@@ -47,16 +47,22 @@ services:
       "
 
   supply-chain-tp:
-    image: supply-chain-tp:$ISOLATION_ID
+    image: supply-tp:$ISOLATION_ID
     volumes:
-      - ../../../:/sawtooth-supply-chain
+      - ../../../:/sawtooth-supply-chain/
+      - /sawtooth-supply-chain/processor/supply_chain_rust/target
+      - /sawtooth-supply-chain/processor/supply_chain_rust/src/messages
     expose:
       - 4004
-    command: /sawtooth-supply-chain/bin/supply-chain-tp-rust -vv -C tcp://validator:4004
     build:
       context: ../../../processor/
     stop_signal: SIGKILL
-  #
+    entrypoint: |
+      bash -c "
+        cargo build &&
+        supply_chain_rust -v -C tcp://validator:4004
+      "
+
   rethink:
     image: rethinkdb
     expose:
@@ -156,7 +162,7 @@ services:
     depends_on:
       - supply-server
     command: "bash -c \" \
-        sleep 10 && \
+        sleep 60 && \
         nose2-3
         -c /sawtooth-supply-chain/nose2.cfg
         -vvv

@@ -1,4 +1,4 @@
-# Copyright 2017 Intel Corporation
+# Copyright 2018 Cargill Incorporated
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,56 +11,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
 
-FROM ubuntu:xenial
+FROM rust:1.22.1
 
-RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
- && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
- && apt-get update \
- && apt-get install -y -q \
-    apt-transport-https \
-    build-essential \
-    ca-certificates \
-    curl \
-    python3 \
-    python3-dev \
-    python3-aiodns=1.1.1-1 \
-    python3-aiohttp=1.3.5-1 \
-    python3-aiopg \
-    python3-async-timeout=1.2.0-1 \
-    python3-bitcoin=1.1.42-1 \
-    python3-cbor \
-    python3-cchardet=2.0a3-1 \
-    python3-chardet=2.3.0-1 \
-    python3-colorlog \
-    python3-cov-core \
-    python3-cryptography-vectors=1.7.2-1 \
-    python3-cryptography=1.7.2-1 \
-    python3-dev \
-    python3-grpcio-tools=1.1.3-1 \
-    python3-grpcio=1.1.3-1 \
-    python3-lmdb=0.92-1 \
-    python3-multidict=2.1.4-1 \
-    python3-netifaces=0.10.4-0.1build2 \
-    python3-nose2 \
-    python3-pip \
-    python3-protobuf \
-    python3-psycopg2 \
-    python3-pycares=2.1.1-1 \
-    python3-pyformance \
-    python3-pytest-runner=2.6.2-1 \
-    python3-pytest=2.9.0-1 \
-    python3-pytz=2016.10-1 \
-    python3-requests \
-    python3-secp256k1=0.13.2-1 \
-    python3-setuptools-scm=1.15.0-1 \
-    python3-six=1.10.0-1 \
-    python3-toml \
-    python3-yaml \
-    python3-yarl=0.10.0-1 \
-    python3-zmq \
-    software-properties-common \
-    python3-sawtooth-sdk \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y unzip libzmq3-dev
+
+# For Building Protobufs
+RUN curl -OLsS https://github.com/google/protobuf/releases/download/v3.5.1/protoc-3.5.1-linux-x86_64.zip \
+ && unzip protoc-3.5.1-linux-x86_64.zip -d protoc3 \
+ && rm protoc-3.5.1-linux-x86_64.zip
+RUN apt-get update && apt-get install -y protobuf-compiler
+
+# Build TP with dummy source in order to cache dependencies in Docker image.
+# Make sure not to use the `volumes` command to overwrite:
+#   - /sawtooth-supply-chain/processor/supply_chain_rust/target/
+#   - /sawtooth-supply-chain/processor/supply_chain_rust/src/messages/
+WORKDIR /sawtooth-supply-chain/processor
+RUN cargo new --bin supply_chain_rust
+
+WORKDIR /sawtooth-supply-chain/processor/supply_chain_rust
+COPY Cargo.toml .
+COPY Cargo.lock .
+RUN cargo build
+
+ENV PATH=$PATH:/sawtooth-supply-chain/processor/supply_chain_rust/target/debug/
+
+ENTRYPOINT ["/sawtooth-supply-chain/processor/supply_chain_rust/target/debug/supply_chain_rust"]
