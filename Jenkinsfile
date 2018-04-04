@@ -66,15 +66,6 @@ node ('master') {
             sh './bin/build_all installed'
         }
 
-        stage("Run Lint") {
-            sh 'docker run --rm -v $(pwd):/project/sawtooth-supply-chain supply-chain-dev-python:$ISOLATION_ID run_lint'
-        }
-
-        stage("Run Bandit") {
-            sh 'docker run --rm -v $(pwd):/project/sawtooth-supply-chain supply-chain-dev-python:$ISOLATION_ID run_bandit'
-        }
-
-
         stage("Create git archive") {
             sh '''
                 REPO=$(git remote show -n origin | grep Fetch | awk -F'[/.]' '{print $6}')
@@ -92,7 +83,6 @@ node ('master') {
         stage("Archive Build artifacts") {
             archiveArtifacts artifacts: '*.tgz, *.zip'
             archiveArtifacts artifacts: 'build/debs/*.deb'
-            archiveArtifacts artifacts: 'build/bandit.html'
             archiveArtifacts artifacts: 'docs/build/html/**, docs/build/latex/*.pdf'
         }
     }

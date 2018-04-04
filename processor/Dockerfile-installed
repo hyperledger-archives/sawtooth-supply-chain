@@ -25,13 +25,13 @@ RUN apt-get update && apt-get install -y protobuf-compiler
 # Copy protos directory
 COPY protos/ /sawtooth-supply-chain/protos/
 
-WORKDIR /sawtooth-supply-chain/processor/supply_chain_rust
+WORKDIR /sawtooth-supply-chain/processor
 
 # Copy everything except the target directory from the TP source
-COPY processor/supply_chain_rust/Cargo.toml processor/supply_chain_rust/build.rs ./
-COPY processor/supply_chain_rust/src/ src/
+COPY processor/Cargo.toml processor/build.rs ./
+COPY processor/src/ src/
 RUN cargo build
 
-ENV PATH=$PATH:/sawtooth-supply-chain/processor/supply_chain_rust/target/debug/
+ENV PATH=$PATH:/sawtooth-supply-chain/processor/target/debug/
 
-ENTRYPOINT ["/sawtooth-supply-chain/processor/supply_chain_rust/target/debug/supply_chain_rust"]
+ENTRYPOINT ["/sawtooth-supply-chain/processor/target/debug/supply_chain_tp"]

@@ -63,7 +63,6 @@ main() {
     docker_build processor/Dockerfile processor/ supply-tp
     docker_build docker/supply-chain-dev-rust . supply-chain-dev-rust
     docker_run supply-chain-dev-rust
-    build_python
 }
 
 docker_run() {
@@ -112,11 +111,6 @@ docker_build() {
         --build-arg http_proxy=$http_proxy \
         --build-arg HTTPS_PROXY=$HTTPS_PROXY \
         --build-arg HTTP_PROXY=$HTTP_PROXY
-}
-
-build_python() {
-    ./docker/build/build_images
-    ./docker/build/build_debs
 }
 
 main

@@ -24,16 +24,16 @@ RUN apt-get update && apt-get install -y protobuf-compiler
 
 # Build TP with dummy source in order to cache dependencies in Docker image.
 # Make sure not to use the `volumes` command to overwrite:
-#   - /sawtooth-supply-chain/processor/supply_chain_rust/target/
-#   - /sawtooth-supply-chain/processor/supply_chain_rust/src/messages/
-WORKDIR /sawtooth-supply-chain/processor
-RUN cargo new --bin supply_chain_rust
+#   - /sawtooth-supply-chain/processor/target/
+#   - /sawtooth-supply-chain/processor/src/messages/
+WORKDIR /sawtooth-supply-chain
+RUN USER=root cargo new --bin processor
 
-WORKDIR /sawtooth-supply-chain/processor/supply_chain_rust
+WORKDIR /sawtooth-supply-chain/processor
 COPY Cargo.toml .
 COPY Cargo.lock .
 RUN cargo build
 
-ENV PATH=$PATH:/sawtooth-supply-chain/processor/supply_chain_rust/target/debug/
+ENV PATH=$PATH:/sawtooth-supply-chain/processor/target/debug/
 
-ENTRYPOINT ["/sawtooth-supply-chain/processor/supply_chain_rust/target/debug/supply_chain_rust"]
+ENTRYPOINT ["/sawtooth-supply-chain/processor/target/debug/supply_chain_tp"]

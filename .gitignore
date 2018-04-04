@@ -3,9 +3,9 @@
 *.sublime*
 
 # Rust
-processor/supply_chain_rust/bin/
-processor/supply_chain_rust/target/
-processor/supply_chain_rust/src/messages/
+processor/bin/
+processor/target/
+processor/src/messages/
 
 # Node
 **/node_modules
@@ -15,8 +15,6 @@ processor/supply_chain_rust/src/messages/
 # Webpack
 **/dist
 
-/processor/**/__pycache__/
-/processor/supply_chain_processor/protobuf
 tests/sawtooth_sc_test/protobuf/
 
 /server/config.json

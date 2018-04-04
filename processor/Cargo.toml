@@ -13,7 +13,7 @@
 # limitations under the License.
 
 [package]
-name = "supply_chain_rust"
+name = "supply_chain_tp"
 version = "0.8.0"
 authors = ["Cargill Incorporated"]
 

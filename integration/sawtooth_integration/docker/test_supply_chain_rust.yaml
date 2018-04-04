@@ -50,8 +50,8 @@ services:
     image: supply-tp:$ISOLATION_ID
     volumes:
       - ../../../:/sawtooth-supply-chain/
-      - /sawtooth-supply-chain/processor/supply_chain_rust/target
-      - /sawtooth-supply-chain/processor/supply_chain_rust/src/messages
+      - /sawtooth-supply-chain/processor/target
+      - /sawtooth-supply-chain/processor/src/messages
     expose:
       - 4004
     build:
@@ -60,7 +60,7 @@ services:
     entrypoint: |
       bash -c "
         cargo build &&
-        supply_chain_rust -v -C tcp://validator:4004
+        supply_chain_tp -v -C tcp://validator:4004
       "
 
   rethink:

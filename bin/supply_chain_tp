@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-#
-# Copyright 2017 Intel Corporation
+#!/bin/bash
+# Copyright 2018 Cargill Incorporated
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,21 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
 
-import os
-import sys
-import sysconfig
+top_dir=$(cd $(dirname $(dirname $0)) && pwd)
+bin=$top_dir/processor/bin/supply_chain_tp
 
-build_str = "lib.{}-{}.{}".format(
-    sysconfig.get_platform(),
-    sys.version_info.major, sys.version_info.minor)
-
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-    'processor'))
-
-from supply_chain_processor.main import main
-
-if __name__ == '__main__':
-    main()
+if [ -e $bin ]
+then
+    $bin $*
+else
+    echo "Please build supply_chain_tp first with 'build_all' or 'build_rust'"
+fi
