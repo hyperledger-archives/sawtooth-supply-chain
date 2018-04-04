@@ -44,6 +44,12 @@ def main(args=None):
         "processor",
         "supply_chain_processor/protobuf")
 
+    # Generate protobuf classes for Python integration tests
+    protoc(
+        JOIN(TOP_DIR, "protos"),
+        "tests",
+        "sawtooth_sc_test/protobuf")
+
 
 def protoc(src_dir, base_dir, pkg, language="python"):
     if language == "python":

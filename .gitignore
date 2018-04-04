@@ -17,6 +17,7 @@ processor/supply_chain_rust/src/messages/
 
 /processor/**/__pycache__/
 /processor/supply_chain_processor/protobuf
+tests/sawtooth_sc_test/protobuf/
 
 /server/config.json
 **/generated_protos.json

@@ -19,22 +19,22 @@ import time
 
 from sawtooth_processor_test.message_factory import MessageFactory
 
-from supply_chain_processor.protobuf.payload_pb2 import SCPayload
-from supply_chain_processor.protobuf.payload_pb2 import CreateAgentAction
-from supply_chain_processor.protobuf.payload_pb2 import CreateProposalAction
-from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
-from supply_chain_processor.protobuf.payload_pb2 import CreateRecordAction
-from supply_chain_processor.protobuf.payload_pb2 import \
+from sawtooth_sc_test.protobuf.payload_pb2 import SCPayload
+from sawtooth_sc_test.protobuf.payload_pb2 import CreateAgentAction
+from sawtooth_sc_test.protobuf.payload_pb2 import CreateProposalAction
+from sawtooth_sc_test.protobuf.payload_pb2 import AnswerProposalAction
+from sawtooth_sc_test.protobuf.payload_pb2 import CreateRecordAction
+from sawtooth_sc_test.protobuf.payload_pb2 import \
     CreateRecordTypeAction
-from supply_chain_processor.protobuf.payload_pb2 import FinalizeRecordAction
-from supply_chain_processor.protobuf.payload_pb2 import \
+from sawtooth_sc_test.protobuf.payload_pb2 import FinalizeRecordAction
+from sawtooth_sc_test.protobuf.payload_pb2 import \
     UpdatePropertiesAction
-from supply_chain_processor.protobuf.payload_pb2 import RevokeReporterAction
+from sawtooth_sc_test.protobuf.payload_pb2 import RevokeReporterAction
 
-from supply_chain_processor.protobuf.property_pb2 import PropertySchema
-from supply_chain_processor.protobuf.property_pb2 import PropertyValue
+from sawtooth_sc_test.protobuf.property_pb2 import PropertySchema
+from sawtooth_sc_test.protobuf.property_pb2 import PropertyValue
 
-import supply_chain_processor.addressing as addressing
+import sawtooth_sc_test.addressing as addressing
 
 
 LOGGER = logging.getLogger(__name__)

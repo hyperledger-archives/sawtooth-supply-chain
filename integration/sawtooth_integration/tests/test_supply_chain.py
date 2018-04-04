@@ -26,10 +26,10 @@ from sawtooth_sc_test.supply_chain_message_factory import \
 from sawtooth_signing import create_context
 from sawtooth_signing import CryptoFactory
 
-import supply_chain_processor.addressing as addressing
-from supply_chain_processor.protobuf.property_pb2 import PropertySchema
-from supply_chain_processor.protobuf.proposal_pb2 import Proposal
-from supply_chain_processor.protobuf.payload_pb2 import AnswerProposalAction
+import sawtooth_sc_test.addressing as addressing
+from sawtooth_sc_test.protobuf.property_pb2 import PropertySchema
+from sawtooth_sc_test.protobuf.proposal_pb2 import Proposal
+from sawtooth_sc_test.protobuf.payload_pb2 import AnswerProposalAction
 
 
 LOGGER = logging.getLogger(__name__)
