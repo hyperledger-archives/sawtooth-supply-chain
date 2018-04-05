@@ -22,7 +22,7 @@ services:
     image: supply-shell
     container_name: supply-shell
     build:
-      context: .
+      context: ../../../
       dockerfile: shell/Dockerfile
     volumes:
       - ../../../:/sawtooth-supply-chain
@@ -110,7 +110,7 @@ services:
     image: supply-server
     container_name: supply-server
     build:
-      context: .
+      context: ../../../
       dockerfile: server/Dockerfile
       args:
         - http_proxy
@@ -134,7 +134,7 @@ services:
     image: supply-ledger-sync
     container_name: supply-ledger-sync
     build:
-      context: .
+      context: ../../../
       dockerfile: ledger_sync/Dockerfile
     volumes:
       - ../../../:/sawtooth-supply-chain
