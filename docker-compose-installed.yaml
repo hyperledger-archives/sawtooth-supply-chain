@@ -29,7 +29,7 @@ services:
         - no_proxy
     depends_on:
       - validator
-    entrypoint: supply_chain_tp -C tcp://validator:4004
+    entrypoint: supply-chain-tp -C tcp://validator:4004
 
   server:
     image: supply-server-installed

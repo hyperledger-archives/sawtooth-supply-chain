@@ -36,4 +36,4 @@ RUN cargo build
 
 ENV PATH=$PATH:/sawtooth-supply-chain/processor/target/debug/
 
-ENTRYPOINT ["/sawtooth-supply-chain/processor/target/debug/supply_chain_tp"]
+ENTRYPOINT ["/sawtooth-supply-chain/processor/target/debug/supply-chain-tp"]

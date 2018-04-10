@@ -17,9 +17,9 @@ set -e
 
 top_dir=$(cd $(dirname $(dirname $0)) && pwd)
 
-echo -e "\033[0;32m--- Building supply_chain_tp ---\n\033[0m"
+echo -e "\033[0;32m--- Building supply-chain-tp ---\n\033[0m"
 
 rm -rf $top_dir/processor/bin/
 mkdir -p $top_dir/processor/bin/
 cd $top_dir/processor/
-cargo build && cp ./target/debug/supply_chain_tp $top_dir/processor/bin/supply_chain_tp
+cargo build && cp ./target/debug/supply-chain-tp $top_dir/processor/bin/supply-chain-tp

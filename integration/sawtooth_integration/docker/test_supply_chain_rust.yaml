@@ -60,7 +60,7 @@ services:
     entrypoint: |
       bash -c "
         cargo build &&
-        supply_chain_tp -v -C tcp://validator:4004
+        supply-chain-tp -v -C tcp://validator:4004
       "
 
   rethink:

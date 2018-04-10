@@ -14,11 +14,11 @@
 # limitations under the License.
 
 top_dir=$(cd $(dirname $(dirname $0)) && pwd)
-bin=$top_dir/processor/bin/supply_chain_tp
+bin=$top_dir/processor/bin/supply-chain-tp
 
 if [ -e $bin ]
 then
     $bin $*
 else
-    echo "Please build supply_chain_tp first with 'build_all' or 'build_rust'"
+    echo "Please build supply-chain-tp first with 'build_all' or 'build_rust'"
 fi
