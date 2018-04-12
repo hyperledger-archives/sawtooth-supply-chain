@@ -38,6 +38,7 @@ const awaitDatabase = () => {
       if (!tableNames.includes(AWAIT_TABLE)) {
         throw new Error()
       }
+      console.log('Successfully connected to database:', NAME)
     })
     .catch(() => {
       console.warn('Database not initialized:', NAME)
