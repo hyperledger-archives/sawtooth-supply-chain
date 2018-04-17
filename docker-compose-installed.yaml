@@ -18,7 +18,7 @@ version: '2.1'
 services:
 
   processor:
-    image: supply-tp-installed
+    image: supply-tp-installed:${ISOLATION_ID}
     container_name: supply-tp-installed
     build:
       context: .
@@ -32,7 +32,7 @@ services:
     entrypoint: supply-chain-tp -C tcp://validator:4004
 
   server:
-    image: supply-server-installed
+    image: supply-server-installed:${ISOLATION_ID}
     container_name: supply-server-installed
     build:
       context: .
@@ -59,7 +59,7 @@ services:
       "
 
   ledger-sync:
-    image: supply-ledger-sync-installed
+    image: supply-ledger-sync-installed:${ISOLATION_ID}
     container_name: supply-ledger-sync-installed
     build:
       context: .
@@ -72,7 +72,7 @@ services:
       - DB_HOST=rethink
 
   asset-client:
-    image: supply-asset-client-installed
+    image: supply-asset-client-installed:${ISOLATION_ID}
     container_name: supply-asset-client-installed
     build:
       context: .
@@ -85,7 +85,7 @@ services:
       - server
 
   fish-client:
-    image: supply-fish-client-installed
+    image: supply-fish-client-installed:${ISOLATION_ID}
     container_name: supply-fish-client-installed
     build:
       context: .
