@@ -160,15 +160,15 @@ services:
       - 8081
     depends_on:
       - supply-server
-    command: "bash -c \" \
-        sleep 60 && \
-        nose2-3
-        -c /sawtooth-supply-chain/nose2.cfg
-        -vvv
-        -s /sawtooth-supply-chain/integration/sawtooth_integration/tests
-        test_supply_chain.TestSupplyChain --log-capture
-
-    \""
+    command: |
+      bash -c "
+        echo 'Waiting 60s to being testing . . .' &&
+        sleep 60 &&
+        nose2-3 -vvv \
+          -c /sawtooth-supply-chain/nose2.cfg \
+          -s /sawtooth-supply-chain/integration/sawtooth_integration/tests \
+          test_supply_chain.TestSupplyChain --log-capture
+      "
     stop_signal: SIGKILL
     environment:
       PYTHONPATH:
