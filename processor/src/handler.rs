@@ -715,8 +715,9 @@ impl SupplyChainTransactionHandler {
             new_property.reporters.push(reporter.clone());
             new_property.set_current_page(1);
             new_property.set_wrapped(false);
+            new_property.set_enum_options(property.enum_options);
 
-            state.set_property(record_id, property_name, new_property)?;
+            state.set_property(record_id, property_name, new_property.clone())?;
 
             let mut new_property_page = property::PropertyPage::new();
             new_property_page.set_name(property_name.to_string());
@@ -724,7 +725,12 @@ impl SupplyChainTransactionHandler {
 
             if provided_properties.contains_key(property_name) {
                 let provided_property = &provided_properties[property_name];
-                let reported_value = match self._make_new_reported_value(0, timestamp, provided_property) {
+                let reported_value = match self._make_new_reported_value(
+                    0,
+                    timestamp,
+                    provided_property,
+                    &new_property,
+                ) {
                     Ok(reported_value) => reported_value,
                     Err(err) => return Err(err),
                 };
@@ -907,7 +913,12 @@ impl SupplyChainTransactionHandler {
                 Err(err) => return Err(err),
             };
 
-            let reported_value = match self._make_new_reported_value(reporter_index, timestamp, update) {
+            let reported_value = match self._make_new_reported_value(
+                reporter_index,
+                timestamp,
+                update,
+                &prop,
+            ) {
                 Ok(reported_value) => reported_value,
                 Err(err) => return Err(err),
             };
@@ -1444,35 +1455,50 @@ impl SupplyChainTransactionHandler {
         &self,
         reporter_index: u32,
         timestamp: u64,
-        prop: &property::PropertyValue,
+        value: &property::PropertyValue,
+        property: &property::Property,
     ) -> Result<property::PropertyPage_ReportedValue, ApplyError> {
         let mut reported_value = property::PropertyPage_ReportedValue::new();
         reported_value.set_reporter_index(reporter_index);
         reported_value.set_timestamp(timestamp);
 
-        match prop.get_data_type() {
+        match value.get_data_type() {
             property::PropertySchema_DataType::TYPE_UNSET => {
                 return Err(ApplyError::InvalidTransaction(String::from(
                     "DataType is not set",
                 )))
             }
             property::PropertySchema_DataType::BYTES => {
-                reported_value.set_bytes_value(prop.get_bytes_value().to_vec())
+                reported_value.set_bytes_value(value.get_bytes_value().to_vec())
             }
             property::PropertySchema_DataType::BOOLEAN => {
-                reported_value.set_boolean_value(prop.get_boolean_value())
+                reported_value.set_boolean_value(value.get_boolean_value())
             }
             property::PropertySchema_DataType::INT => {
-                reported_value.set_int_value(prop.get_int_value())
+                reported_value.set_int_value(value.get_int_value())
             }
             property::PropertySchema_DataType::STRING => {
-                reported_value.set_string_value(prop.get_string_value().to_string())
+                reported_value.set_string_value(value.get_string_value().to_string())
+            }
+            property::PropertySchema_DataType::ENUM => {
+                let enum_name = value.get_enum_value().to_string();
+                let enum_index = match property.enum_options.iter()
+                    .position(|name| name == &enum_name) {
+                        Some(index) => index,
+                        None => {
+                            return Err(ApplyError::InvalidTransaction(format!(
+                                "Provided enum name is not a valid option: {}",
+                                enum_name,
+                            )))
+                        }
+                    };
+                reported_value.set_enum_value(enum_index as u32)
             }
             property::PropertySchema_DataType::LOCATION => {
-                reported_value.set_location_value(prop.get_location_value().clone())
+                reported_value.set_location_value(value.get_location_value().clone())
             }
             property::PropertySchema_DataType::FLOAT => {
-                reported_value.set_float_value(prop.get_float_value())
+                reported_value.set_float_value(value.get_float_value())
             }
         };
         Ok(reported_value)
