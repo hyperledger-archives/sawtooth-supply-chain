@@ -63,7 +63,7 @@ node ('master') {
         // Use a docker container to build and protogen, so that the Jenkins
         // environment doesn't need all the dependencies.
         stage("Build Test Dependencies") {
-            sh './bin/build_all installed'
+            sh 'docker-compose -f docker-compose-installed.yaml build --force-rm'
         }
 
         stage("Create git archive") {
@@ -81,6 +81,8 @@ node ('master') {
         }
 
         stage("Archive Build artifacts") {
+            sh 'mkdir -p build/debs'
+            sh 'docker run -v $(pwd)/build/debs:/build supply-tp-installed:$ISOLATION_ID bash -c "cp /tmp/supply-chain-tp*.deb /build"'
             archiveArtifacts artifacts: '*.tgz, *.zip'
             archiveArtifacts artifacts: 'build/debs/*.deb'
             archiveArtifacts artifacts: 'docs/build/html/**, docs/build/latex/*.pdf'
