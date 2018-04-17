@@ -20,7 +20,7 @@ services:
 
   shell:
     image: supply-shell
-    container_name: supply-shell
+    container_name: supply-shell-test
     build:
       context: ../../../
       dockerfile: shell/Dockerfile
@@ -71,7 +71,7 @@ services:
 
   settings-tp:
     image: hyperledger/sawtooth-tp_settings:latest
-    container_name: sawtooth-settings-tp-default
+    container_name: supply-settings-tp-test
     expose:
       - 4004
     depends_on:
@@ -80,7 +80,7 @@ services:
 
   validator:
     image: hyperledger/sawtooth-validator:latest
-    container_name: sawtooth-validator-default
+    container_name: supply-validator-test
     expose:
       - 4004
     ports:
@@ -102,7 +102,7 @@ services:
 
   rest-api:
     image: hyperledger/sawtooth-rest_api:latest
-    container_name: sawtooth-rest-api-default
+    container_name: supply-rest-api-test
     expose:
       - 4004
       - 8008
@@ -114,7 +114,7 @@ services:
 
   supply-server:
     image: supply-server
-    container_name: supply-server
+    container_name: supply-server-test
     build:
       context: ../../../
       dockerfile: server/Dockerfile
@@ -138,7 +138,7 @@ services:
 
   ledger-sync:
     image: supply-ledger-sync
-    container_name: supply-ledger-sync
+    container_name: supply-ledger-sync-test
     build:
       context: ../../../
       dockerfile: ledger_sync/Dockerfile
