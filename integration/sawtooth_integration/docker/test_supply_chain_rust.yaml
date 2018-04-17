@@ -83,8 +83,6 @@ services:
     container_name: supply-validator-test
     expose:
       - 4004
-    ports:
-      - "4004:4004"
     # start the validator with an empty genesis batch
     command: "bash -c \"\
         sawadm keygen && \
@@ -106,8 +104,6 @@ services:
     expose:
       - 4004
       - 8008
-    ports:
-      - "8008:8008"
     depends_on:
       - validator
     entrypoint: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
