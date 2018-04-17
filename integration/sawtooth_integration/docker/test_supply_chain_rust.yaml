@@ -154,6 +154,9 @@ services:
 
   test-supply-chain-rust:
     image: supply-chain-dev-python:$ISOLATION_ID
+    build:
+      context: ../../../
+      dockerfile: docker/supply-chain-dev-python
     volumes:
       - ../../../:/sawtooth-supply-chain
     expose:
