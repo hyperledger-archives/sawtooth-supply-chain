@@ -38,11 +38,11 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    # Generate Track and Trade protos
+    # Generate protobuf classes for Python integration tests
     protoc(
         JOIN(TOP_DIR, "protos"),
-        "processor",
-        "supply_chain_processor/protobuf")
+        "tests",
+        "sawtooth_sc_test/protobuf")
 
 
 def protoc(src_dir, base_dir, pkg, language="python"):

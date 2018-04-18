@@ -63,17 +63,8 @@ node ('master') {
         // Use a docker container to build and protogen, so that the Jenkins
         // environment doesn't need all the dependencies.
         stage("Build Test Dependencies") {
-            sh './bin/build_all installed'
+            sh 'docker-compose -f docker-compose-installed.yaml build --force-rm'
         }
-
-        stage("Run Lint") {
-            sh 'docker run --rm -v $(pwd):/project/sawtooth-supply-chain supply-chain-dev-python:$ISOLATION_ID run_lint'
-        }
-
-        stage("Run Bandit") {
-            sh 'docker run --rm -v $(pwd):/project/sawtooth-supply-chain supply-chain-dev-python:$ISOLATION_ID run_bandit'
-        }
-
 
         stage("Create git archive") {
             sh '''
@@ -90,9 +81,10 @@ node ('master') {
         }
 
         stage("Archive Build artifacts") {
+            sh 'mkdir -p build/debs'
+            sh 'docker run -v $(pwd)/build/debs:/build supply-tp-installed:$ISOLATION_ID bash -c "cp /tmp/supply-chain-tp*.deb /build"'
             archiveArtifacts artifacts: '*.tgz, *.zip'
             archiveArtifacts artifacts: 'build/debs/*.deb'
-            archiveArtifacts artifacts: 'build/bandit.html'
             archiveArtifacts artifacts: 'docs/build/html/**, docs/build/latex/*.pdf'
         }
     }

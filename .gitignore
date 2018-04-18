@@ -2,6 +2,11 @@
 /.idea/
 *.sublime*
 
+# Rust
+processor/bin/
+processor/target/
+processor/src/messages/
+
 # Node
 **/node_modules
 **/package-lock.json
@@ -10,8 +15,7 @@
 # Webpack
 **/dist
 
-/processor/**/__pycache__/
-/processor/supply_chain_processor/protobuf
+tests/sawtooth_sc_test/protobuf/
 
 /server/config.json
 **/generated_protos.json

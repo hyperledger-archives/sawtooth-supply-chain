@@ -13,9 +13,11 @@
 # limitations under the License.
 
 [package]
-name = "supply_chain_rust"
-version = "0.8.0"
+name = "supply-chain-tp"
+version = "0.8.10"
 authors = ["Cargill Incorporated"]
+description = "Sawtooth Supply Chain Transaction Processor"
+homepage = "https://github.com/hyperledger/sawtooth-supply-chain"
 
 [dependencies]
 sawtooth_sdk = { git = "https://github.com/hyperledger/sawtooth-core.git" }

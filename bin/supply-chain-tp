@@ -1,4 +1,5 @@
-# Copyright 2017 Intel Corporation
+#!/bin/bash
+# Copyright 2018 Cargill Incorporated
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,7 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
 
+top_dir=$(cd $(dirname $(dirname $0)) && pwd)
+bin=$top_dir/processor/bin/supply-chain-tp
 
-__all__ = []
+if [ -e $bin ]
+then
+    $bin $*
+else
+    echo "Please build supply-chain-tp first with 'build_all' or 'build_rust'"
+fi

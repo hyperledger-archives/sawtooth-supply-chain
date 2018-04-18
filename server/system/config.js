@@ -39,6 +39,7 @@ const initConfigValue = (key, defaultValue = null) => {
 // if not set in environment variables or config.json
 initConfigValue('PORT', 3000)
 initConfigValue('RETRY_WAIT', 5000)
+initConfigValue('DEFAULT_SUBMIT_WAIT', 5000000)
 initConfigValue('VALIDATOR_URL', 'tcp://localhost:4004')
 initConfigValue('DB_HOST', 'localhost')
 initConfigValue('DB_PORT', 28015)

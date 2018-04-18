@@ -915,7 +915,7 @@ impl SupplyChainTransactionHandler {
                     new_page_number = 1;
                 }
 
-                let mut new_page = match state.get_property_page(record_id, name, new_page_number) {
+                let new_page = match state.get_property_page(record_id, name, new_page_number) {
                     Ok(Some(mut new_page)) => {
                         new_page.set_reported_values(RepeatedField::from_vec(Vec::new()));
                         new_page

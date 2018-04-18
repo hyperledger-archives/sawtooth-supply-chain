@@ -41,7 +41,6 @@ services:
       - SERVER=http://server:3000
     command: |
       bash -c "
-        protogen &&
         cd asset_client/ && npm run build && cd - &&
         cd fish_client/ && npm run build && cd - &&
         if [ ! -f /root/.sawtooth/keys/root.priv ]; then
@@ -68,12 +67,13 @@ services:
         - no_proxy
     volumes:
       - .:/sawtooth-supply-chain
-    depends_on:
-      - shell
-      - validator
+      - /sawtooth-supply-chain/processor/target
+      - /sawtooth-supply-chain/processor/src/messages
     entrypoint: |
-      /sawtooth-supply-chain/bin/supply_chain_tp -vv tcp://validator:4004
-
+      bash -c "
+        cargo build &&
+        supply-chain-tp -v -C tcp://validator:4004
+      "
 
   server:
     image: supply-server

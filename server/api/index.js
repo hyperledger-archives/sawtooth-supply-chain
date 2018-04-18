@@ -103,7 +103,7 @@ const initInternalParams = (req, res, next) => {
 
 // Middleware for parsing the wait query parameter
 const waitParser = (req, res, next) => {
-  const DEFAULT_WAIT = 60
+  const DEFAULT_WAIT = Math.floor(config.DEFAULT_SUBMIT_WAIT / 1000)
   const parsed = req.query.wait === '' ? DEFAULT_WAIT : Number(req.query.wait)
   req.query.wait = _.isNaN(parsed) ? null : parsed
   next()
