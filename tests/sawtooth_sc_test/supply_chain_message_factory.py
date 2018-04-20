@@ -41,6 +41,12 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 
 
+class Enum(object):
+    """A simple wrapper class to store an enum name with type information"""
+    def __init__(self, name):
+        self.value = name
+
+
 class SupplyChainMessageFactory:
     def __init__(self, signer=None):
         self._factory = MessageFactory(
@@ -72,8 +78,8 @@ class SupplyChainMessageFactory:
                     PropertySchema(
                         name=name,
                         data_type=data_type,
-                        required=required)
-                    for (name, data_type, required) in properties
+                        **attributes)
+                    for (name, data_type, attributes) in properties
                 ]
             )
         )
@@ -291,6 +297,7 @@ def _make_property_value(name, value):
         str: 'string_value',
         bytes: 'bytes_value',
         float: 'float_value',
+        Enum: 'enum_value',
     }
 
     type_tags = {
@@ -299,6 +306,7 @@ def _make_property_value(name, value):
         str: PropertySchema.STRING,
         bytes: PropertySchema.BYTES,
         float: PropertySchema.FLOAT,
+        Enum: PropertySchema.ENUM,
     }
 
     try:
@@ -308,7 +316,8 @@ def _make_property_value(name, value):
     except KeyError:
         raise Exception('Unsupported type')
 
-    setattr(property_value, slot, value)
+    unwrapped_value = getattr(value, 'value', value)
+    setattr(property_value, slot, unwrapped_value)
     property_value.data_type = type_tag
 
     return property_value

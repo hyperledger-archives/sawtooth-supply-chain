@@ -23,6 +23,7 @@ from sawtooth_integration.tests.integration_tools import wait_for_rest_apis
 
 from sawtooth_sc_test.supply_chain_message_factory import \
     SupplyChainMessageFactory
+from sawtooth_sc_test.supply_chain_message_factory import Enum
 from sawtooth_signing import create_context
 from sawtooth_signing import CryptoFactory
 
@@ -271,23 +272,25 @@ class TestSupplyChain(unittest.TestCase):
             fail.
             ''',
             ['species', 'weight', 'temperature',
-             'latitude', 'longitude', 'is_trout'])
+             'latitude', 'longitude', 'is_trout', 'how_big'])
 
         self.assert_valid(
             jin.create_record_type(
                 'fish',
-                ('species', PropertySchema.STRING, True),
-                ('weight', PropertySchema.INT, True),
-                ('temperature', PropertySchema.INT, False),
-                ('latitude', PropertySchema.INT, False),
-                ('longitude', PropertySchema.INT, False),
-                ('is_trout', PropertySchema.BOOLEAN, False),
+                ('species', PropertySchema.STRING, { 'required': True }),
+                ('weight', PropertySchema.INT, { 'required': True }),
+                ('temperature', PropertySchema.INT, {}),
+                ('latitude', PropertySchema.INT, {}),
+                ('longitude', PropertySchema.INT, {}),
+                ('is_trout', PropertySchema.BOOLEAN, {}),
+                ('how_big', PropertySchema.ENUM,
+                 { 'enum_options': ['big', 'bigger', 'biggest']}),
             ))
 
         self.assert_invalid(
             jin.create_record_type(
                 'fish',
-                ('blarg', PropertySchema.FLOAT, True),
+                ('blarg', PropertySchema.FLOAT, { 'required': True }),
             ))
 
         self.narrate(
@@ -325,11 +328,24 @@ class TestSupplyChain(unittest.TestCase):
             `weight`, the record can be successfully created.
             ''')
 
+        self.assert_invalid(
+            jin.create_record(
+                'fish-456',
+                'fish',
+                {'species': 'trout', 'how_big': Enum('small')}))
+
+        self.narrate(
+            '''
+            Jin gave the value 'small' for 'how_big', but only 'big', 'bigger',
+            and 'biggest' are valid options for this enum.
+            ''')
+
         self.assert_valid(
             jin.create_record(
                 'fish-456',
                 'fish',
-                {'species': 'trout', 'weight': 5, 'is_trout': True}))
+                {'species': 'trout', 'weight': 5,
+                 'is_trout': True, 'how_big': Enum('bigger')}))
 
         self.narrate(
             '''
@@ -368,6 +384,16 @@ class TestSupplyChain(unittest.TestCase):
             jin.update_properties(
                 'fish-456',
                 {'is_trout': False}))
+
+        self.narrate(
+            '''
+            Jin updates how_big.
+            ''')
+
+        self.assert_valid(
+            jin.update_properties(
+                'fish-456',
+                {'how_big': Enum('biggest')}))
 
         self.narrate(
             '''
