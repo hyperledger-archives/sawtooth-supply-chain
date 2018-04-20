@@ -108,6 +108,7 @@ const findReportedValues =
 
 const getValue = dataType => value => {
   return r.branch(
+    r.eq(dataType, 'BOOLEAN'), value('booleanValue'),
     r.eq(dataType, 'INT'), value('intValue'),
     r.eq(dataType, 'STRING'), value('stringValue'),
     r.eq(dataType, 'FLOAT'), value('floatValue'),
