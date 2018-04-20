@@ -270,7 +270,8 @@ class TestSupplyChain(unittest.TestCase):
             Subsequent attempts to create a type with that name will
             fail.
             ''',
-            ['species', 'weight', 'temperature', 'latitude', 'longitude'])
+            ['species', 'weight', 'temperature',
+             'latitude', 'longitude', 'is_trout'])
 
         self.assert_valid(
             jin.create_record_type(
@@ -280,6 +281,7 @@ class TestSupplyChain(unittest.TestCase):
                 ('temperature', PropertySchema.INT, False),
                 ('latitude', PropertySchema.INT, False),
                 ('longitude', PropertySchema.INT, False),
+                ('is_trout', PropertySchema.BOOLEAN, False),
             ))
 
         self.assert_invalid(
@@ -327,7 +329,7 @@ class TestSupplyChain(unittest.TestCase):
             jin.create_record(
                 'fish-456',
                 'fish',
-                {'species': 'trout', 'weight': 5}))
+                {'species': 'trout', 'weight': 5, 'is_trout': True}))
 
         self.narrate(
             '''
@@ -356,6 +358,16 @@ class TestSupplyChain(unittest.TestCase):
             jin.update_properties(
                 'fish-???',
                 {'species': 'flounder'}))
+
+        self.narrate(
+            '''
+            Jin updates is_trout.
+            ''')
+
+        self.assert_valid(
+            jin.update_properties(
+                'fish-456',
+                {'is_trout': False}))
 
         self.narrate(
             '''
