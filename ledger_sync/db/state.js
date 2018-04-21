@@ -75,9 +75,35 @@ const addProperty = (property, blockNum) => {
 }
 
 const addPropertyPage = (page, blockNum) => {
-  return addBlockState('propertyPages', 'attributes',
-                       ['name', 'recordId', 'pageNum'].map(k => page[k]),
-                       page, blockNum)
+  return db.queryTable('properties', properties => {
+    return properties
+      .getAll([page.name, page.recordId], { index: 'attributes' })
+      .filter({ endBlockNum: Number.MAX_SAFE_INTEGER })
+  })
+    .then(properties => {
+      if (properties.length === 0) {
+        const attrs = `${page.name}, ${page.recordId}`
+        return console.warn("WARNING! Unable to find page's Property:", attrs)
+      }
+
+      const property = properties[0]
+
+      // Convert enum indexes into names, or empty strings if not an enum
+      if (property.dataType === 'ENUM') {
+        page.reportedValues.forEach(reported => {
+          reported.enumValue = property.enumOptions[reported.enumValue]
+        })
+      } else {
+        page.reportedValues.forEach(reported => {
+          reported.enumValue = ''
+        })
+      }
+    })
+    .then(() => {
+      return addBlockState('propertyPages', 'attributes',
+                           ['name', 'recordId', 'pageNum'].map(k => page[k]),
+                           page, blockNum)
+    })
 }
 
 const addProposal = (proposal, blockNum) => {

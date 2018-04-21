@@ -16,6 +16,7 @@
  */
 'use strict'
 
+const _ = require('lodash')
 const blocks = require('../db/blocks')
 const state = require('../db/state')
 const protos = require('./protos')
@@ -78,7 +79,7 @@ const getObjectifier = address => {
   }
 }
 
-const getAdder = address => {
+const stateAdder = address => {
   const addState = state[`add${getProtoName(address)}`]
   const toObject = getObjectifier(address)
   return (stateInstance, blockNum) => {
@@ -92,14 +93,26 @@ const getEntries = ({ address, value }) => {
     .entries
 }
 
+const entryAdder = block => change => {
+  const addState = stateAdder(change.address)
+  return Promise.all(getEntries(change).map(entry => {
+    return addState(entry, block.blockNum)
+  }))
+}
+
 const handle = (block, changes) => {
   deltaQueue.add(() => {
-    return Promise.all(changes.map(change => {
-      const addState = getAdder(change.address)
-      return Promise.all(getEntries(change).map(entry => {
-        return addState(entry, block.blockNum)
-      }))
-    }))
+    const [ pageChanges, otherChanges ] = _.partition(changes, change => {
+      return getProtoName(change.address) === 'PropertyPage'
+    })
+
+    return Promise.all(otherChanges.map(entryAdder(block)))
+      .then(() => {
+        // If there are page changes, give other changes a chance to propagate
+        const wait = pageChanges.length === 0 ? 0 : 100
+        return new Promise(resolve => setTimeout(resolve, wait))
+      })
+      .then(() =>  Promise.all(pageChanges.map(entryAdder(block))))
       .then(() => blocks.insert(block))
   })
 }

@@ -114,6 +114,7 @@ const getValue = dataType => value => {
     r.eq(dataType, 'FLOAT'), value('floatValue'),
     r.eq(dataType, 'BYTES'), value('bytesValue'),
     r.eq(dataType, 'LOCATION'), value('locationValue'),
+    r.eq(dataType, 'ENUM'), value('enumValue'),
     value('bytesValue') // if dataType is unknown, use bytesValue
   )
 }
