@@ -40,7 +40,7 @@ const typedWidget = state => {
     })
   }
 
-  if (property.dataType === 'INT' || property.dataType === 'FLOAT') {
+  if (property.dataType === 'NUMBER') {
     return m(LineGraphWidget, { updates: property.updates })
   }
 

@@ -176,8 +176,8 @@ const _handleSubmit = (signingKey, state) => {
   if (state.weight) {
     properties.push({
       name: 'weight',
-      intValue: parsing.toInt(state.weight),
-      dataType: payloads.createRecord.enum.INT
+      numberValue: parsing.toInt(state.weight),
+      dataType: payloads.createRecord.enum.NUMBER
     })
   }
 

@@ -31,7 +31,7 @@ const api = require('../services/api')
 
 const STORAGE_KEY = 'fish_net.encryptedKey'
 const FAMILY_NAME = 'supply_chain'
-const FAMILY_VERSION = '1.0'
+const FAMILY_VERSION = '1.1'
 const NAMESPACE = '3400de'
 
 const context = new secp256k1.Secp256k1Context()

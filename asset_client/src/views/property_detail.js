@@ -40,7 +40,7 @@ const typedWidget = state => {
     })
   }
 
-  if (property.dataType === 'INT' || property.dataType === 'FLOAT') {
+  if (property.dataType === 'NUMBER') {
     return m(LineGraphWidget, { updates: property.updates })
   }
 
@@ -82,7 +82,7 @@ const updateSubmitter = state => e => {
 
 // Produces an input field particular to the type of data
 const typedInput = state => {
-  if (state.property.dataType === 'INT') {
+  if (state.property.dataType === 'NUMBER') {
     return m('.col-md-8', [
       m('input.form-control', {
         placeholder: 'Enter New Value...',

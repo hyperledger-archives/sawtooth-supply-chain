@@ -470,8 +470,8 @@ const AssetDetail = {
               name: 'weight',
               label: 'Weight (kg)',
               record,
-              typeField: 'intValue',
-              type: payloads.updateProperties.enum.INT,
+              typeField: 'numberValue',
+              type: payloads.updateProperties.enum.NUMBER,
               xform: (x) => parsing.toInt(x),
               onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
             })
@@ -496,8 +496,8 @@ const AssetDetail = {
               name: 'temperature',
               label: 'Temperature (°C)',
               record,
-              typeField: 'intValue',
-              type: payloads.updateProperties.enum.INT,
+              typeField: 'numberValue',
+              type: payloads.updateProperties.enum.NUMBER,
               xform: (x) => parsing.toInt(x),
               onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
             })
@@ -513,8 +513,8 @@ const AssetDetail = {
               name: 'shock',
               label: 'Shock (g)',
               record,
-              typeField: 'intValue',
-              type: payloads.updateProperties.enum.INT,
+              typeField: 'numberValue',
+              type: payloads.updateProperties.enum.NUMBER,
               xform: (x) => parsing.toInt(x),
               onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
             })

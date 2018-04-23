@@ -577,8 +577,8 @@ const FishDetail = {
               name: 'temperature',
               label: 'Temperature (C°)',
               record,
-              typeField: 'intValue',
-              type: payloads.updateProperties.enum.INT,
+              typeField: 'numberValue',
+              type: payloads.updateProperties.enum.NUMBER,
               xform: (x) => parsing.toInt(x),
               onsuccess: () => _loadData(vnode.attrs.recordId, vnode.state)
             })

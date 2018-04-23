@@ -12,12 +12,12 @@
           {
             "name": "length",
             "dataType": 3,
-            "intValue": 2257000
+            "numberValue": 2257000
           },
           {
             "name": "weight",
             "dataType": 3,
-            "intValue": 247096000
+            "numberValue": 247096000
           },
           {
             "name": "location",
@@ -46,12 +46,12 @@
           {
             "name": "length",
             "dataType": 3,
-            "intValue": 672000
+            "numberValue": 672000
           },
           {
             "name": "weight",
             "dataType": 3,
-            "intValue": 7826000
+            "numberValue": 7826000
           },
           {
             "name": "location",
@@ -77,12 +77,12 @@
           {
             "name": "length",
             "dataType": 3,
-            "intValue": 20567000
+            "numberValue": 20567000
           },
           {
             "name": "weight",
             "dataType": 3,
-            "intValue": 57243980000
+            "numberValue": 57243980000
           },
           {
             "name": "location",

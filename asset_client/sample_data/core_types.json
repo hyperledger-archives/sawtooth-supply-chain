@@ -13,7 +13,8 @@
         },
         {
           "name": "weight",
-          "dataType": 3
+          "dataType": 3,
+          "numberExponent": -6
         },
         {
           "name": "location",
@@ -21,11 +22,13 @@
         },
         {
           "name": "temperature",
-          "dataType": 3
+          "dataType": 3,
+          "numberExponent": -6
         },
         {
           "name": "shock",
-          "dataType": 3
+          "dataType": 3,
+          "numberExponent": -6
         }
     ]
   }
