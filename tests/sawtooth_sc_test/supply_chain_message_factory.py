@@ -51,7 +51,7 @@ class SupplyChainMessageFactory:
     def __init__(self, signer=None):
         self._factory = MessageFactory(
             family_name=addressing.FAMILY_NAME,
-            family_version='1.0',
+            family_version='1.1',
             namespace=addressing.NAMESPACE,
             signer=signer)
 
@@ -293,19 +293,17 @@ def _make_property_value(name, value):
 
     type_slots = {
         bool: 'boolean_value',
-        int: 'int_value',
+        int: 'number_value',
         str: 'string_value',
         bytes: 'bytes_value',
-        float: 'float_value',
         Enum: 'enum_value',
     }
 
     type_tags = {
         bool: PropertySchema.BOOLEAN,
-        int: PropertySchema.INT,
+        int: PropertySchema.NUMBER,
         str: PropertySchema.STRING,
         bytes: PropertySchema.BYTES,
-        float: PropertySchema.FLOAT,
         Enum: PropertySchema.ENUM,
     }
 
