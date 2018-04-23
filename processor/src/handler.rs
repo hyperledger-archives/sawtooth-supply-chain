@@ -574,7 +574,7 @@ impl SupplyChainTransactionHandler {
     pub fn new() -> SupplyChainTransactionHandler {
         SupplyChainTransactionHandler {
             family_name: "supply_chain".to_string(),
-            family_versions: vec!["1.0".to_string()],
+            family_versions: vec!["1.1".to_string()],
             namespaces: vec![get_supply_chain_prefix().to_string()],
         }
     }
@@ -715,6 +715,7 @@ impl SupplyChainTransactionHandler {
             new_property.reporters.push(reporter.clone());
             new_property.set_current_page(1);
             new_property.set_wrapped(false);
+            new_property.set_number_exponent(property.get_number_exponent());
             new_property.set_enum_options(property.enum_options);
 
             state.set_property(record_id, property_name, new_property.clone())?;
@@ -1474,8 +1475,8 @@ impl SupplyChainTransactionHandler {
             property::PropertySchema_DataType::BOOLEAN => {
                 reported_value.set_boolean_value(value.get_boolean_value())
             }
-            property::PropertySchema_DataType::INT => {
-                reported_value.set_int_value(value.get_int_value())
+            property::PropertySchema_DataType::NUMBER => {
+                reported_value.set_number_value(value.get_number_value())
             }
             property::PropertySchema_DataType::STRING => {
                 reported_value.set_string_value(value.get_string_value().to_string())
@@ -1496,9 +1497,6 @@ impl SupplyChainTransactionHandler {
             }
             property::PropertySchema_DataType::LOCATION => {
                 reported_value.set_location_value(value.get_location_value().clone())
-            }
-            property::PropertySchema_DataType::FLOAT => {
-                reported_value.set_float_value(value.get_float_value())
             }
         };
         Ok(reported_value)
