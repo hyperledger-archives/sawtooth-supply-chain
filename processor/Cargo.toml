@@ -14,7 +14,7 @@
 
 [package]
 name = "supply-chain-tp"
-version = "0.10.0"
+version = "0.10.1"
 authors = ["Cargill Incorporated"]
 description = "Sawtooth Supply Chain Transaction Processor"
 homepage = "https://github.com/hyperledger/sawtooth-supply-chain"
