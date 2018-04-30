@@ -28,18 +28,22 @@ const AWAIT_TABLE = 'blocks'
 // Connection to db for query methods, run connect before querying
 let connection = null
 
+const promisedTimeout = (fn, wait) => {
+  return new Promise(resolve => setTimeout(resolve, wait)).then(fn);
+}
+
 const awaitDatabase = () => {
   return r.tableList().run(connection)
     .then(tableNames => {
       if (!tableNames.includes(AWAIT_TABLE)) {
         throw new Error()
       }
+      console.log('Successfully connected to database:', NAME)
     })
     .catch(() => {
       console.warn('Database not initialized:', NAME)
       console.warn(`Retrying database in ${RETRY_WAIT / 1000} seconds...`)
-      return new Promise(resolve => setTimeout(resolve, RETRY_WAIT))
-        .then(awaitDatabase)
+      return promisedTimeout(awaitDatabase, RETRY_WAIT)
     })
 }
 
@@ -48,6 +52,14 @@ const connect = () => {
     .then(conn => {
       connection = conn
       return awaitDatabase()
+    })
+    .catch(err => {
+      if (err instanceof r.Error.ReqlDriverError) {
+        console.warn('Unable to connect to RethinkDB')
+        console.warn(`Retrying in ${RETRY_WAIT / 1000} seconds...`)
+        return promisedTimeout(connect, RETRY_WAIT)
+      }
+      throw err
     })
 }
 
