@@ -286,6 +286,7 @@ def _make_property_value(name, value):
     property_value = PropertyValue(name=name)
 
     type_slots = {
+        bool: 'boolean_value',
         int: 'int_value',
         str: 'string_value',
         bytes: 'bytes_value',
@@ -293,6 +294,7 @@ def _make_property_value(name, value):
     }
 
     type_tags = {
+        bool: PropertySchema.BOOLEAN,
         int: PropertySchema.INT,
         str: PropertySchema.STRING,
         bytes: PropertySchema.BYTES,

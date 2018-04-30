@@ -724,7 +724,10 @@ impl SupplyChainTransactionHandler {
 
             if provided_properties.contains_key(property_name) {
                 let provided_property = &provided_properties[property_name];
-                let reported_value = self._make_new_reported_value(0, timestamp, provided_property);
+                let reported_value = match self._make_new_reported_value(0, timestamp, provided_property) {
+                    Ok(reported_value) => reported_value,
+                    Err(err) => return Err(err),
+                };
 
                 new_property_page.reported_values.push(reported_value);
             }
@@ -904,7 +907,10 @@ impl SupplyChainTransactionHandler {
                 Err(err) => return Err(err),
             };
 
-            let reported_value = self._make_new_reported_value(reporter_index, timestamp, update);
+            let reported_value = match self._make_new_reported_value(reporter_index, timestamp, update) {
+                Ok(reported_value) => reported_value,
+                Err(err) => return Err(err),
+            };
             page.reported_values.push(reported_value);
             page.reported_values
                 .sort_by_key(|rv| (rv.clone().timestamp, rv.clone().reporter_index));
@@ -1439,29 +1445,37 @@ impl SupplyChainTransactionHandler {
         reporter_index: u32,
         timestamp: u64,
         prop: &property::PropertyValue,
-    ) -> property::PropertyPage_ReportedValue {
+    ) -> Result<property::PropertyPage_ReportedValue, ApplyError> {
         let mut reported_value = property::PropertyPage_ReportedValue::new();
         reported_value.set_reporter_index(reporter_index);
         reported_value.set_timestamp(timestamp);
 
         match prop.get_data_type() {
+            property::PropertySchema_DataType::TYPE_UNSET => {
+                return Err(ApplyError::InvalidTransaction(String::from(
+                    "DataType is not set",
+                )))
+            }
             property::PropertySchema_DataType::BYTES => {
                 reported_value.set_bytes_value(prop.get_bytes_value().to_vec())
             }
-            property::PropertySchema_DataType::STRING => {
-                reported_value.set_string_value(prop.get_string_value().to_string())
+            property::PropertySchema_DataType::BOOLEAN => {
+                reported_value.set_boolean_value(prop.get_boolean_value())
             }
             property::PropertySchema_DataType::INT => {
                 reported_value.set_int_value(prop.get_int_value())
             }
-            property::PropertySchema_DataType::FLOAT => {
-                reported_value.set_float_value(prop.get_float_value())
+            property::PropertySchema_DataType::STRING => {
+                reported_value.set_string_value(prop.get_string_value().to_string())
             }
             property::PropertySchema_DataType::LOCATION => {
                 reported_value.set_location_value(prop.get_location_value().clone())
             }
+            property::PropertySchema_DataType::FLOAT => {
+                reported_value.set_float_value(prop.get_float_value())
+            }
         };
-        reported_value
+        Ok(reported_value)
     }
 }
 

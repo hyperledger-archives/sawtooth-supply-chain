@@ -6,22 +6,22 @@
       "properties": [
           {
             "name": "species",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "BFT"
           },
           {
             "name": "length",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 2257000
           },
           {
             "name": "weight",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 247096000
           },
           {
             "name": "location",
-            "dataType": 4,
+            "dataType": 7,
             "locationValue": {
               "latitude": 42456486,
               "longitude": -67982434
@@ -40,22 +40,22 @@
       "properties": [
           {
             "name": "species",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "STV"
           },
           {
             "name": "length",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 672000
           },
           {
             "name": "weight",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 7826000
           },
           {
             "name": "location",
-            "dataType": 4,
+            "dataType": 7,
             "locationValue": {
               "latitude": 46786299,
               "longitude": -92051336
@@ -71,22 +71,22 @@
       "properties": [
           {
             "name": "species",
-            "dataType": 1,
+            "dataType": 4,
             "stringValue": "SPW"
           },
           {
             "name": "length",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 20567000
           },
           {
             "name": "weight",
-            "dataType": 2,
+            "dataType": 3,
             "intValue": 57243980000
           },
           {
             "name": "location",
-            "dataType": 4,
+            "dataType": 7,
             "locationValue": {
               "latitude": -31404863,
               "longitude": 40018772

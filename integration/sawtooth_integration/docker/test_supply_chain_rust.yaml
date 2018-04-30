@@ -20,7 +20,7 @@ services:
 
   shell:
     image: supply-shell
-    container_name: supply-shell
+    container_name: supply-shell-test
     build:
       context: ../../../
       dockerfile: shell/Dockerfile
@@ -71,7 +71,7 @@ services:
 
   settings-tp:
     image: hyperledger/sawtooth-tp_settings:latest
-    container_name: sawtooth-settings-tp-default
+    container_name: supply-settings-tp-test
     expose:
       - 4004
     depends_on:
@@ -80,11 +80,9 @@ services:
 
   validator:
     image: hyperledger/sawtooth-validator:latest
-    container_name: sawtooth-validator-default
+    container_name: supply-validator-test
     expose:
       - 4004
-    ports:
-      - "4004:4004"
     # start the validator with an empty genesis batch
     command: "bash -c \"\
         sawadm keygen && \
@@ -102,19 +100,17 @@ services:
 
   rest-api:
     image: hyperledger/sawtooth-rest_api:latest
-    container_name: sawtooth-rest-api-default
+    container_name: supply-rest-api-test
     expose:
       - 4004
       - 8008
-    ports:
-      - "8008:8008"
     depends_on:
       - validator
     entrypoint: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
 
   supply-server:
     image: supply-server
-    container_name: supply-server
+    container_name: supply-server-test
     build:
       context: ../../../
       dockerfile: server/Dockerfile
@@ -138,7 +134,7 @@ services:
 
   ledger-sync:
     image: supply-ledger-sync
-    container_name: supply-ledger-sync
+    container_name: supply-ledger-sync-test
     build:
       context: ../../../
       dockerfile: ledger_sync/Dockerfile
@@ -164,15 +160,15 @@ services:
       - 8081
     depends_on:
       - supply-server
-    command: "bash -c \" \
-        sleep 60 && \
-        nose2-3
-        -c /sawtooth-supply-chain/nose2.cfg
-        -vvv
-        -s /sawtooth-supply-chain/integration/sawtooth_integration/tests
-        test_supply_chain.TestSupplyChain --log-capture
-
-    \""
+    command: |
+      bash -c "
+        echo 'Waiting 60s to being testing . . .' &&
+        sleep 60 &&
+        nose2-3 -vvv \
+          -c /sawtooth-supply-chain/nose2.cfg \
+          -s /sawtooth-supply-chain/integration/sawtooth_integration/tests \
+          test_supply_chain.TestSupplyChain --log-capture
+      "
     stop_signal: SIGKILL
     environment:
       PYTHONPATH:

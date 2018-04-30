@@ -4,28 +4,28 @@
     "properties": [
         {
           "name": "type",
-          "dataType": 1,
+          "dataType": 4,
           "required": true
         },
         {
           "name": "subtype",
-          "dataType": 1
-        },
-        {
-          "name": "weight",
-          "dataType": 2
-        },
-        {
-          "name": "location",
           "dataType": 4
         },
         {
+          "name": "weight",
+          "dataType": 3
+        },
+        {
+          "name": "location",
+          "dataType": 7
+        },
+        {
           "name": "temperature",
-          "dataType": 2
+          "dataType": 3
         },
         {
           "name": "shock",
-          "dataType": 2
+          "dataType": 3
         }
     ]
   }

@@ -65,11 +65,13 @@ message PropertyContainer {
 
 message PropertySchema {
   enum DataType {
-    BYTES = 0;
-    STRING = 1;
-    INT = 2;
-    FLOAT = 3;
-    LOCATION = 4;
+    TYPE_UNSET = 0;
+    BYTES = 1;
+    BOOLEAN = 2;
+    INT = 3;
+    STRING = 4;
+    LOCATION = 7;
+    FLOAT = 8;
   }
 
   // The name of the property, e.g. "temperature"
@@ -95,10 +97,11 @@ message PropertyValue {
   // one of these fields should be used, and it should match the type
   // specified for this Property in the RecordType.
   bytes bytes_value = 11;
-  string string_value = 12;
+  bool boolean_value = 12;
   sint64 int_value = 13;
-  float float_value = 14;
-  Location location_value = 15;
+  string string_value = 14;
+  Location location_value = 17;
+  float float_value = 18;
 }
 
 
@@ -114,10 +117,11 @@ message PropertyPage {
     // fields should be used, and it should match the type
     // specified for this Property in the RecordType.
     bytes bytes_value = 11;
-    string string_value = 12;
+    bool boolean_value = 12;
     sint64 int_value = 13;
-    float float_value = 14;
-    Location location_value = 15;
+    string string_value = 14;
+    Location location_value = 17;
+    float float_value = 18;
   }
 
   // The name of the page's associated Property and the record_id of
