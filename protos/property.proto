@@ -55,6 +55,9 @@ message Property {
   // true, the earliest page's address will be one more than the
   // current_page, or "0001" if the current_page is "ffff".
   bool wrapped = 6;
+
+  // Used with ENUM data types, the string names of available options
+  repeated string enum_options = 11;
 }
 
 
@@ -70,6 +73,7 @@ message PropertySchema {
     BOOLEAN = 2;
     INT = 3;
     STRING = 4;
+    ENUM = 5;
     LOCATION = 7;
     FLOAT = 8;
   }
@@ -83,6 +87,9 @@ message PropertySchema {
   // A flag indicating whether initial values must be provided for the
   // Property when a Record is created.
   bool required = 3;
+
+  // Used with ENUM data types, the string names of available options
+  repeated string enum_options = 11;
 }
 
 
@@ -100,6 +107,7 @@ message PropertyValue {
   bool boolean_value = 12;
   sint64 int_value = 13;
   string string_value = 14;
+  string enum_value = 15;
   Location location_value = 17;
   float float_value = 18;
 }
@@ -120,6 +128,7 @@ message PropertyPage {
     bool boolean_value = 12;
     sint64 int_value = 13;
     string string_value = 14;
+    uint32 enum_value = 15;
     Location location_value = 17;
     float float_value = 18;
   }
