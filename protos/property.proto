@@ -64,6 +64,9 @@ message Property {
 
   // Used with ENUM data types, the string names of available options
   repeated string enum_options = 11;
+
+  // Used with STRUCT data types, defines the properties a struct must contain
+  repeated PropertySchema struct_properties = 12;
 }
 
 
@@ -80,6 +83,7 @@ message PropertySchema {
     NUMBER = 3;
     STRING = 4;
     ENUM = 5;
+    STRUCT = 6;
     LOCATION = 7;
   }
 
@@ -101,6 +105,9 @@ message PropertySchema {
 
   // Used with ENUM data types, the string names of available options
   repeated string enum_options = 11;
+
+  // Used with STRUCT data types, defines the properties a struct must contain
+  repeated PropertySchema struct_properties = 12;
 }
 
 
@@ -119,6 +126,7 @@ message PropertyValue {
   sint64 number_value = 13;
   string string_value = 14;
   string enum_value = 15;
+  repeated PropertyValue struct_values = 16;
   Location location_value = 17;
 }
 
@@ -139,6 +147,7 @@ message PropertyPage {
     sint64 number_value = 13;
     string string_value = 14;
     uint32 enum_value = 15;
+    repeated PropertyValue struct_values = 16;
     Location location_value = 17;
   }
 
