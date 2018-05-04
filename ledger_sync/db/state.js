@@ -20,6 +20,25 @@ const _ = require('lodash')
 const r = require('rethinkdb')
 const db = require('./')
 
+
+const valueNames = {
+  BYTES: 'bytesValue',
+  BOOLEAN: 'booleanValue',
+  NUMBER: 'numberValue',
+  STRING: 'stringValue',
+  ENUM: 'enumValue',
+  LOCATION: 'locationValue'
+}
+
+const xformStruct = properties => {
+  return _.fromPairs(properties.map(property => {
+    const value = property.dataType === 'STRUCT'
+      ? xformStruct(property.structValues)
+      : property[ valueNames[property.dataType] ]
+    return [property.name, value]
+  }))
+}
+
 const addBlockState = (tableName, indexName, indexValue, doc, blockNum) => {
   return db.modifyTable(tableName, table => {
     return table
@@ -98,6 +117,20 @@ const addPropertyPage = (page, blockNum) => {
           reported.enumValue = ''
         })
       }
+
+      // Convert `structValues` array into `structValue` object
+      if (property.dataType === 'STRUCT') {
+        page.reportedValues.forEach(reported => {
+          reported.structValue = xformStruct(reported.structValues)
+          delete reported.structValues
+        })
+      } else {
+        page.reportedValues.forEach(reported => {
+          reported.structValue = {}
+          delete reported.structValues
+        })
+      }
+
     })
     .then(() => {
       return addBlockState('propertyPages', 'attributes',
