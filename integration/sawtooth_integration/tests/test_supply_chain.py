@@ -272,7 +272,7 @@ class TestSupplyChain(unittest.TestCase):
             fail.
             ''',
             ['species', 'weight', 'temperature',
-             'latitude', 'longitude', 'is_trout', 'how_big'])
+             'location', 'is_trout', 'how_big'])
 
         self.assert_valid(
             jin.create_record_type(
@@ -281,8 +281,15 @@ class TestSupplyChain(unittest.TestCase):
                 ('weight', PropertySchema.NUMBER, { 'required': True }),
                 ('temperature', PropertySchema.NUMBER,
                  { 'number_exponent': -3 }),
-                ('latitude', PropertySchema.NUMBER, {}),
-                ('longitude', PropertySchema.NUMBER, {}),
+                ('location', PropertySchema.STRUCT,
+                 { 'struct_properties': [
+                    ('hemisphere', PropertySchema.STRING, {}),
+                    ('gps', PropertySchema.STRUCT,
+                     { 'struct_properties': [
+                        ('latitude', PropertySchema.NUMBER, {}),
+                        ('longitude', PropertySchema.NUMBER, {})
+                     ] })
+                 ]}),
                 ('is_trout', PropertySchema.BOOLEAN, {}),
                 ('how_big', PropertySchema.ENUM,
                  { 'enum_options': ['big', 'bigger', 'biggest']}),
@@ -341,12 +348,30 @@ class TestSupplyChain(unittest.TestCase):
             and 'biggest' are valid options for this enum.
             ''')
 
+        self.assert_invalid(
+            jin.create_record(
+                'fish-456',
+                'fish',
+                {'species': 'trout', 'location': {
+                    'hemisphere': 'north',
+                    'gps': {'lat': 45, 'long': 45}
+                }}))
+
+        self.narrate(
+            '''
+            Jin used the keys "lat" and "long" for the gps, but the schema
+            specified "latitude" and "longitude".
+            ''')
+
         self.assert_valid(
             jin.create_record(
                 'fish-456',
                 'fish',
                 {'species': 'trout', 'weight': 5,
-                 'is_trout': True, 'how_big': Enum('bigger')}))
+                 'is_trout': True, 'how_big': Enum('bigger'),
+                 'location': {
+                    'hemisphere': 'north',
+                    'gps': {'longitude': 45, 'latitude': 45}}}))
 
         self.narrate(
             '''
@@ -405,6 +430,25 @@ class TestSupplyChain(unittest.TestCase):
             jin.update_properties(
                 'fish-456',
                 {'temperature': -3141}))
+
+        self.assert_invalid(
+            jin.update_properties(
+                'fish-456',
+                {'location': {
+                    'hemisphere': 'north',
+                    'gps': {'latitude': 50, 'longitude': False}}}))
+
+        self.assert_invalid(
+            jin.update_properties(
+                'fish-456',
+                {'location': {'hemisphere': 'south'}}))
+
+        self.assert_valid(
+            jin.update_properties(
+                'fish-456',
+                {'location': {
+                    'hemisphere': 'south',
+                    'gps': {'latitude': 50, 'longitude': 45}}}))
 
         self.narrate(
             '''
@@ -800,11 +844,12 @@ class TestSupplyChain(unittest.TestCase):
         self.assertEqual(get_record['owner'], sun.public_key)
         self.assertEqual(get_record['recordId'], 'fish-456')
 
-        for attr in ('latitude',
-                     'longitude',
-                     'species',
+        for attr in ('species',
                      'temperature',
-                     'weight'):
+                     'weight',
+                     'is_trout',
+                     'how_big',
+                     'location'):
             self.assertIn(attr, get_record['updates']['properties'])
 
         get_records = jin.get_records()
