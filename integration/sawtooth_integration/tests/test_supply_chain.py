@@ -193,7 +193,7 @@ class TestSupplyChain(unittest.TestCase):
         except AssertionError:
             raise AssertionError(
                 'Transaction is unexpectedly invalid -- {}'.format(
-                    result['data'][0]['invalid_transactions'][0]['message']))
+                    result[1]['data'][0]['invalid_transactions'][0]['message']))
 
     def assert_invalid(self, result):
         self.narrate('{}', result)
