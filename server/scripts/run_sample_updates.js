@@ -77,14 +77,11 @@ const updateValue = (update, oldValue) => {
 
 const updateProperty = (update, oldValue) => {
   oldValue = oldValue || update.startValue || null
-  const { INT, FLOAT, LOCATION } = protos.PropertySchema.DataType
+  const { NUMBER, LOCATION } = protos.PropertySchema.DataType
   const property = _.pick(update, 'name', 'dataType')
 
-  if (property.dataType === INT) {
-    property.intValue = parseInt(updateValue(update, oldValue || 0))
-
-  } else if (property.dataType === FLOAT) {
-    property.floatValue = updateValue(update, oldValue || 0)
+  if (property.dataType === NUMBER) {
+    property.numberValue = parseInt(updateValue(update, oldValue || 0))
 
   } else if (property.dataType === LOCATION) {
     const defaultLoc = { latitude: 0, longitude: 0 }

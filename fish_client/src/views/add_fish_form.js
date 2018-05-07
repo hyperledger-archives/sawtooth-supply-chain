@@ -195,13 +195,13 @@ const _handleSubmit = (signingKey, state) => {
       },
       {
         name: 'length',
-        intValue: parsing.toInt(state.lengthInCM),
-        dataType: payloads.createRecord.enum.INT
+        numberValue: parsing.toInt(state.lengthInCM),
+        dataType: payloads.createRecord.enum.NUMBER
       },
       {
         name: 'weight',
-        intValue: parsing.toInt(state.weightInKg),
-        dataType: payloads.createRecord.enum.INT
+        numberValue: parsing.toInt(state.weightInKg),
+        dataType: payloads.createRecord.enum.NUMBER
       },
       {
         name: 'location',

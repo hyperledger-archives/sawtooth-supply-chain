@@ -28,7 +28,7 @@ const {
 const protos = require('../blockchain/protos')
 
 const FAMILY_NAME = 'supply_chain'
-const FAMILY_VERSION = '1.0'
+const FAMILY_VERSION = '1.1'
 const NAMESPACE = '3400de'
 
 const SERVER = process.env.SERVER || 'http://localhost:3000'

@@ -10,12 +10,14 @@
         {
           "name": "length",
           "dataType": 3,
-          "required": true
+          "required": true,
+          "numberExponent": -6
         },
         {
           "name": "weight",
           "dataType": 3,
-          "required": true
+          "required": true,
+          "numberExponent": -6
         },
         {
           "name": "location",
@@ -24,7 +26,8 @@
         },
         {
           "name": "temperature",
-          "dataType": 3
+          "dataType": 3,
+          "numberExponent": -6
         },
         {
           "name": "tilt",

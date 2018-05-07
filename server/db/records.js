@@ -109,9 +109,8 @@ const findReportedValues =
 const getValue = dataType => value => {
   return r.branch(
     r.eq(dataType, 'BOOLEAN'), value('booleanValue'),
-    r.eq(dataType, 'INT'), value('intValue'),
+    r.eq(dataType, 'NUMBER'), value('numberValue'),
     r.eq(dataType, 'STRING'), value('stringValue'),
-    r.eq(dataType, 'FLOAT'), value('floatValue'),
     r.eq(dataType, 'BYTES'), value('bytesValue'),
     r.eq(dataType, 'LOCATION'), value('locationValue'),
     r.eq(dataType, 'ENUM'), value('enumValue'),
@@ -143,6 +142,7 @@ const getPropertyValues = recordId => block => property => {
       return r.expr({
         'name': getName(property),
         'dataType': dataType,
+        numberExponent: property('numberExponent'),
         'reporterKeys': reporterKeys,
         'values': findReportedValues(recordId)(getName(property))(dataType)(reporterKeys)(block)
       })
@@ -215,7 +215,11 @@ const _loadRecord = (block, authedKey) => (record) => {
               )
             ),
             'reporters': getAuthorizedReporterKeys(propertyValue),
-          })),
+          }).merge(r.branch(
+            getDataType(propertyValue).eq('NUMBER'),
+            { numberExponent: propertyValue('numberExponent') },
+            {}
+          ))),
         'updates': r.expr({
           'owners': getOwners(record),
           'custodians': getCustodians(record),

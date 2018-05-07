@@ -278,10 +278,11 @@ class TestSupplyChain(unittest.TestCase):
             jin.create_record_type(
                 'fish',
                 ('species', PropertySchema.STRING, { 'required': True }),
-                ('weight', PropertySchema.INT, { 'required': True }),
-                ('temperature', PropertySchema.INT, {}),
-                ('latitude', PropertySchema.INT, {}),
-                ('longitude', PropertySchema.INT, {}),
+                ('weight', PropertySchema.NUMBER, { 'required': True }),
+                ('temperature', PropertySchema.NUMBER,
+                 { 'number_exponent': -3 }),
+                ('latitude', PropertySchema.NUMBER, {}),
+                ('longitude', PropertySchema.NUMBER, {}),
                 ('is_trout', PropertySchema.BOOLEAN, {}),
                 ('how_big', PropertySchema.ENUM,
                  { 'enum_options': ['big', 'bigger', 'biggest']}),
@@ -290,7 +291,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_invalid(
             jin.create_record_type(
                 'fish',
-                ('blarg', PropertySchema.FLOAT, { 'required': True }),
+                ('blarg', PropertySchema.NUMBER, { 'required': True }),
             ))
 
         self.narrate(
@@ -318,11 +319,11 @@ class TestSupplyChain(unittest.TestCase):
             jin.create_record(
                 'fish-456',
                 'fish',
-                {'species': 'trout', 'weight': 5.1}))
+                {'species': 'trout', 'weight': 'heavy'}))
 
         self.narrate(
             '''
-            Jin gave the value 5.1 for the property `weight`, but the
+            Jin gave the value 'heavy' for the property `weight`, but the
             type for that property is required to be int. When he
             provides a string value for `species` and an int value for
             `weight`, the record can be successfully created.
@@ -358,12 +359,12 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_valid(
             jin.update_properties(
                 'fish-456',
-                {'temperature': 4}))
+                {'temperature': -1414}))
 
         self.assert_invalid(
             jin.update_properties(
                 'fish-456',
-                {'temperature': '4'}))
+                {'temperature': '-1414'}))
 
         self.assert_invalid(
             jin.update_properties(
@@ -403,7 +404,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_valid(
             jin.update_properties(
                 'fish-456',
-                {'temperature': 3}))
+                {'temperature': -3141}))
 
         self.narrate(
             '''
@@ -416,7 +417,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_invalid(
             sensor_stark.update_properties(
                 'fish-456',
-                {'temperature': 3}))
+                {'temperature': -3141}))
 
         self.narrate(
             '''
@@ -454,7 +455,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_invalid(
             sensor_stark.update_properties(
                 'fish-456',
-                {'temperature': 3}))
+                {'temperature': -3141}))
 
         self.narrate(
             '''
@@ -486,7 +487,7 @@ class TestSupplyChain(unittest.TestCase):
             self.assert_valid(
                 sensor_stark.update_properties(
                     'fish-456',
-                    {'temperature': i}))
+                    {'temperature': -i * 1000}))
 
         self.narrate(
             '''
@@ -575,17 +576,17 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_invalid(
             jin.update_properties(
                 'fish-456',
-                {'temperature': 6}))
+                {'temperature': -6282}))
 
         self.assert_valid(
             sun.update_properties(
                 'fish-456',
-                {'temperature': 6}))
+                {'temperature': -6282}))
 
         self.assert_valid(
             sensor_stark.update_properties(
                 'fish-456',
-                {'temperature': 7}))
+                {'temperature': -7071}))
 
         self.narrate(
             '''
@@ -617,7 +618,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_valid(
             sensor_dollars.update_properties(
                 'fish-456',
-                {'temperature': 8}))
+                {'temperature': -8485}))
 
         self.assert_valid(
             sun.revoke_reporter(
@@ -628,7 +629,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_invalid(
             sensor_stark.update_properties(
                 'fish-456',
-                {'temperature': 9}))
+                {'temperature': -9899}))
 
         self.narrate(
             '''
@@ -676,7 +677,7 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_invalid(
             sun.update_properties(
                 'fish-456',
-                {'temperature': 2}))
+                {'temperature': -2828}))
 
         ##
 
@@ -763,7 +764,7 @@ class TestSupplyChain(unittest.TestCase):
         log_json(get_record_property)
 
         self.assertIn('dataType', get_record_property)
-        self.assertEqual(get_record_property['dataType'], 'INT')
+        self.assertEqual(get_record_property['dataType'], 'NUMBER')
 
         self.assertIn('name', get_record_property)
         self.assertEqual(get_record_property['name'], 'temperature')
@@ -888,7 +889,7 @@ class TestSupplyChain(unittest.TestCase):
                 ]
             ),
             {
-                'dataType': 'INT',
+                'dataType': 'NUMBER',
                 'name': 'weight',
             }
         )
