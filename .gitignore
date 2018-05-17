@@ -3,6 +3,7 @@
 *.sublime*
 
 # Rust
+processor/Cargo.lock
 processor/bin/
 processor/target/
 processor/src/messages/

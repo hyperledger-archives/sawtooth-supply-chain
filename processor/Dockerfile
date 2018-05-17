@@ -30,8 +30,7 @@ WORKDIR /sawtooth-supply-chain
 RUN USER=root cargo new --bin processor
 
 WORKDIR /sawtooth-supply-chain/processor
-COPY Cargo.toml .
-COPY Cargo.lock .
+COPY Cargo.toml Cargo.lock* ./
 RUN cargo build
 
 ENV PATH=$PATH:/sawtooth-supply-chain/processor/target/debug/
