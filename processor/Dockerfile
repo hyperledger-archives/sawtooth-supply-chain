@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM rust:1.22.1
+FROM rust:1
 
 RUN apt-get update && apt-get install -y unzip libzmq3-dev
 
