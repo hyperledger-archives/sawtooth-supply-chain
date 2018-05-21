@@ -16,8 +16,11 @@
  */
 'use strict'
 
+const _ = require('lodash')
 const { NotFound } = require('./errors')
 const db = require('../db/record_types')
+
+const FILTER_KEYS = ['name']
 
 const fetch = ({ typeName }) => {
   return db.fetch(typeName)
@@ -29,7 +32,7 @@ const fetch = ({ typeName }) => {
     })
 }
 
-const list = () => db.list()
+const list = params => db.list(_.pick(params, FILTER_KEYS))
 
 module.exports = {
   fetch,

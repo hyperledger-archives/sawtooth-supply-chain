@@ -51,16 +51,17 @@ const fetchQuery = name => currentBlock => {
     .default(null)
 }
 
-const listQuery = currentBlock => {
+const listQuery = filterQuery => currentBlock => {
   return r.table('recordTypes')
     .filter(fromBlock(currentBlock))
+    .filter(filterQuery)
     .map(publishRecordType)
     .coerceTo('array')
 }
 
 const fetch = name => db.queryWithCurrentBlock(fetchQuery(name))
 
-const list = () => db.queryWithCurrentBlock(listQuery)
+const list = filterQuery => db.queryWithCurrentBlock(listQuery(filterQuery))
 
 module.exports = {
   fetch,
