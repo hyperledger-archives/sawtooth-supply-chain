@@ -42,6 +42,15 @@ const publishRecordType = type => {
   })
 }
 
+const fetchQuery = name => currentBlock => {
+  return r.table('recordTypes')
+    .getAll(name, { index: 'name' })
+    .filter(fromBlock(currentBlock))
+    .map(publishRecordType)
+    .nth(0)
+    .default(null)
+}
+
 const listQuery = currentBlock => {
   return r.table('recordTypes')
     .filter(fromBlock(currentBlock))
@@ -49,8 +58,11 @@ const listQuery = currentBlock => {
     .coerceTo('array')
 }
 
+const fetch = name => db.queryWithCurrentBlock(fetchQuery(name))
+
 const list = () => db.queryWithCurrentBlock(listQuery)
 
 module.exports = {
+  fetch,
   list
 }

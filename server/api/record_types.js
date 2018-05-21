@@ -16,10 +16,22 @@
  */
 'use strict'
 
+const { NotFound } = require('./errors')
 const db = require('../db/record_types')
+
+const fetch = ({ typeName }) => {
+  return db.fetch(typeName)
+    .then(resourceType => {
+      if (!resourceType) {
+        throw new NotFound(`No resource type with name: ${typeName}`)
+      }
+      return resourceType
+    })
+}
 
 const list = () => db.list()
 
 module.exports = {
+  fetch,
   list
 }
