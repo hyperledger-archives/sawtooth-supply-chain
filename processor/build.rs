@@ -20,6 +20,7 @@ extern crate protoc_rust;
 
 use std::fs;
 use std::io::Write;
+use protoc_rust::Customize;
 
 fn main() {
     // Generate protobuf files
@@ -35,6 +36,9 @@ fn main() {
             .map(|a| a.as_ref())
             .collect::<Vec<&str>>(),
         includes: &["src", "../protos"],
+        customize: Customize {
+            ..Default::default()
+        },
     }).expect("unable to run protoc");
 
     let mut file = fs::File::create("src/messages/mod.rs").unwrap();

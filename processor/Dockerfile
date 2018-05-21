@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM rust:1.22.1
+FROM rust:1
 
 RUN apt-get update && apt-get install -y unzip libzmq3-dev
 
@@ -30,8 +30,7 @@ WORKDIR /sawtooth-supply-chain
 RUN USER=root cargo new --bin processor
 
 WORKDIR /sawtooth-supply-chain/processor
-COPY Cargo.toml .
-COPY Cargo.lock .
+COPY Cargo.toml Cargo.lock* ./
 RUN cargo build
 
 ENV PATH=$PATH:/sawtooth-supply-chain/processor/target/debug/
