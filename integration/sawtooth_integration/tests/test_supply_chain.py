@@ -280,7 +280,7 @@ class TestSupplyChain(unittest.TestCase):
                 ('species', PropertySchema.STRING, { 'required': True }),
                 ('weight', PropertySchema.NUMBER, { 'required': True }),
                 ('temperature', PropertySchema.NUMBER,
-                 { 'number_exponent': -3 }),
+                 { 'number_exponent': -3, 'delayed': True }),
                 ('location', PropertySchema.STRUCT,
                  { 'struct_properties': [
                     ('hemisphere', PropertySchema.STRING, {}),
@@ -361,6 +361,19 @@ class TestSupplyChain(unittest.TestCase):
             '''
             Jin used the keys "lat" and "long" for the gps, but the schema
             specified "latitude" and "longitude".
+            ''')
+
+        self.assert_invalid(
+            jin.create_record(
+                'fish-456',
+                'fish',
+                {'species': 'trout', 'weight': 5,
+                 'temperature': -1000}))
+
+        self.narrate(
+            '''
+            Jin gave an initial value for temperature, but temperature is a
+            "delayed" property, and may not be set at creation time.
             ''')
 
         self.assert_valid(
