@@ -143,6 +143,7 @@ const getPropertyValues = recordId => block => property => {
       return r.expr({
         'name': getName(property),
         'dataType': dataType,
+        fixed: property('fixed'),
         numberExponent: property('numberExponent'),
         'reporterKeys': reporterKeys,
         'values': findReportedValues(recordId)(getName(property))(dataType)(reporterKeys)(block)
@@ -219,6 +220,10 @@ const _loadRecord = (block, authedKey) => (record) => {
           }).merge(r.branch(
             getDataType(propertyValue).eq('NUMBER'),
             { numberExponent: propertyValue('numberExponent') },
+            {}
+          )).merge(r.branch(
+            propertyValue('fixed'),
+            { fixed: propertyValue('fixed') },
             {}
           ))),
         'updates': r.expr({
