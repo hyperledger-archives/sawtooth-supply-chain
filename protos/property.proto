@@ -97,6 +97,10 @@ message PropertySchema {
   // Property when a Record is created.
   bool required = 3;
 
+  // A flag that indicates a property may not be set at record creation,
+  // only later during subsequent property updates.
+  bool delayed = 5;
+
   // Used with numbers to communicate how the integer value should be converted
   // to a fractional number. Uses the same principle as scientific notation.
   // A number value of 1, with an exponent of 3, would be 1,000 (1 * 10^3).
