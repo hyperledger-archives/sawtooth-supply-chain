@@ -56,6 +56,10 @@ message Property {
   // current_page, or "0001" if the current_page is "ffff".
   bool wrapped = 6;
 
+  // If set to true, values may only be set for this Property
+  // during Record creation, not later with updates.
+  bool fixed = 9;
+
   // Used with numbers to communicate how the integer value should be converted
   // to a fractional number. Uses the same principle as scientific notation.
   // A number value of 1, with an exponent of 3, would be 1,000 (1 * 10^3).
@@ -96,6 +100,10 @@ message PropertySchema {
   // A flag indicating whether initial values must be provided for the
   // Property when a Record is created.
   bool required = 3;
+
+  // Another flag. If set to true, values may only be set for this Property
+  // during Record creation, not later with updates.
+  bool fixed = 4;
 
   // A flag that indicates a property may not be set at record creation,
   // only later during subsequent property updates.
