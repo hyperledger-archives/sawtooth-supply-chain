@@ -717,6 +717,7 @@ impl SupplyChainTransactionHandler {
             new_property.set_wrapped(false);
             new_property.set_number_exponent(property.get_number_exponent());
             new_property.set_enum_options(property.enum_options);
+            new_property.set_struct_properties(property.struct_properties);
 
             state.set_property(record_id, property_name, new_property.clone())?;
 
@@ -1495,11 +1496,67 @@ impl SupplyChainTransactionHandler {
                     };
                 reported_value.set_enum_value(enum_index as u32)
             }
+            property::PropertySchema_DataType::STRUCT => {
+                match self._validate_struct_values(
+                    &value.struct_values,
+                    &property.struct_properties
+                ) {
+                    Ok(_) => (),
+                    Err(e) => return Err(e),
+                }
+
+                let struct_values = RepeatedField::from_vec(value.get_struct_values().to_vec());
+                reported_value.set_struct_values(struct_values)
+            }
             property::PropertySchema_DataType::LOCATION => {
                 reported_value.set_location_value(value.get_location_value().clone())
             }
         };
         Ok(reported_value)
+    }
+
+    fn _validate_struct_values(
+        &self,
+        struct_values: &RepeatedField<property::PropertyValue>,
+        schema_values: &RepeatedField<property::PropertySchema>
+    ) -> Result<(), ApplyError> {
+        if struct_values.len() != schema_values.len() {
+            return Err(ApplyError::InvalidTransaction(format!(
+                "Provided struct does not match schema length: {:?} != {:?}",
+                struct_values.len(),
+                schema_values.len(),
+            )))
+        }
+
+        for schema in schema_values.iter() {
+            let value = match struct_values.iter().find(|val| val.name == schema.name) {
+                Some(val) => val,
+                None => return Err(ApplyError::InvalidTransaction(format!(
+                    "Provided struct missing required property from schema: {}",
+                    schema.name,
+                )))
+            };
+
+            if value.data_type != schema.data_type {
+                return Err(ApplyError::InvalidTransaction(format!(
+                    "Struct property \"{}\" must have data type: {:?}",
+                    schema.name,
+                    schema.data_type,
+                )))
+            }
+
+            if schema.data_type == property::PropertySchema_DataType::STRUCT {
+                match self._validate_struct_values(
+                    &value.struct_values,
+                    &schema.struct_properties
+                ) {
+                    Ok(_) => (),
+                    Err(e) => return Err(e),
+                }
+            }
+        }
+
+        Ok(())
     }
 }
 

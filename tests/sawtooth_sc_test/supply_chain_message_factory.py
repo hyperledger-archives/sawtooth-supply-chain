@@ -70,17 +70,18 @@ class SupplyChainMessageFactory:
         )
 
     def create_record_type(self, name, *properties):
+        def make_schema(name, data_type, attrs):
+            if 'struct_properties' in attrs:
+                attrs['struct_properties'] =\
+                    [make_schema(n, dt, a)
+                     for n, dt, a in attrs['struct_properties']]
+            return PropertySchema(name=name, data_type=data_type, **attrs)
+
         payload = _make_sc_payload(
             action=SCPayload.CREATE_RECORD_TYPE,
             create_record_type=CreateRecordTypeAction(
                 name=name,
-                properties=[
-                    PropertySchema(
-                        name=name,
-                        data_type=data_type,
-                        **attributes)
-                    for (name, data_type, attributes) in properties
-                ]
+                properties=[make_schema(n, dt, a) for (n, dt, a) in properties]
             )
         )
 
@@ -289,6 +290,13 @@ def _make_sc_payload(**kwargs):
 
 
 def _make_property_value(name, value):
+    if type(value) == dict:
+        values = [_make_property_value(k, v) for k, v in value.items()]
+        return PropertyValue(
+            name=name,
+            data_type=PropertySchema.STRUCT,
+            struct_values=values)
+
     property_value = PropertyValue(name=name)
 
     type_slots = {
