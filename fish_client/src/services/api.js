@@ -14,65 +14,65 @@
  * limitations under the License.
  * ----------------------------------------------------------------------------
  */
-'use strict'
+"use strict";
 
-const m = require('mithril')
-const _ = require('lodash')
-const sjcl = require('sjcl')
+const m = require('mithril');
+const _ = require('lodash');
+const sjcl = require('sjcl');
 
-const API_PATH = 'api/'
-const STORAGE_KEY = 'fish_net.authorization'
-let authToken = null
+const API_PATH = 'api/';
+const STORAGE_KEY = 'fish_net.authorization';
+let authToken = null;
 
 /**
  * Generates a base-64 encoded SHA-256 hash of a plain text password
  * for submission to authorization routes
  */
 const hashPassword = password => {
-  const bits = sjcl.hash.sha256.hash(password)
-  return sjcl.codec.base64.fromBits(bits)
-}
+  const bits = sjcl.hash.sha256.hash(password);
+  return sjcl.codec.base64.fromBits(bits);
+};
 
 /**
  * Getters and setters to handle the auth token both in memory and storage
  */
 const getAuth = () => {
   if (!authToken) {
-    authToken = window.localStorage.getItem(STORAGE_KEY)
+    authToken = window.localStorage.getItem(STORAGE_KEY);
   }
-  return authToken
-}
+  return authToken;
+};
 
 const setAuth = token => {
-  window.localStorage.setItem(STORAGE_KEY, token)
-  authToken = token
-  return authToken
-}
+  window.localStorage.setItem(STORAGE_KEY, token);
+  authToken = token;
+  return authToken;
+};
 
 const clearAuth = () => {
-  const token = getAuth()
-  window.localStorage.clear(STORAGE_KEY)
-  authToken = null
-  return token
-}
+  const token = getAuth();
+  window.localStorage.clear(STORAGE_KEY);
+  authToken = null;
+  return token;
+};
 
 /**
  * Parses the authToken to return the logged in user's public key
  */
 const getPublicKey = () => {
-  const token = getAuth()
-  if (!token) return null
-  return window.atob(token.split('.')[1])
-}
+  const token = getAuth();
+  if (!token) return null;
+  return window.atob(token.split('.')[1]);
+};
 
 // Adds Authorization header and prepends API path to url
 const baseRequest = opts => {
-  const Authorization = getAuth()
-  const authHeader = Authorization ? { Authorization } : {}
-  opts.headers = _.assign(opts.headers, authHeader)
-  opts.url = API_PATH + opts.url
-  return m.request(opts)
-}
+  const Authorization = getAuth();
+  const authHeader = Authorization ? { Authorization } : {};
+  opts.headers = _.assign(opts.headers, authHeader);
+  opts.url = API_PATH + opts.url;
+  return m.request(opts);
+};
 
 /**
  * Submits a request to an api endpoint with an auth header if present
@@ -82,15 +82,15 @@ const request = (method, endpoint, data) => {
     method,
     url: endpoint,
     data
-  })
-}
+  });
+};
 
 /**
  * Method specific versions of request
  */
-const get = _.partial(request, 'GET')
-const post = _.partial(request, 'POST')
-const patch = _.partial(request, 'PATCH')
+const get = _.partial(request, 'GET');
+const post = _.partial(request, 'POST');
+const patch = _.partial(request, 'PATCH');
 
 /**
  * Method for posting a binary file to the API
@@ -103,8 +103,8 @@ const postBinary = (endpoint, data) => {
     // prevent Mithril from trying to JSON stringify the body
     serialize: x => x,
     data
-  })
-}
+  });
+};
 
 module.exports = {
   hashPassword,
@@ -117,4 +117,4 @@ module.exports = {
   post,
   patch,
   postBinary
-}
+};
