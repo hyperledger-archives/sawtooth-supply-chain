@@ -25,6 +25,7 @@ const users = require('./users')
 const { BadRequest, Unauthorized } = require('./errors')
 const agents = require('./agents')
 const records = require('./records')
+const recordTypes = require('./record_types')
 const blockchain = require('../blockchain/')
 const batcher = require('../blockchain/batcher')
 const config = require('../system/config')
@@ -180,6 +181,9 @@ router.get('/records', handle(records.listRecords))
 router.get('/records/:recordId', handle(records.fetchRecord))
 router.get('/records/:recordId/property/:propertyName', handle(records.fetchProperty))
 router.get('/records/:recordId/:propertyName', handle(records.fetchProperty))
+
+router.get('/record-types', handle(recordTypes.list))
+router.get('/record-types/:typeName', handle(recordTypes.fetch))
 
 router.post('/transactions', handleBody(blockchain.submit))
 
