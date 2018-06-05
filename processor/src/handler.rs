@@ -688,6 +688,17 @@ impl SupplyChainTransactionHandler {
                     provided_name
                 )));
             };
+
+            let is_delayed = match type_schemata.get(provided_name) {
+                Some(property_schema) => property_schema.delayed,
+                None => false,
+            };
+            if is_delayed {
+                return Err(ApplyError::InvalidTransaction(format!(
+                    "Property is 'delayed', and cannot be set at record creation: {}",
+                    provided_name
+                )));
+            };
         }
         let mut new_record = record::Record::new();
         new_record.set_record_id(record_id.to_string());
