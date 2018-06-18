@@ -277,7 +277,8 @@ class TestSupplyChain(unittest.TestCase):
         self.assert_valid(
             jin.create_record_type(
                 'fish',
-                ('species', PropertySchema.STRING, { 'required': True }),
+                ('species', PropertySchema.STRING,
+                 { 'required': True, 'fixed': True }),
                 ('weight', PropertySchema.NUMBER, { 'required': True }),
                 ('temperature', PropertySchema.NUMBER,
                  { 'number_exponent': -3, 'delayed': True }),
@@ -413,6 +414,16 @@ class TestSupplyChain(unittest.TestCase):
             jin.update_properties(
                 'fish-???',
                 {'species': 'flounder'}))
+
+        self.narrate(
+            '''
+            Jin attempts to update species, but it is a static property.
+            ''')
+
+        self.assert_invalid(
+            jin.update_properties(
+                'fish-456',
+                {'species': 'bass'}))
 
         self.narrate(
             '''

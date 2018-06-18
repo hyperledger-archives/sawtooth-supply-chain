@@ -726,6 +726,7 @@ impl SupplyChainTransactionHandler {
             new_property.reporters.push(reporter.clone());
             new_property.set_current_page(1);
             new_property.set_wrapped(false);
+            new_property.set_fixed(property.get_fixed());
             new_property.set_number_exponent(property.get_number_exponent());
             new_property.set_enum_options(property.enum_options);
             new_property.set_struct_properties(property.struct_properties);
@@ -905,6 +906,13 @@ impl SupplyChainTransactionHandler {
                 return Err(ApplyError::InvalidTransaction(format!(
                     "Reporter is not authorized: {}",
                     signer
+                )));
+            }
+
+            if prop.fixed {
+                return Err(ApplyError::InvalidTransaction(format!(
+                    "Property is fixed and cannot be updated: {}",
+                    prop.name
                 )));
             }
 
