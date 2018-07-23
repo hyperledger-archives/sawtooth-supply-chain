@@ -106,6 +106,13 @@ const postBinary = (endpoint, data) => {
   })
 }
 
+const getBlocks = (endpoint) => {
+    return baseRequest({
+        method: 'GET',
+        absurl: endpoint,
+    })
+}
+
 module.exports = {
   hashPassword,
   getAuth,
@@ -116,5 +123,6 @@ module.exports = {
   get,
   post,
   patch,
-  postBinary
+  postBinary,
+  getBlocks
 }
