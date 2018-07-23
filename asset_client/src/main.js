@@ -35,6 +35,7 @@ const Dashboard = require('./views/dashboard')
 const LoginForm = require('./views/login_form')
 const PropertyDetailPage = require('./views/property_detail')
 const SignupForm = require('./views/signup_form')
+const BlockList = require('./views/list_blocks')
 
 /**
  * A basic layout component that adds the navbar to the view.
@@ -52,7 +53,8 @@ const loggedInNav = () => {
   const links = [
     ['/create', 'Add Asset'],
     ['/assets', 'View Assets'],
-    ['/agents', 'View Agents']
+    ['/agents', 'View Agents'],
+    ['/blocks', 'View Blocks']
   ]
   return m(navigation.Navbar, {}, [
     navigation.links(links),
@@ -64,7 +66,8 @@ const loggedInNav = () => {
 const loggedOutNav = () => {
   const links = [
     ['/assets', 'View Assets'],
-    ['/agents', 'View Agents']
+    ['/agents', 'View Agents'],
+    ['/blocks', 'View Blocks']
   ]
   return m(navigation.Navbar, {}, [
     navigation.links(links),
@@ -128,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/logout': { onmatch: logout },
     '/profile': { onmatch: profile },
     '/assets/:recordId/:name': resolve(PropertyDetailPage),
-    '/signup': resolve(SignupForm)
+    '/signup': resolve(SignupForm),
+    '/blocks': resolve(BlockList)
   })
 })
