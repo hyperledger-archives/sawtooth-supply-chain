@@ -28,6 +28,7 @@ const records = require('./records')
 const recordTypes = require('./record_types')
 const blockchain = require('../blockchain/')
 const batcher = require('../blockchain/batcher')
+const blocks = require('./blocks')
 const config = require('../system/config')
 
 const router = express.Router()
@@ -184,6 +185,8 @@ router.get('/records/:recordId/:propertyName', handle(records.fetchProperty))
 
 router.get('/record-types', handle(recordTypes.list))
 router.get('/record-types/:typeName', handle(recordTypes.fetch))
+router.get('/blocks', handle(blocks.listBlocks))
+router.get('/blocks/:id', handle(blocks.getBlock))
 
 router.post('/transactions', handleBody(blockchain.submit))
 
