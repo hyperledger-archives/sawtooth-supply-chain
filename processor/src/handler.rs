@@ -740,8 +740,11 @@ impl SupplyChainTransactionHandler {
             new_property.set_wrapped(false);
             new_property.set_fixed(property.get_fixed());
             new_property.set_number_exponent(property.get_number_exponent());
-            new_property.set_enum_options(property.enum_options);
-            new_property.set_struct_properties(property.struct_properties);
+            new_property.set_enum_options(
+                RepeatedField::from_vec(property.get_enum_options().to_vec()));
+            new_property.set_struct_properties(
+                RepeatedField::from_vec(property.get_struct_properties().to_vec()));
+            new_property.set_unit(property.get_unit().to_string());
 
             state.set_property(record_id, property_name, new_property.clone())?;
 

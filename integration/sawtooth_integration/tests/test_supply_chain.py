@@ -279,9 +279,10 @@ class TestSupplyChain(unittest.TestCase):
                 'fish',
                 ('species', PropertySchema.STRING,
                  { 'required': True, 'fixed': True }),
-                ('weight', PropertySchema.NUMBER, { 'required': True }),
+                ('weight', PropertySchema.NUMBER,
+                 { 'required': True, 'unit': 'grams' }),
                 ('temperature', PropertySchema.NUMBER,
-                 { 'number_exponent': -3, 'delayed': True }),
+                 { 'number_exponent': -3, 'delayed': True, 'unit': 'Celsius' }),
                 ('location', PropertySchema.STRUCT,
                  { 'struct_properties': [
                     ('hemisphere', PropertySchema.STRING, {}),

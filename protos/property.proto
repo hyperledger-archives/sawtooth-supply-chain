@@ -71,6 +71,9 @@ message Property {
 
   // Used with STRUCT data types, defines the properties a struct must contain
   repeated PropertySchema struct_properties = 12;
+
+  // This optional metadata describes the unit a Property is measured in
+  string unit = 20;
 }
 
 
@@ -120,6 +123,9 @@ message PropertySchema {
 
   // Used with STRUCT data types, defines the properties a struct must contain
   repeated PropertySchema struct_properties = 12;
+
+  // This optional metadata describes the unit a Property is measured in
+  string unit = 20;
 }
 
 
