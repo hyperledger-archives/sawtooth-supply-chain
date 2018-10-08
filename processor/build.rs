@@ -36,9 +36,7 @@ fn main() {
             .map(|a| a.as_ref())
             .collect::<Vec<&str>>(),
         includes: &["src", "../protos"],
-        customize: Customize {
-            ..Default::default()
-        },
+        customize: Customize::default(),
     }).expect("unable to run protoc");
 
     let mut file = fs::File::create("src/messages/mod.rs").unwrap();
