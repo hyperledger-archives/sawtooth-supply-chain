@@ -1,0 +1,139 @@
+# Copyright 2017 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ------------------------------------------------------------------------------
+
+version: '2.1'
+
+services:
+
+  processor:
+    image: hyperledger/sawtooth-supply-chain-tp:0.10
+    container_name: sawtooth-supply-chain-tp
+    depends_on:
+      - validator
+    entrypoint: supply-chain-tp -C tcp://validator:4004
+
+  server:
+    image: hyperledger/sawtooth-supply-chain-server
+    container_name: sawtooth-supply-chain-server
+    expose:
+      - 3000
+    ports:
+      - '8020:3000'
+    depends_on:
+      - validator
+      - rethink
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
+    command: |
+      bash -c "
+        set -x &&
+        npm run init &&
+        node index.js
+      "
+
+  ledger-sync:
+    image: hyperledger/sawtooth-supply-chain-ledger-sync:0.10
+    container_name: sawtooth-supply-chain-ledger-sync
+    depends_on:
+      - validator
+      - rethink
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
+
+  fish-client:
+    image: hyperedger/sawtooth-supply-chain-fish-client:0.10
+    container_name: sawtooth-supply-chain-fish-client
+    expose:
+      - 80
+    ports:
+      - '80:80'
+    depends_on:
+      - server
+
+  shell:
+    image: hyperledger/sawtooth-supply-chain-shell:0.10
+    container_name: sawtoot-supply-chain-shell
+    depends_on:
+      - rethink
+      - rest-api
+    environment:
+      - VALIDATOR_URL=tcp://validator:4004
+      - DB_HOST=rethink
+      - SERVER=http://server:3000
+    command: |
+      bash -c "
+        cd asset_client/ && npm run build && cd - &&
+        cd fish_client/ && npm run build && cd - &&
+        if [ ! -f /root/.sawtooth/keys/root.priv ]; then
+          sawtooth keygen &&
+          cd server/ &&
+          npm run init &&
+          npm run make-asset &&
+          npm run make-fish &&
+          npm run seed-sample-assets &&
+          npm run seed-sample-fish &&
+          cd - &&
+          tail -f /dev/null
+        fi;"
+
+  rethink:
+    image: rethinkdb
+    container_name: supply-rethink
+    expose:
+      - 8080
+      - 28015
+
+  validator:
+    image: hyperledger/sawtooth-validator:1.0
+    container_name: supply-validator
+    expose:
+      - 4004
+    # start the validator with an empty genesis batch
+    entrypoint: |
+      bash -c "
+        if [ ! -f /etc/sawtooth/keys/validator.priv ]; then
+          sawadm keygen &&
+          sawtooth keygen my_key &&
+          sawset genesis -k /root/.sawtooth/keys/my_key.priv &&
+          sawadm genesis config-genesis.batch
+        fi;
+        sawtooth-validator -v \
+          --endpoint tcp://validator:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800
+      "
+
+  settings-tp:
+    image: hyperledger/sawtooth-settings-tp:1.0
+    container_name: supply-settings-tp
+    depends_on:
+      - validator
+    entrypoint: settings-tp -v -C tcp://validator:4004
+
+  rest-api:
+    image: hyperledger/sawtooth-rest-api:1.0
+    container_name: supply-rest-api
+    expose:
+      - 8008
+    ports:
+      - '8024:8008'
+    depends_on:
+      - validator
+    entrypoint: |
+      sawtooth-rest-api -vv
+        --connect tcp://validator:4004
+        --bind rest-api:8008
