@@ -39,6 +39,9 @@ services:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
       - SERVER=http://server:3000
+      - 'http_proxy=${http_proxy}'
+      - 'https_proxy=${https_proxy}'
+      - 'no_proxy=rest-api,server,eth0,validator,${no_proxy}'
     command: |
       bash -c "
         cd asset_client/ && npm run build && cd - &&
@@ -65,6 +68,10 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
+    environment:
+      - 'http_proxy=${http_proxy}'
+      - 'https_proxy=${https_proxy}'
+      - 'no_proxy=rest-api,server,eth0,validator,${no_proxy}'
     volumes:
       - .:/sawtooth-supply-chain
       - /sawtooth-supply-chain/processor/target
@@ -99,6 +106,9 @@ services:
     environment:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
+      - 'http_proxy=${http_proxy}'
+      - 'https_proxy=${https_proxy}'
+      - 'no_proxy=rest-api,server,eth0,validator,${no_proxy}'
     entrypoint: node index.js
 
   ledger-sync:
@@ -120,6 +130,9 @@ services:
     environment:
       - VALIDATOR_URL=tcp://validator:4004
       - DB_HOST=rethink
+      - 'http_proxy=${http_proxy}'
+      - 'https_proxy=${https_proxy}'
+      - 'no_proxy=rest-api,server,eth0,validator,${no_proxy}'
 
   asset-client:
     image: supply-asset-client
@@ -156,6 +169,10 @@ services:
     ports:
       - '8023:8080'
       - '28020:28015'
+    environment:
+      - 'http_proxy=${http_proxy}'
+      - 'https_proxy=${https_proxy}'
+      - 'no_proxy=rest-api,server,eth0,validator,${no_proxy}'
 
   validator:
     image: hyperledger/sawtooth-validator:1.0
