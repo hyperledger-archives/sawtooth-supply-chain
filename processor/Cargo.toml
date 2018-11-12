@@ -20,10 +20,10 @@ description = "Sawtooth Supply Chain Transaction Processor"
 homepage = "https://github.com/hyperledger/sawtooth-supply-chain"
 
 [dependencies]
-sawtooth_sdk = { git = "https://github.com/hyperledger/sawtooth-core.git" }
+sawtooth-sdk = "^0.1"
 rust-crypto = "0.2.36"
 rustc-serialize = "0.3.22"
-zmq = { git = "https://github.com/erickt/rust-zmq", branch = "release/v0.8" }
+sawtooth-zmq = "0.8.2-dev5"
 clap = "2"
 protobuf = "2"
 log = "0.3.0"
