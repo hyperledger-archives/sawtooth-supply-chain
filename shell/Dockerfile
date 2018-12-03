@@ -13,12 +13,12 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-FROM hyperledger/sawtooth-shell:1.0
+FROM hyperledger/sawtooth-shell:nightly
 
 # Install Python, Node.js, and Ubuntu dependencies
-RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc/apt/sources.list \
-  && (apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8AA7AF1F1091A5FD \
-  || apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 8AA7AF1F1091A5FD) \
+RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable bionic universe" >> /etc/apt/sources.list \
+  && (apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 44FC67F19B2466EA \
+  || apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 44FC67F19B2466EA) \
   && apt-get update \
   && apt-get install -y -q \
     apt-transport-https \
@@ -30,16 +30,16 @@ RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable xenial universe" >> /etc
     python3 \
     python3-colorlog \
     python3-dev \
-    python3-grpcio-tools=1.1.3-1 \
-    python3-grpcio=1.1.3-1 \
+    python3-grpcio-tools \
+    python3-grpcio \
     python3-nose2 \
     python3-pip \
     python3-protobuf \
-    python3-pytest-runner=2.6.2-1 \
-    python3-pytest=2.9.0-1 \
+    python3-pytest-runner \
+    python3-pytest \
     python3-sawtooth-sdk \
     python3-sawtooth-signing \
-    python3-setuptools-scm=1.15.0-1 \
+    python3-setuptools-scm \
     python3-yaml \
     software-properties-common \
   && curl -s -S -o /tmp/setup-node.sh https://deb.nodesource.com/setup_8.x \
