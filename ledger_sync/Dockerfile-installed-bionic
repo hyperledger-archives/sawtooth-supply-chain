@@ -21,11 +21,13 @@ FROM ubuntu:bionic
 
 LABEL "install-type"="mounted"
 
+RUN apt-get update \
+ && apt-get install gnupg -y
+
 # Install Node and Ubuntu dependencies
 RUN apt-get update && apt-get install -y -q --no-install-recommends \
     curl \
     ca-certificates \
-    gnupg \
     pkg-config \
     build-essential \
     libzmq3-dev \
@@ -38,25 +40,14 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
  && rm -rf /var/lib/apt/lists/* \
  && npm install -g prebuild-install
 
-WORKDIR /sawtooth-supply-chain/server
+WORKDIR /sawtooth-supply-chain/ledger_sync
 
-RUN \
- if [ ! -z $HTTP_PROXY ] && [ -z $http_proxy ]; then \
-  http_proxy=$HTTP_PROXY; \
- fi; \
- if [ ! -z $HTTPS_PROXY ] && [ -z $https_proxy ]; then \
-  https_proxy=$HTTPS_PROXY; \
- fi; \
- if [ ! -z $http_proxy ]; then \
-  npm config set proxy $http_proxy; \
- fi; \
- if [ ! -z $https_proxy ]; then \
-  npm config set https-proxy $https_proxy; \
- fi
-
-COPY server/package.json .
+COPY ledger_sync/package.json .
 RUN npm install
+
+COPY protos/ ../protos/
+COPY ledger_sync/ .
 
 EXPOSE 3000/tcp
 
-CMD ["/usr/bin/node" "index.js"]
+CMD ["/usr/bin/node", "index.js"]

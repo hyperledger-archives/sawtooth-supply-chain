@@ -22,7 +22,7 @@ services:
     container_name: supply-tp-installed
     build:
       context: .
-      dockerfile: processor/Dockerfile-installed
+      dockerfile: processor/Dockerfile-installed-${DISTRO}
       args:
         - http_proxy
         - https_proxy
@@ -36,7 +36,7 @@ services:
     container_name: supply-server-installed
     build:
       context: .
-      dockerfile: server/Dockerfile-installed
+      dockerfile: server/Dockerfile-installed-${DISTRO}
       args:
         - http_proxy
         - https_proxy
@@ -63,7 +63,7 @@ services:
     container_name: supply-ledger-sync-installed
     build:
       context: .
-      dockerfile: ledger_sync/Dockerfile-installed
+      dockerfile: ledger_sync/Dockerfile-installed-${DISTRO}
     depends_on:
       - validator
       - rethink
