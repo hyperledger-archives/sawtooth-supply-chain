@@ -13,7 +13,8 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-FROM hyperledger/sawtooth-shell:nightly
+# Change 'nightly' to 'bumper-nightly' when you are using Sawtooth 1.1/Ubuntu 18 LTS (Xenial)
+FROM hyperledger/sawtooth-shell:nightly 
 
 # Install Python, Node.js, and Ubuntu dependencies
 RUN echo "deb http://repo.sawtooth.me/ubuntu/1.0/stable bionic universe" >> /etc/apt/sources.list \
