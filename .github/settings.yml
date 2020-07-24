@@ -1,0 +1,9 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+repository:
+  name: sawtooth-supply-chain
+  description: Archive of sawtooth-supply-chain: Sawtooth Supply Chain
+  archived: true
+  private: false
