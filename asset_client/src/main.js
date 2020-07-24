@@ -50,7 +50,7 @@ const Layout = {
 
 const loggedInNav = () => {
   const links = [
-    ['/create', 'Add Asset'],
+    ['/create', 'Ad Asset'],
     ['/assets', 'View Assets'],
     ['/agents', 'View Agents']
   ]
